@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Carbon Kisan — Buyer Dashboard</title>
+  <meta name="description" content="CSR buyer dashboard — track carbon credit purchases, CO₂ offset, and download impact certificates.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/styles.css">
+  <style>
+    .buyer-layout { padding-top: 64px; display: flex; min-height: 100vh; }
+    .buyer-content { flex: 1; overflow-x: hidden; }
+    .buyer-main { padding: 32px; max-width: 1200px; }
+    .buyer-stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 28px; }
+    .buyer-stat-card { background: var(--surface-2); border: 0.5px solid var(--border); border-radius: var(--radius-lg); padding: 20px; position: relative; overflow: hidden; transition: border-color 0.2s; }
+    .buyer-stat-card:hover { border-color: rgba(26,107,138,0.4); }
+    .buyer-stat-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: var(--sky); }
+    .buyer-stat-card.green::before { background: var(--leaf); }
+    .buyer-stat-label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 8px; }
+    .buyer-stat-value { font-size: 28px; font-weight: 700; color: var(--river); line-height: 1; }
+    .buyer-stat-card.green .buyer-stat-value { color: var(--leaf); }
+    .cert-item { display: flex; align-items: center; justify-content: space-between; padding: 14px 0; border-bottom: 0.5px solid var(--border); }
+    .cert-item:last-child { border-bottom: none; }
+    .cert-icon { width: 36px; height: 36px; background: rgba(26,107,138,0.15); border: 0.5px solid rgba(26,107,138,0.3); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+    .sparkline-container { display: flex; align-items: flex-end; gap: 2px; height: 24px; }
+    .spark-bar { width: 4px; background: var(--leaf); border-radius: 2px 2px 0 0; opacity: 0.7; min-height: 3px; }
+    .heatmap-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
+    .heatmap-cell { border-radius: var(--radius-sm); padding: 10px 8px; text-align: center; font-size: 11px; font-weight: 600; cursor: pointer; transition: transform 0.15s; }
+    .heatmap-cell:hover { transform: scale(1.05); }
+    .progress-bar-wrap { height: 6px; background: var(--surface-3); border-radius: 3px; overflow: hidden; margin-top: 6px; }
+    .progress-bar-fill { height: 100%; border-radius: 3px; background: linear-gradient(90deg, var(--leaf), var(--sky)); transition: width 1s ease; }
+    @media (max-width: 1024px) { .buyer-stats-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 768px) { .buyer-stats-grid { grid-template-columns: 1fr 1fr; } .buyer-main { padding: 20px; } .grid-2 { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body class="buyer-theme">
+
+<!-- ── NAVBAR ── -->
+<nav class="navbar" id="main-nav" style="border-bottom-color:rgba(26,107,138,0.3)">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-brand">
+      <div class="nav-brand-icon" style="background:var(--sky)">🌿</div>
+      <div class="nav-brand-name" style="color:var(--river)">Carbon Kisan</div>
+    </a>
+    <div class="nav-links">
+      <a href="buyer-dashboard.html" class="nav-link active" style="color:var(--river)">Dashboard</a>
+      <a href="marketplace.html" class="nav-link">Marketplace</a>
+    </div>
+    <div class="nav-actions">
+      <span class="badge badge-sold" id="buyer-navbar-badge">🏢 Tata Motors CSR</span>
+      <button class="btn btn-sky btn-sm" onclick="window.location.href='marketplace.html'">
+        Browse credits →
+      </button>
+    </div>
+    <button class="hamburger" id="hamburger"><span></span><span></span><span></span></button>
+  </div>
+  <div class="mobile-menu" id="mobile-menu">
+    <div class="mobile-menu-inner">
+      <a href="buyer-dashboard.html" class="mobile-link">Dashboard</a>
+      <a href="marketplace.html" class="mobile-link">Marketplace</a>
+      <div class="mobile-menu-ctas" style="margin-top:16px;">
+        <!-- profile buttons will be dynamically injected here -->
+      </div>
+    </div>
+  </div>
+</nav>
+
+<div class="buyer-layout">
+
+  <!-- ── SIDEBAR ── -->
+  <div class="buyer-sidebar">
+    <a href="buyer-dashboard.html" class="buyer-sidebar-item active" title="Dashboard">
+      📊
+      <span class="buyer-sidebar-tooltip">Dashboard</span>
+    </a>
+    <a href="marketplace.html" class="buyer-sidebar-item" title="Marketplace">
+      🛒
+      <span class="buyer-sidebar-tooltip">Marketplace</span>
+    </a>
+    <a href="#" class="buyer-sidebar-item" onclick="openProfileModal('buyer'); return false;" title="Settings" style="margin-top:auto">
+      ⚙️
+      <span class="buyer-sidebar-tooltip">Settings / Profile</span>
+    </a>
+  </div>
+
+  <!-- ── MAIN CONTENT ── -->
+  <div class="buyer-content">
+    <div class="buyer-main">
+
+      <!-- Header -->
+      <div class="flex items-center justify-between mb-20 flex-wrap gap-12">
+        <div>
+          <div class="section-eyebrow" style="color:var(--river)">CSR buyer portal</div>
+          <h1 style="font-size:24px;font-weight:700;color:var(--text-primary)" id="buyer-welcome-name">Tata Motors CSR Dashboard</h1>
+          <p style="font-size:13px;color:var(--text-muted)">Q3 2026 · Last updated 2 min ago</p>
+        </div>
+        <div class="flex gap-12">
+          <button class="btn btn-ghost btn-sm" onclick="exportCSV()">📥 Export CSV</button>
+          <a href="marketplace.html" class="btn btn-sky">🛒 Buy more credits</a>
+        </div>
+      </div>
+
+      <!-- ── STATS ── -->
+      <div class="buyer-stats-grid">
+        <div class="buyer-stat-card">
+          <div class="buyer-stat-label">Credits bought</div>
+          <div class="buyer-stat-value" id="stat-credits-bought" data-count="0">0</div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:4px">System-wide Total</div>
+          <div class="progress-bar-wrap" style="margin-top:10px">
+            <div class="progress-bar-fill" data-width="78" style="width:0%"></div>
+          </div>
+        </div>
+
+        <div class="buyer-stat-card green">
+          <div class="buyer-stat-label">CO₂ offset (Total)</div>
+          <div class="buyer-stat-value" id="stat-co2-offset" data-count="0" data-decimals="2" data-suffix=" t">0</div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:4px">System-wide Total</div>
+          <div class="progress-bar-wrap" style="margin-top:10px">
+            <div class="progress-bar-fill" data-width="59" style="width:0%;background:var(--leaf)"></div>
+          </div>
+        </div>
+
+        <div class="buyer-stat-card">
+          <div class="buyer-stat-label">Total spent (To Farmers)</div>
+          <div class="buyer-stat-value" style="font-size:22px" id="stat-total-spent" data-count="0" data-decimals="0" data-prefix="₹">₹0</div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:4px">Direct payouts</div>
+        </div>
+
+        <div class="buyer-stat-card green">
+          <div class="buyer-stat-label">Farmers supported</div>
+          <div class="buyer-stat-value" id="stat-farmers-supported" data-count="0">0</div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:4px" id="stat-districts">Across multiple districts</div>
+        </div>
+      </div>
+
+      <!-- ── MAIN GRID ── -->
+      <div class="grid-2" style="gap:20px">
+
+        <!-- Purchase history -->
+        <div class="card">
+          <div class="flex justify-between items-center mb-16">
+            <div style="font-size:15px;font-weight:600;color:var(--text-primary)">Purchase history</div>
+            <button class="btn btn-ghost btn-sm" onclick="exportCSV()">Export CSV</button>
+          </div>
+
+          <div class="data-table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Credit ID</th>
+                <th>Farmer</th>
+                <th>Location</th>
+                <th>CO₂ (tonnes)</th>
+                <th style="text-align:right">₹ Paid</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="mono text-sm">CC-7821</td>
+                <td>Rajan Patil</td>
+                <td class="text-xs text-muted">Nashik, MH</td>
+                <td class="text-leaf">0.112 t</td>
+                <td style="text-align:right" class="text-leaf font-600">₹560</td>
+                <td><span class="badge badge-success">Verified</span></td>
+              </tr>
+              <tr>
+                <td class="mono text-sm">CC-7614</td>
+                <td>Sunita Devi</td>
+                <td class="text-xs text-muted">Ludhiana, PB</td>
+                <td class="text-leaf">0.148 t</td>
+                <td style="text-align:right" class="text-leaf font-600">₹740</td>
+                <td><span class="badge badge-success">Verified</span></td>
+              </tr>
+              <tr>
+                <td class="mono text-sm">CC-7803</td>
+                <td>Mohan Reddy</td>
+                <td class="text-xs text-muted">Hyderabad, TG</td>
+                <td class="text-leaf">0.076 t</td>
+                <td style="text-align:right" class="text-leaf font-600">₹380</td>
+                <td><span class="badge badge-success">Verified</span></td>
+              </tr>
+              <tr>
+                <td class="mono text-sm">CC-7901</td>
+                <td>Kavita Bai</td>
+                <td class="text-xs text-muted">Vidisha, MP</td>
+                <td class="text-leaf">0.096 t</td>
+                <td style="text-align:right" class="text-leaf font-600">₹480</td>
+                <td><span class="badge badge-pending">Processing</span></td>
+              </tr>
+              <tr>
+                <td class="mono text-sm">CC-7756</td>
+                <td>Amar Singh</td>
+                <td class="text-xs text-muted">Amritsar, PB</td>
+                <td class="text-leaf">0.136 t</td>
+                <td style="text-align:right" class="text-leaf font-600">₹680</td>
+              </tr>
+            </tbody>
+          </table>
+          </div>
+
+          <div style="margin-top:14px;text-align:center">
+            <button class="btn btn-ghost btn-sm" onclick="showToast('info', 'Loading more records...', '')">
+              Load more records ↓
+            </button>
+          </div>
+        </div>
+
+        <!-- Right column -->
+        <div style="display:flex;flex-direction:column;gap:16px">
+
+          <!-- Live activity -->
+          <div class="card">
+            <div class="flex items-center gap-8 mb-12">
+              <div class="pulse-dot" style="background:var(--river)"></div>
+              <div style="font-size:15px;font-weight:600;color:var(--text-primary)">Live activity</div>
+            </div>
+
+            <div class="feed-item">
+              <div class="feed-dot" style="background:#5BC8E8"></div>
+              <div class="feed-body">
+                <div class="feed-text">Wipro CSR purchased 0.200 t from Maharashtra</div>
+                <div class="feed-time">3 min ago</div>
+              </div>
+            </div>
+            <div class="feed-item">
+              <div class="feed-dot feed-dot-green"></div>
+              <div class="feed-body">
+                <div class="feed-text">New credits listed — Kavita Bai, MP · 0.096 t</div>
+                <div class="feed-time">12 min ago</div>
+              </div>
+            </div>
+            <div class="feed-item">
+              <div class="feed-dot" style="background:#5BC8E8"></div>
+              <div class="feed-body">
+                <div class="feed-text">HDFC Bank purchased 0.320 t from Punjab</div>
+                <div class="feed-time">24 min ago</div>
+              </div>
+            </div>
+            <div class="feed-item">
+              <div class="feed-dot feed-dot-green"></div>
+              <div class="feed-body">
+                <div class="feed-text">Mohan Reddy (TG) issued new credit — 0.104 t</div>
+                <div class="feed-time">38 min ago</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Impact certificates -->
+          <div class="card">
+            <div style="font-size:15px;font-weight:600;color:var(--text-primary);margin-bottom:16px">
+              📜 Impact certificates
+            </div>
+
+            <div class="cert-item">
+              <div class="flex items-center gap-12">
+                <div class="cert-icon">📋</div>
+                <div>
+                  <div style="font-size:13px;color:var(--text-primary);font-weight:500">Q2 2026 — 0.580 t CO₂</div>
+                  <div style="font-size:11px;color:var(--text-muted)">84 farmers · Generated Jul 1</div>
+                </div>
+              </div>
+              <button class="btn btn-ghost btn-sm" onclick="downloadCert('Q2-2026')">Download PDF</button>
+            </div>
+
+            <div class="cert-item">
+              <div class="flex items-center gap-12">
+                <div class="cert-icon">📋</div>
+                <div>
+                  <div style="font-size:13px;color:var(--text-primary);font-weight:500">Q1 2026 — 0.660 t CO₂</div>
+                  <div style="font-size:11px;color:var(--text-muted)">72 farmers · Generated Apr 1</div>
+                </div>
+              </div>
+              <button class="btn btn-ghost btn-sm" onclick="downloadCert('Q1-2026')">Download PDF</button>
+            </div>
+
+            <div class="cert-item">
+              <div class="flex items-center gap-12">
+                <div class="cert-icon">📋</div>
+                <div>
+                  <div style="font-size:13px;color:var(--text-primary);font-weight:500">Annual 2025 — 2.400 t CO₂</div>
+                  <div style="font-size:11px;color:var(--text-muted)">148 farmers · Generated Jan 1</div>
+                </div>
+              </div>
+              <button class="btn btn-ghost btn-sm" onclick="downloadCert('Annual-2025')">Download PDF</button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script src="/js/main.js"></script>
+<script>
+  // Load local buyer name
+  document.addEventListener('DOMContentLoaded', () => {
+    const bName = localStorage.getItem('carbn-buyer-name') || 'Tata Motors CSR';
+    document.getElementById('buyer-welcome-name').textContent = `${bName} Dashboard`;
+    document.getElementById('buyer-navbar-badge').textContent = `🏢 ${bName}`;
+
+    fetchImpactStats();
+  });
+
+  async function fetchImpactStats() {
+    try {
+      const res = await window.fetchWithAuth('/impact/stats');
+      const data = await res.json();
+      
+      document.getElementById('stat-credits-bought').setAttribute('data-count', data.total_transactions || 0);
+      document.getElementById('stat-co2-offset').setAttribute('data-count', data.total_co2e_sold || 0);
+      document.getElementById('stat-total-spent').setAttribute('data-count', data.total_farmer_income_inr || 0);
+      document.getElementById('stat-farmers-supported').setAttribute('data-count', data.farmer_count || 0);
+      document.getElementById('stat-districts').textContent = `Across ${data.district_count || 0} districts`;
+
+      // Re-trigger intersection observer for new data-count values
+      document.querySelectorAll('[data-count]').forEach(el => countObs.observe(el));
+    } catch (err) {
+      console.error('Failed to fetch impact stats', err);
+    }
+  }
+
+  // Count-up animations
+  const countObs = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting && e.target.getAttribute('data-count')) {
+        animateCount(e.target);
+        countObs.unobserve(e.target);
+      }
+      if (e.isIntersecting && e.target.getAttribute('data-width')) {
+        animateBar(e.target);
+        countObs.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.3 });
+
+  function animateCount(el) {
+    const target = parseFloat(el.getAttribute('data-count'));
+    const prefix = el.getAttribute('data-prefix') || '';
+    const suffix = el.getAttribute('data-suffix') || '';
+    const decimals = parseInt(el.getAttribute('data-decimals')) || 0;
+    const duration = 1200;
+    const start = performance.now();
+
+    function update(ts) {
+      const progress = Math.min((ts - start) / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      const val = eased * target;
+      
+      let formattedVal = val.toLocaleString('en-IN', {
+        minimumFractionDigits: decimals,
+        maximumFractionDigits: decimals
+      });
+      el.textContent = prefix + formattedVal + suffix;
+      if (progress < 1) requestAnimationFrame(update);
+    }
+    requestAnimationFrame(update);
+  }
+
+  function animateBar(el) {
+    const target = parseInt(el.getAttribute('data-width'));
+    let current = 0;
+    const step = () => {
+      current = Math.min(current + 2, target);
+      el.style.width = current + '%';
+      if (current < target) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  }
+
+  document.querySelectorAll('[data-count]').forEach(el => countObs.observe(el));
+  document.querySelectorAll('[data-width]').forEach(el => countObs.observe(el));
+
+  function downloadCert(period) {
+    showToast('success', `Downloading ${period} certificate`, 'Preparing download...');
+    const htmlContent = `
+      <html>
+      <head>
+        <title>Carbon Kisan Impact Certificate - ${period}</title>
+        <style>
+          body { font-family: 'Inter', sans-serif; background: #070F1A; color: #E0EFFF; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; }
+          .cert-container { width: 800px; padding: 60px; background: #102035; border: 4px double #1E90FF; border-radius: 16px; text-align: center; box-shadow: 0 12px 48px rgba(0,0,0,0.5); }
+          h1 { color: #1E90FF; font-size: 32px; margin-bottom: 10px; }
+          h2 { color: #5BC8E8; font-size: 20px; font-weight: 500; margin-bottom: 40px; }
+          p { font-size: 16px; line-height: 1.8; color: #7EB5DD; margin: 20px 0; }
+          .stats { display: flex; justify-content: space-around; margin: 40px 0; padding: 20px; background: #162843; border-radius: 10px; border: 0.5px solid rgba(30,144,255,0.2); }
+          .stat-val { font-size: 28px; font-weight: 700; color: #2ECC71; }
+          .stat-lbl { font-size: 12px; color: #3D6E99; text-transform: uppercase; margin-top: 4px; }
+          .footer-logo { font-size: 24px; color: #1E90FF; font-weight: 700; margin-top: 50px; }
+        </style>
+      </head>
+      <body>
+        <div class="cert-container">
+          <div style="font-size: 60px;">🌿</div>
+          <h1>Carbon Kisan</h1>
+          <h2>Carbon Offset Certificate</h2>
+          <p>This is to certify that corporate buyer <strong>Tata Motors CSR</strong> has successfully offset carbon emissions through sustainable farming practices logged by registered Indian farmers for the period of <strong>${period}</strong>.</p>
+          <div class="stats">
+            <div>
+              <div class="stat-val">0.580 Tonnes</div>
+              <div class="stat-lbl">CO₂ Sequestered</div>
+            </div>
+            <div>
+              <div class="stat-val">84 Farmers</div>
+              <div class="stat-lbl">Rural Partners Supported</div>
+            </div>
+          </div>
+          <p>Verified by Carbon Kisan ML Sequestration Model (R² 0.81)</p>
+          <div class="footer-logo">Carbon Kisan</div>
+        </div>
+      </body>
+      </html>
+    `;
+    const blob = new Blob([htmlContent], { type: 'text/html' });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = `Carbon_Kisan_Impact_Certificate_${period}.html`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
+
+  function exportCSV() {
+    showToast('success', 'Exporting purchase history', 'CSV file is downloading.');
+    const rows = [
+      ["Credit ID", "Farmer", "Location", "CO2 (tonnes)", "Amount Paid (INR)", "Status"],
+      ["CC-7821", "Rajan Patil", "Nashik, MH", "0.112", "560", "Verified"],
+      ["CC-7614", "Sunita Devi", "Ludhiana, PB", "0.148", "740", "Verified"],
+      ["CC-7803", "Mohan Reddy", "Hyderabad, TG", "0.076", "380", "Verified"],
+      ["CC-7901", "Kavita Bai", "Vidisha, MP", "0.096", "480", "Processing"],
+      ["CC-7756", "Amar Singh", "Amritsar, PB", "0.136", "680", "Verified"]
+    ];
+    let csvContent = "data:text/csv;charset=utf-8," + rows.map(e => e.join(",")).join("\n");
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", "carbon_credit_purchase_history.csv");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
+</script>
+</body>
+</html>

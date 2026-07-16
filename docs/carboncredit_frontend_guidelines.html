@@ -1,0 +1,1827 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CarbonCredit.in — Frontend Design Guidelines</title>
+<style>
+  :root {
+    --forest: #1A3A2A;
+    --forest-mid: #1E4D35;
+    --leaf: #2ECC71;
+    --leaf-dim: #27AE60;
+    --leaf-muted: rgba(46,204,113,0.12);
+    --bark: #8B6914;
+    --sky: #1A6B8A;
+    --sky-dim: #155A75;
+    --soil: #3D2B1F;
+    --cream: #F5F0E8;
+    --cream-dark: #EDE5D0;
+    --ink: #0D1F15;
+    --ink-mid: #2A3D30;
+    --muted: #6B8C72;
+    --muted-light: #9BB89F;
+    --surface-0: #0D1A12;
+    --surface-1: #122018;
+    --surface-2: #1A2E1F;
+    --surface-3: #223828;
+    --border: rgba(46,204,113,0.15);
+    --border-strong: rgba(46,204,113,0.3);
+    --amber: #F59E0B;
+    --amber-dim: rgba(245,158,11,0.15);
+    --red: #EF4444;
+    --white: #FFFFFF;
+    --text-primary: #E8F5EA;
+    --text-secondary: #9BB89F;
+    --text-muted: #5A7A5E;
+    --radius-sm: 6px;
+    --radius: 10px;
+    --radius-lg: 16px;
+    --radius-xl: 24px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: var(--surface-0);
+    color: var(--text-primary);
+    line-height: 1.6;
+    font-size: 15px;
+  }
+
+  /* ── SIDEBAR NAV ── */
+  .layout { display: flex; min-height: 100vh; }
+
+  .sidebar {
+    width: 240px;
+    flex-shrink: 0;
+    background: var(--surface-1);
+    border-right: 0.5px solid var(--border);
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+    padding: 24px 0 40px;
+  }
+
+  .sidebar-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0 20px 24px;
+    border-bottom: 0.5px solid var(--border);
+    margin-bottom: 16px;
+  }
+
+  .sidebar-logo-icon {
+    width: 32px; height: 32px;
+    background: var(--leaf);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px;
+  }
+
+  .sidebar-logo-text { font-size: 14px; font-weight: 600; color: var(--leaf); }
+  .sidebar-logo-sub { font-size: 10px; color: var(--text-muted); }
+
+  .nav-section { padding: 0 12px; margin-bottom: 4px; }
+  .nav-section-label {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    padding: 12px 8px 4px;
+  }
+
+  .nav-item {
+    display: block;
+    padding: 7px 10px;
+    border-radius: 6px;
+    font-size: 13px;
+    color: var(--text-secondary);
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.15s;
+    border: none;
+    background: none;
+    width: 100%;
+    text-align: left;
+  }
+
+  .nav-item:hover { background: var(--leaf-muted); color: var(--leaf); }
+  .nav-item.active { background: var(--leaf-muted); color: var(--leaf); font-weight: 500; }
+
+  /* ── MAIN CONTENT ── */
+  .main { flex: 1; overflow-y: auto; }
+
+  .section { padding: 48px 56px; border-bottom: 0.5px solid var(--border); }
+  .section:last-child { border-bottom: none; }
+
+  /* ── TYPOGRAPHY ── */
+  .doc-eyebrow {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--leaf);
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    margin-bottom: 8px;
+  }
+
+  h1 { font-size: 32px; font-weight: 700; color: var(--text-primary); line-height: 1.2; margin-bottom: 12px; }
+  h2 { font-size: 22px; font-weight: 600; color: var(--text-primary); margin-bottom: 16px; }
+  h3 { font-size: 16px; font-weight: 600; color: var(--leaf); margin-bottom: 10px; margin-top: 24px; }
+  h4 { font-size: 13px; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 8px; }
+
+  p { color: var(--text-secondary); margin-bottom: 12px; line-height: 1.7; }
+  p:last-child { margin-bottom: 0; }
+
+  .lead { font-size: 17px; color: var(--text-primary); opacity: 0.85; }
+
+  /* ── CARDS ── */
+  .card {
+    background: var(--surface-2);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 20px 24px;
+  }
+
+  .card + .card { margin-top: 12px; }
+
+  .card-sm {
+    background: var(--surface-2);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+  }
+
+  /* ── GRIDS ── */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+  .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+
+  /* ── COLOR SWATCHES ── */
+  .swatch-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
+  .swatch {
+    border-radius: var(--radius);
+    overflow: hidden;
+    border: 0.5px solid var(--border);
+  }
+  .swatch-color { height: 64px; }
+  .swatch-info { padding: 10px 12px; background: var(--surface-3); }
+  .swatch-name { font-size: 12px; font-weight: 600; color: var(--text-primary); }
+  .swatch-hex { font-size: 11px; color: var(--text-muted); font-family: monospace; }
+  .swatch-role { font-size: 10px; color: var(--text-muted); margin-top: 2px; }
+
+  /* ── TYPOGRAPHY SCALE ── */
+  .type-row {
+    display: flex;
+    align-items: baseline;
+    gap: 20px;
+    padding: 14px 0;
+    border-bottom: 0.5px solid var(--border);
+  }
+  .type-row:last-child { border-bottom: none; }
+  .type-meta { width: 120px; flex-shrink: 0; }
+  .type-label { font-size: 11px; color: var(--text-muted); }
+  .type-spec { font-size: 11px; color: var(--text-muted); font-family: monospace; }
+
+  /* ── COMPONENT DEMOS ── */
+  .demo-box {
+    background: var(--surface-3);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 24px;
+    margin-top: 16px;
+  }
+
+  /* ── BUTTONS ── */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    border-radius: var(--radius);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+    transition: all 0.15s;
+    text-decoration: none;
+  }
+  .btn-primary { background: var(--leaf); color: var(--ink); }
+  .btn-primary:hover { background: #34d978; }
+  .btn-secondary { background: var(--surface-3); color: var(--text-primary); border: 0.5px solid var(--border-strong); }
+  .btn-secondary:hover { background: var(--surface-2); border-color: var(--leaf); }
+  .btn-ghost { background: transparent; color: var(--leaf); border: 0.5px solid var(--leaf-dim); }
+  .btn-ghost:hover { background: var(--leaf-muted); }
+  .btn-danger { background: rgba(239,68,68,0.15); color: var(--red); border: 0.5px solid rgba(239,68,68,0.3); }
+  .btn-sm { padding: 6px 14px; font-size: 13px; }
+  .btn-lg { padding: 14px 28px; font-size: 16px; }
+  .btn-sky { background: var(--sky); color: white; }
+  .btn-sky:hover { background: var(--sky-dim); }
+
+  /* ── STATUS BADGES ── */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+  .badge-success { background: rgba(46,204,113,0.15); color: var(--leaf); border: 0.5px solid rgba(46,204,113,0.3); }
+  .badge-pending { background: var(--amber-dim); color: var(--amber); border: 0.5px solid rgba(245,158,11,0.3); }
+  .badge-sold { background: rgba(26,107,138,0.2); color: #5BC8E8; border: 0.5px solid rgba(26,107,138,0.4); }
+  .badge-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+
+  /* ── INPUT ── */
+  .input {
+    width: 100%;
+    background: var(--surface-1);
+    border: 0.5px solid var(--border-strong);
+    border-radius: var(--radius);
+    padding: 10px 14px;
+    font-size: 14px;
+    color: var(--text-primary);
+    outline: none;
+    transition: border-color 0.15s;
+    font-family: inherit;
+  }
+  .input:focus { border-color: var(--leaf); box-shadow: 0 0 0 3px rgba(46,204,113,0.08); }
+  .input::placeholder { color: var(--text-muted); }
+
+  .form-label { font-size: 12px; color: var(--text-secondary); margin-bottom: 6px; display: block; font-weight: 500; }
+
+  /* ── STAT CARDS ── */
+  .stat-card {
+    background: var(--surface-2);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 18px 20px;
+  }
+  .stat-label { font-size: 12px; color: var(--text-muted); margin-bottom: 6px; }
+  .stat-value { font-size: 26px; font-weight: 700; color: var(--leaf); line-height: 1; }
+  .stat-sub { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
+
+  /* ── WIREFRAME BOXES ── */
+  .wireframe {
+    background: var(--surface-1);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    font-size: 12px;
+  }
+  .wf-bar {
+    background: var(--surface-2);
+    border-bottom: 0.5px solid var(--border);
+    padding: 10px 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .wf-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--border-strong); }
+  .wf-url { font-size: 11px; color: var(--text-muted); font-family: monospace; }
+  .wf-body { padding: 20px; }
+  .wf-nav {
+    background: var(--surface-2);
+    border-bottom: 0.5px solid var(--border);
+    padding: 12px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .wf-nav-logo { font-size: 13px; font-weight: 600; color: var(--leaf); display: flex; align-items: center; gap: 8px; }
+  .wf-nav-links { display: flex; gap: 20px; font-size: 12px; color: var(--text-muted); }
+  .wf-nav-links span.active { color: var(--leaf); }
+  .wf-section { padding: 20px; }
+  .wf-hero { text-align: center; padding: 32px 20px; }
+  .wf-h1 { font-size: 22px; font-weight: 700; color: var(--text-primary); margin-bottom: 8px; line-height: 1.3; }
+  .wf-p { font-size: 12px; color: var(--text-secondary); margin-bottom: 16px; max-width: 400px; margin-left: auto; margin-right: auto; }
+  .wf-btn-row { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+  .wf-placeholder {
+    background: var(--surface-3);
+    border: 0.5px dashed var(--border-strong);
+    border-radius: var(--radius);
+    padding: 12px;
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 11px;
+  }
+  .wf-grid { display: grid; gap: 12px; }
+  .wf-row { display: flex; gap: 12px; }
+  .wf-col { flex: 1; }
+
+  /* ── PAGE LAYOUT DIAGRAM ── */
+  .layout-diagram {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 11px;
+  }
+  .ld-row { display: flex; gap: 4px; }
+  .ld-block {
+    background: var(--surface-3);
+    border: 0.5px solid var(--border);
+    border-radius: 4px;
+    padding: 8px 10px;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+
+  /* ── TOAST / NOTIFICATION ── */
+  .toast {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--surface-3);
+    border: 0.5px solid var(--border-strong);
+    border-radius: var(--radius);
+    padding: 12px 16px;
+    font-size: 13px;
+    margin-bottom: 8px;
+  }
+  .toast-icon { width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 11px; }
+  .toast-success .toast-icon { background: rgba(46,204,113,0.2); color: var(--leaf); }
+  .toast-info .toast-icon { background: rgba(26,107,138,0.25); color: #5BC8E8; }
+  .toast-warn .toast-icon { background: var(--amber-dim); color: var(--amber); }
+
+  /* ── LIVE FEED ITEMS ── */
+  .feed-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 0.5px solid var(--border);
+  }
+  .feed-item:last-child { border-bottom: none; }
+  .feed-dot { width: 8px; height: 8px; border-radius: 50%; margin-top: 5px; flex-shrink: 0; }
+  .feed-dot-green { background: var(--leaf); }
+  .feed-dot-blue { background: #5BC8E8; }
+  .feed-body { flex: 1; }
+  .feed-text { font-size: 13px; color: var(--text-primary); }
+  .feed-time { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+
+  /* ── LANG TAG ── */
+  .lang-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: var(--surface-3);
+    border: 0.5px solid var(--border);
+    border-radius: 6px;
+    padding: 3px 8px;
+    font-size: 11px;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .lang-tag.active { background: var(--leaf-muted); border-color: var(--leaf); color: var(--leaf); }
+
+  /* ── SEPARATOR ── */
+  .sep { border: none; border-top: 0.5px solid var(--border); margin: 24px 0; }
+  .sep-label {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--text-muted);
+    font-size: 11px;
+    margin: 20px 0;
+  }
+  .sep-label::before, .sep-label::after { content: ''; flex: 1; height: 0.5px; background: var(--border); }
+
+  /* ── RULE CALLOUT ── */
+  .rule-block {
+    background: var(--surface-2);
+    border-left: 3px solid var(--leaf);
+    border-radius: 0 var(--radius) var(--radius) 0;
+    padding: 14px 18px;
+    margin: 14px 0;
+    font-size: 13px;
+    color: var(--text-secondary);
+  }
+  .rule-block.warn { border-left-color: var(--amber); }
+  .rule-block.info { border-left-color: var(--sky); }
+
+  .rule-title { font-size: 12px; font-weight: 600; color: var(--text-primary); margin-bottom: 4px; }
+
+  /* ── CODE BLOCK ── */
+  .code-block {
+    background: var(--surface-1);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px 20px;
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+    color: var(--leaf);
+    overflow-x: auto;
+    margin: 12px 0;
+    line-height: 1.8;
+  }
+  .code-comment { color: var(--text-muted); }
+  .code-key { color: #5BC8E8; }
+  .code-val { color: var(--leaf); }
+
+  /* ── SECTION HEADER ── */
+  .section-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+  .section-num {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    background: var(--leaf-muted);
+    border: 0.5px solid var(--leaf);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--leaf);
+    flex-shrink: 0;
+    margin-top: 4px;
+  }
+
+  /* ── INNOVATION BOX ── */
+  .innovation-card {
+    background: linear-gradient(135deg, rgba(46,204,113,0.08) 0%, rgba(26,107,138,0.08) 100%);
+    border: 0.5px solid var(--leaf);
+    border-radius: var(--radius-lg);
+    padding: 20px 24px;
+    margin: 14px 0;
+  }
+  .innovation-title { font-size: 13px; font-weight: 600; color: var(--leaf); margin-bottom: 6px; display: flex; align-items: center; gap: 8px; }
+  .innovation-body { font-size: 13px; color: var(--text-secondary); line-height: 1.7; }
+
+  /* ── HEADER AREA ── */
+  .doc-header {
+    background: linear-gradient(135deg, var(--surface-1) 0%, var(--forest-mid) 100%);
+    border-bottom: 0.5px solid var(--border-strong);
+    padding: 56px;
+  }
+
+  /* ── HEATMAP PREVIEW ── */
+  .heatmap-preview { display: grid; grid-template-columns: repeat(5,1fr); gap: 3px; margin: 12px 0; }
+  .hm-cell {
+    padding: 8px 6px;
+    border-radius: 4px;
+    text-align: center;
+    font-size: 10px;
+    font-weight: 600;
+  }
+
+  /* ── PAGE SCROLL TABLE ── */
+  .spec-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .spec-table th { text-align: left; font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.6px; padding: 10px 12px; border-bottom: 0.5px solid var(--border); }
+  .spec-table td { padding: 12px 12px; border-bottom: 0.5px solid var(--border); color: var(--text-secondary); vertical-align: top; }
+  .spec-table td:first-child { color: var(--text-primary); font-weight: 500; }
+  .spec-table tr:last-child td { border-bottom: none; }
+
+  /* ── OTP INPUT PREVIEW ── */
+  .otp-row { display: flex; gap: 8px; justify-content: center; margin: 12px 0; }
+  .otp-box {
+    width: 44px; height: 52px;
+    background: var(--surface-1);
+    border: 0.5px solid var(--border-strong);
+    border-radius: var(--radius);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--leaf);
+  }
+  .otp-box.active { border-color: var(--leaf); box-shadow: 0 0 0 3px rgba(46,204,113,0.1); }
+  .otp-box.empty { color: transparent; }
+
+  /* ── TOOLTIP ── */
+  .tooltip-demo { position: relative; display: inline-block; }
+  .tooltip-tip {
+    background: var(--surface-3);
+    border: 0.5px solid var(--border-strong);
+    border-radius: var(--radius-sm);
+    padding: 6px 10px;
+    font-size: 11px;
+    color: var(--text-primary);
+    white-space: nowrap;
+    display: inline-block;
+    margin-top: 6px;
+  }
+
+  /* ── CREDIT CARD ── */
+  .credit-listing {
+    background: var(--surface-2);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 16px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .credit-listing-top { display: flex; justify-content: space-between; align-items: flex-start; }
+  .credit-farmer { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+  .credit-location { font-size: 11px; color: var(--text-muted); }
+  .credit-price { font-size: 18px; font-weight: 700; color: var(--leaf); }
+  .credit-details { font-size: 12px; color: var(--text-muted); line-height: 1.6; }
+  .credit-id { font-family: monospace; font-size: 11px; color: var(--text-muted); }
+
+  /* ── SCROLLBAR ── */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--surface-0); }
+  ::-webkit-scrollbar-thumb { background: var(--surface-3); border-radius: 3px; }
+
+  /* ── MOTION ── */
+  @media (prefers-reduced-motion: no-preference) {
+    .btn { transition: all 0.15s ease; }
+    .nav-item { transition: all 0.12s ease; }
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 900px) {
+    .sidebar { display: none; }
+    .section { padding: 32px 24px; }
+    .swatch-grid { grid-template-columns: repeat(3,1fr); }
+    .grid-3, .grid-4 { grid-template-columns: 1fr 1fr; }
+  }
+
+  /* ── UTILS ── */
+  .mt-4 { margin-top: 4px; }
+  .mt-8 { margin-top: 8px; }
+  .mt-12 { margin-top: 12px; }
+  .mt-20 { margin-top: 20px; }
+  .mt-28 { margin-top: 28px; }
+  .mb-4 { margin-bottom: 4px; }
+  .mb-8 { margin-bottom: 8px; }
+  .mb-16 { margin-bottom: 16px; }
+  .flex { display: flex; }
+  .flex-col { flex-direction: column; }
+  .items-center { align-items: center; }
+  .justify-between { justify-content: space-between; }
+  .gap-8 { gap: 8px; }
+  .gap-12 { gap: 12px; }
+  .gap-16 { gap: 16px; }
+  .mono { font-family: monospace; }
+  .text-leaf { color: var(--leaf); }
+  .text-muted { color: var(--text-muted); }
+  .text-sm { font-size: 13px; }
+  .text-xs { font-size: 11px; }
+  .font-600 { font-weight: 600; }
+  .inline-flex { display: inline-flex; }
+  .rounded { border-radius: var(--radius); }
+  .full { width: 100%; }
+</style>
+</head>
+<body>
+
+<div class="layout">
+
+<!-- SIDEBAR -->
+<nav class="sidebar">
+  <div class="sidebar-logo">
+    <div class="sidebar-logo-icon">🌿</div>
+    <div>
+      <div class="sidebar-logo-text">CarbonCredit.in</div>
+      <div class="sidebar-logo-sub">Frontend Guidelines v1.0</div>
+    </div>
+  </div>
+
+  <div class="nav-section">
+    <div class="nav-section-label">Foundation</div>
+    <a class="nav-item active" href="#brand">Brand Identity</a>
+    <a class="nav-item" href="#colors">Color System</a>
+    <a class="nav-item" href="#typography">Typography</a>
+    <a class="nav-item" href="#spacing">Spacing & Layout</a>
+    <a class="nav-item" href="#motion">Motion & Animation</a>
+  </div>
+
+  <div class="nav-section">
+    <div class="nav-section-label">Components</div>
+    <a class="nav-item" href="#buttons">Buttons</a>
+    <a class="nav-item" href="#inputs">Inputs & Forms</a>
+    <a class="nav-item" href="#cards">Cards & Surfaces</a>
+    <a class="nav-item" href="#badges">Badges & Status</a>
+    <a class="nav-item" href="#notifications">Notifications</a>
+    <a class="nav-item" href="#lang">Language Switcher</a>
+  </div>
+
+  <div class="nav-section">
+    <div class="nav-section-label">Pages</div>
+    <a class="nav-item" href="#landing">Landing Page</a>
+    <a class="nav-item" href="#farmer-login">Farmer Login</a>
+    <a class="nav-item" href="#farmer-dash">Farmer Dashboard</a>
+    <a class="nav-item" href="#log-practice">Log Practice</a>
+    <a class="nav-item" href="#buyer-login">Buyer Login</a>
+    <a class="nav-item" href="#buyer-dash">Buyer Dashboard</a>
+    <a class="nav-item" href="#marketplace">Marketplace</a>
+  </div>
+
+  <div class="nav-section">
+    <div class="nav-section-label">Innovation</div>
+    <a class="nav-item" href="#innovations">Suggested Features</a>
+    <a class="nav-item" href="#accessibility">Accessibility</a>
+    <a class="nav-item" href="#mobile">Mobile Behaviour</a>
+  </div>
+</nav>
+
+<!-- MAIN -->
+<main class="main">
+
+<!-- HEADER -->
+<div class="doc-header" id="brand">
+  <div class="doc-eyebrow">CarbonCredit.in — Design System</div>
+  <h1>Frontend Design<br>Guidelines</h1>
+  <p class="lead">A complete visual and interaction specification for the CarbonCredit micro-marketplace — a platform that connects rural Indian farmers with urban CSR buyers through verifiable carbon credits.</p>
+  <div class="flex gap-8 mt-20" style="flex-wrap:wrap;">
+    <span class="badge badge-success"><span class="badge-dot"></span>Environment-first palette</span>
+    <span class="badge badge-sold"><span class="badge-dot"></span>Bilingual / multilingual</span>
+    <span class="badge badge-pending"><span class="badge-dot"></span>Mobile-first design</span>
+  </div>
+</div>
+
+<!-- ── DESIGN PHILOSOPHY ── -->
+<div class="section">
+  <div class="section-header">
+    <div class="section-num">✦</div>
+    <div>
+      <h2>Design Philosophy</h2>
+      <p>CarbonCredit.in serves two very different audiences — rural Indian farmers (often first-time app users, low digital literacy, mobile-only, regional language) and urban CSR professionals (desktop-first, data-driven, formal). The design must feel trustworthy and serious enough for a financial product while remaining approachable and clear for a farmer in Vidarbha.</p>
+    </div>
+  </div>
+  <div class="grid-3">
+    <div class="card-sm">
+      <div style="font-size:20px;margin-bottom:8px;">🌱</div>
+      <h4>Earth, not tech</h4>
+      <p class="text-sm">Colors come from the forest floor, not a Silicon Valley palette. Dark forest greens, leaf accents, soil tones — the product should feel like it belongs to the land it serves.</p>
+    </div>
+    <div class="card-sm">
+      <div style="font-size:20px;margin-bottom:8px;">🤝</div>
+      <h4>Trust through clarity</h4>
+      <p class="text-sm">Every number on screen is a farmer's income or a buyer's carbon commitment. Legibility, precision, and honesty in UI copy are non-negotiable.</p>
+    </div>
+    <div class="card-sm">
+      <div style="font-size:20px;margin-bottom:8px;">🌐</div>
+      <h4>Language-first</h4>
+      <p class="text-sm">The farmer portal must work in Marathi, Hindi, Punjabi, Telugu, and Kannada. Layouts must not break with longer regional text. Language toggle is always visible.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ── COLOR SYSTEM ── -->
+<div class="section" id="colors">
+  <div class="section-header">
+    <div class="section-num">01</div>
+    <div>
+      <h2>Color System</h2>
+      <p>The palette is built around deep forest greens and earth tones. Background layers darken progressively inward (like soil depth). The accent leaf green is used sparingly — only for interactive elements, values, and positive signals.</p>
+    </div>
+  </div>
+
+  <h3>Primary Palette</h3>
+  <div class="swatch-grid">
+    <div class="swatch">
+      <div class="swatch-color" style="background:#0D1A12;"></div>
+      <div class="swatch-info">
+        <div class="swatch-name">Deep Soil</div>
+        <div class="swatch-hex">#0D1A12</div>
+        <div class="swatch-role">Page background</div>
+      </div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-color" style="background:#122018;"></div>
+      <div class="swatch-info">
+        <div class="swatch-name">Forest Floor</div>
+        <div class="swatch-hex">#122018</div>
+        <div class="swatch-role">Sidebar / Nav</div>
+      </div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-color" style="background:#1A2E1F;"></div>
+      <div class="swatch-info">
+        <div class="swatch-name">Canopy</div>
+        <div class="swatch-hex">#1A2E1F</div>
+        <div class="swatch-role">Card background</div>
+      </div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-color" style="background:#223828;"></div>
+      <div class="swatch-info">
+        <div class="swatch-name">Undergrowth</div>
+        <div class="swatch-hex">#223828</div>
+        <div class="swatch-role">Hover / raised</div>
+      </div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-color" style="background:#2ECC71; border:0.5px solid rgba(255,255,255,0.1)"></div>
+      <div class="swatch-info">
+        <div class="swatch-name">Leaf Green ✦</div>
+        <div class="swatch-hex">#2ECC71</div>
+        <div class="swatch-role">Primary accent</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="swatch-grid mt-12">
+    <div class="swatch">
+      <div class="swatch-color" style="background:#27AE60;"></div>
+      <div class="swatch-info">
+        <div class="swatch-name">Leaf Dim</div>
+        <div class="swatch-hex">#27AE60</div>
+        <div class="swatch-role">Hover state</div>
+      </div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-color" style="background:#1A6B8A;"></div>
+      <div class="swatch-info">
+        <div class="swatch-name">Deep Sky</div>
+        <div class="swatch-hex">#1A6B8A</div>
+        <div class="swatch-role">CSR buyer accent</div>
+      </div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-color" style="background:#F59E0B;"></div>
+      <div class="swatch-info">
+        <div class="swatch-name">Harvest Gold</div>
+        <div class="swatch-hex">#F59E0B</div>
+        <div class="swatch-role">Warning / pending</div>
+      </div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-color" style="background:#EF4444;"></div>
+      <div class="swatch-info">
+        <div class="swatch-name">Red Clay</div>
+        <div class="swatch-hex">#EF4444</div>
+        <div class="swatch-role">Error / danger</div>
+      </div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-color" style="background:#5BC8E8;"></div>
+      <div class="swatch-info">
+        <div class="swatch-name">River Blue</div>
+        <div class="swatch-hex">#5BC8E8</div>
+        <div class="swatch-role">Info / live feed</div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="sep">
+  <h3>Color Usage Rules</h3>
+  <div class="rule-block">
+    <div class="rule-title">🌿 Leaf Green (#2ECC71) — reserve it</div>
+    Use only for: primary CTA buttons, positive values (₹ earned, kg CO₂), active nav items, success badges, and interactive accents. Never use for decorative backgrounds or body text.
+  </div>
+  <div class="rule-block info">
+    <div class="rule-title">🌊 Deep Sky (#1A6B8A) — buyer identity</div>
+    Use for the CSR buyer portal's primary CTA ("I'm a CSR buyer" button, buyer-side accents). This separates the two user journeys visually.
+  </div>
+  <div class="rule-block warn">
+    <div class="rule-title">⚡ Harvest Gold (#F59E0B) — status only</div>
+    Use only for "pending" badges, warnings, and OTP timers. Never as a decorative element.
+  </div>
+
+  <hr class="sep">
+  <h3>Color Token Reference</h3>
+  <div class="code-block">
+<span class="code-comment">/* CSS Custom Properties — paste into :root */</span>
+
+<span class="code-key">--surface-0:</span>  <span class="code-val">#0D1A12</span>; <span class="code-comment">/* page bg */</span>
+<span class="code-key">--surface-1:</span>  <span class="code-val">#122018</span>; <span class="code-comment">/* sidebar, nav */</span>
+<span class="code-key">--surface-2:</span>  <span class="code-val">#1A2E1F</span>; <span class="code-comment">/* card bg */</span>
+<span class="code-key">--surface-3:</span>  <span class="code-val">#223828</span>; <span class="code-comment">/* raised / hover */</span>
+
+<span class="code-key">--leaf:</span>       <span class="code-val">#2ECC71</span>; <span class="code-comment">/* primary accent */</span>
+<span class="code-key">--leaf-dim:</span>   <span class="code-val">#27AE60</span>; <span class="code-comment">/* hover */</span>
+<span class="code-key">--leaf-muted:</span> <span class="code-val">rgba(46,204,113,0.12)</span>; <span class="code-comment">/* subtle tint */</span>
+
+<span class="code-key">--sky:</span>        <span class="code-val">#1A6B8A</span>; <span class="code-comment">/* buyer accent */</span>
+<span class="code-key">--amber:</span>      <span class="code-val">#F59E0B</span>; <span class="code-comment">/* warning */</span>
+<span class="code-key">--red:</span>        <span class="code-val">#EF4444</span>; <span class="code-comment">/* error */</span>
+<span class="code-key">--river:</span>      <span class="code-val">#5BC8E8</span>; <span class="code-comment">/* info */</span>
+
+<span class="code-key">--text-primary:</span>   <span class="code-val">#E8F5EA</span>; <span class="code-comment">/* headings */</span>
+<span class="code-key">--text-secondary:</span> <span class="code-val">#9BB89F</span>; <span class="code-comment">/* body */</span>
+<span class="code-key">--text-muted:</span>     <span class="code-val">#5A7A5E</span>; <span class="code-comment">/* labels, hints */</span>
+
+<span class="code-key">--border:</span>         <span class="code-val">rgba(46,204,113,0.15)</span>;
+<span class="code-key">--border-strong:</span>  <span class="code-val">rgba(46,204,113,0.30)</span>;
+  </div>
+</div>
+
+<!-- ── TYPOGRAPHY ── -->
+<div class="section" id="typography">
+  <div class="section-header">
+    <div class="section-num">02</div>
+    <div>
+      <h2>Typography</h2>
+      <p>A clean, legible system. No serif — farmers need maximum clarity on small screens. Weights are limited to 400 (body), 500 (UI labels), 600 (section headers), 700 (display/values). The number display style is especially important — farmers will read their ₹ earnings at a glance.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h4>Font Stack</h4>
+    <div class="code-block" style="margin-top:10px">
+<span class="code-comment">/* Primary — system stack ensures OS-native rendering in all languages */</span>
+<span class="code-key">font-family:</span> 'Inter', 'Noto Sans', system-ui, -apple-system, sans-serif;
+
+<span class="code-comment">/* For Hindi / Marathi / regional scripts */</span>
+<span class="code-key">font-family:</span> 'Noto Sans Devanagari', 'Noto Sans', system-ui, sans-serif;
+
+<span class="code-comment">/* For Punjabi (Gurmukhi) */</span>
+<span class="code-key">font-family:</span> 'Noto Sans Gurmukhi', 'Noto Sans', system-ui, sans-serif;
+
+<span class="code-comment">/* For Telugu / Kannada — same Noto family */</span>
+<span class="code-key">font-family:</span> 'Noto Sans Telugu', 'Noto Sans', system-ui, sans-serif;
+    </div>
+    <div class="rule-block mt-12">
+      <div class="rule-title">Noto Sans — the multilingual backbone</div>
+      Load Noto Sans from Google Fonts with the correct subsets. The body font should auto-switch subset when the user changes language — no layout shift because Noto's metrics are consistent.
+    </div>
+  </div>
+
+  <h3>Type Scale</h3>
+  <div class="card mt-12" style="padding:0 20px">
+    <div class="type-row">
+      <div class="type-meta">
+        <div class="type-label">Display</div>
+        <div class="type-spec">36px / 700</div>
+      </div>
+      <div style="font-size:36px;font-weight:700;color:var(--text-primary);line-height:1.1">Carbon credits for every farmer.</div>
+    </div>
+    <div class="type-row">
+      <div class="type-meta">
+        <div class="type-label">H1</div>
+        <div class="type-spec">28px / 700</div>
+      </div>
+      <div style="font-size:28px;font-weight:700;color:var(--text-primary)">Farmer Dashboard</div>
+    </div>
+    <div class="type-row">
+      <div class="type-meta">
+        <div class="type-label">H2</div>
+        <div class="type-spec">22px / 600</div>
+      </div>
+      <div style="font-size:22px;font-weight:600;color:var(--text-primary)">Credit Wallet</div>
+    </div>
+    <div class="type-row">
+      <div class="type-meta">
+        <div class="type-label">H3</div>
+        <div class="type-spec">17px / 600</div>
+      </div>
+      <div style="font-size:17px;font-weight:600;color:var(--leaf)">Available credits — 28 listings</div>
+    </div>
+    <div class="type-row">
+      <div class="type-meta">
+        <div class="type-label">Body</div>
+        <div class="type-spec">15px / 400</div>
+      </div>
+      <div style="font-size:15px;color:var(--text-secondary)">Farmers log sustainable practices such as no-till farming, cover cropping, and reduced pesticide use to earn verifiable carbon credits.</div>
+    </div>
+    <div class="type-row">
+      <div class="type-meta">
+        <div class="type-label">Small</div>
+        <div class="type-spec">13px / 400</div>
+      </div>
+      <div style="font-size:13px;color:var(--text-secondary)">CC-7821 · Rajan Patil · Nashik, MH · 112 kg CO₂ · No-till</div>
+    </div>
+    <div class="type-row">
+      <div class="type-meta">
+        <div class="type-label">Caption</div>
+        <div class="type-spec">11px / 500</div>
+      </div>
+      <div style="font-size:11px;font-weight:500;color:var(--text-muted);text-transform:uppercase;letter-spacing:.6px">CROP TYPE / PRACTICE</div>
+    </div>
+    <div class="type-row">
+      <div class="type-meta">
+        <div class="type-label">Money</div>
+        <div class="type-spec">32px / 700</div>
+      </div>
+      <div style="font-size:32px;font-weight:700;color:var(--leaf)">₹4,820</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── SPACING & LAYOUT ── -->
+<div class="section" id="spacing">
+  <div class="section-header">
+    <div class="section-num">03</div>
+    <div>
+      <h2>Spacing & Layout</h2>
+      <p>An 8px base grid. Every spacing value is a multiple of 4. Layouts use CSS Grid for structure and Flexbox for alignment within rows. Maximum content width is 1280px for the buyer portal (data-dense), 560px for the farmer portal (mobile-first, single-column).</p>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div>
+      <h3>Spacing Scale</h3>
+      <div class="card" style="display:flex;flex-direction:column;gap:10px;padding:20px">
+        <div v-for="s in [4,8,12,16,20,24,32,40,48,56]">
+          <div style="display:flex;align-items:center;gap:12px;">
+            <div style="width:var(--w,4px);height:16px;background:var(--leaf);border-radius:2px" id="bar"></div>
+          </div>
+        </div>
+        <!-- Manual rows -->
+        <div class="flex items-center gap-12"><div style="height:12px;background:var(--leaf);border-radius:2px;width:4px"></div><span class="text-xs mono" style="color:var(--text-muted)">4px — micro gap</span></div>
+        <div class="flex items-center gap-12"><div style="height:12px;background:var(--leaf);border-radius:2px;width:8px"></div><span class="text-xs mono" style="color:var(--text-muted)">8px — icon-text</span></div>
+        <div class="flex items-center gap-12"><div style="height:12px;background:var(--leaf);border-radius:2px;width:12px"></div><span class="text-xs mono" style="color:var(--text-muted)">12px — field gap</span></div>
+        <div class="flex items-center gap-12"><div style="height:12px;background:var(--leaf);border-radius:2px;width:16px"></div><span class="text-xs mono" style="color:var(--text-muted)">16px — card padding (sm)</span></div>
+        <div class="flex items-center gap-12"><div style="height:12px;background:var(--leaf);border-radius:2px;width:24px"></div><span class="text-xs mono" style="color:var(--text-muted)">24px — card padding (lg)</span></div>
+        <div class="flex items-center gap-12"><div style="height:12px;background:var(--leaf);border-radius:2px;width:32px"></div><span class="text-xs mono" style="color:var(--text-muted)">32px — section gap</span></div>
+        <div class="flex items-center gap-12"><div style="height:12px;background:var(--leaf);border-radius:2px;width:48px"></div><span class="text-xs mono" style="color:var(--text-muted)">48px — section padding</span></div>
+        <div class="flex items-center gap-12"><div style="height:12px;background:var(--leaf);border-radius:2px;width:56px"></div><span class="text-xs mono" style="color:var(--text-muted)">56px — page padding</span></div>
+      </div>
+    </div>
+    <div>
+      <h3>Border Radius Scale</h3>
+      <div class="card" style="display:flex;flex-direction:column;gap:12px;padding:20px">
+        <div class="flex items-center gap-12"><div style="width:60px;height:28px;background:var(--surface-3);border:0.5px solid var(--border-strong);border-radius:4px"></div><span class="text-xs mono" style="color:var(--text-muted)">4px — tags, mini chips</span></div>
+        <div class="flex items-center gap-12"><div style="width:60px;height:28px;background:var(--surface-3);border:0.5px solid var(--border-strong);border-radius:6px"></div><span class="text-xs mono" style="color:var(--text-muted)">6px — small (--radius-sm)</span></div>
+        <div class="flex items-center gap-12"><div style="width:60px;height:28px;background:var(--surface-3);border:0.5px solid var(--border-strong);border-radius:10px"></div><span class="text-xs mono" style="color:var(--text-muted)">10px — default (--radius)</span></div>
+        <div class="flex items-center gap-12"><div style="width:60px;height:28px;background:var(--surface-3);border:0.5px solid var(--border-strong);border-radius:16px"></div><span class="text-xs mono" style="color:var(--text-muted)">16px — cards (--radius-lg)</span></div>
+        <div class="flex items-center gap-12"><div style="width:60px;height:28px;background:var(--surface-3);border:0.5px solid var(--border-strong);border-radius:24px"></div><span class="text-xs mono" style="color:var(--text-muted)">24px — modals (--radius-xl)</span></div>
+        <div class="flex items-center gap-12"><div style="width:60px;height:28px;background:var(--surface-3);border:0.5px solid var(--border-strong);border-radius:999px"></div><span class="text-xs mono" style="color:var(--text-muted)">999px — badges, pills</span></div>
+      </div>
+    </div>
+  </div>
+
+  <h3>Portal Layouts</h3>
+  <div class="grid-2 mt-12">
+    <div>
+      <p class="text-xs text-muted mb-8" style="font-weight:600;text-transform:uppercase;letter-spacing:.6px">FARMER PORTAL — Mobile-first, single column</p>
+      <div style="background:var(--surface-2);border:0.5px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;font-size:11px">
+        <div style="background:var(--surface-3);padding:8px 12px;border-bottom:0.5px solid var(--border);text-align:center;color:var(--leaf)">Sticky nav bar (60px)</div>
+        <div style="padding:12px;display:flex;flex-direction:column;gap:8px">
+          <div class="wf-placeholder">Language switcher + greeting</div>
+          <div class="flex gap-8">
+            <div class="wf-placeholder" style="flex:1">₹ earned</div>
+            <div class="wf-placeholder" style="flex:1">Credits</div>
+            <div class="wf-placeholder" style="flex:1">CO₂ kg</div>
+          </div>
+          <div class="wf-placeholder" style="height:100px">Credit wallet (scrollable list)</div>
+          <div class="wf-placeholder" style="height:80px">Live activity feed</div>
+          <div class="wf-placeholder">Refer a farmer</div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <p class="text-xs text-muted mb-8" style="font-weight:600;text-transform:uppercase;letter-spacing:.6px">BUYER PORTAL — Desktop, sidebar + main</p>
+      <div style="background:var(--surface-2);border:0.5px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;font-size:11px">
+        <div style="background:var(--surface-3);padding:8px 12px;border-bottom:0.5px solid var(--border);text-align:center;color:#5BC8E8">Top nav (64px) — logo + tabs + user</div>
+        <div style="display:flex;height:200px">
+          <div style="width:72px;background:var(--surface-3);border-right:0.5px solid var(--border);display:flex;flex-direction:column;align-items:center;gap:12px;padding:12px 0">
+            <div style="width:32px;height:32px;background:var(--border);border-radius:8px"></div>
+            <div style="width:32px;height:32px;background:var(--border);border-radius:8px"></div>
+            <div style="width:32px;height:32px;background:var(--border);border-radius:8px"></div>
+          </div>
+          <div style="flex:1;padding:10px;display:flex;flex-direction:column;gap:6px">
+            <div class="flex gap-6" style="gap:6px">
+              <div class="wf-placeholder" style="flex:1;font-size:10px">Credits bought</div>
+              <div class="wf-placeholder" style="flex:1;font-size:10px">CO₂ offset</div>
+              <div class="wf-placeholder" style="flex:1;font-size:10px">Farmers</div>
+              <div class="wf-placeholder" style="flex:1;font-size:10px">₹ Spent</div>
+            </div>
+            <div class="flex gap-6" style="gap:6px">
+              <div class="wf-placeholder" style="flex:2;height:80px;font-size:10px">Purchase history</div>
+              <div class="wf-placeholder" style="flex:1;height:80px;font-size:10px">Live feed</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── MOTION ── -->
+<div class="section" id="motion">
+  <div class="section-header">
+    <div class="section-num">04</div>
+    <div>
+      <h2>Motion & Animation</h2>
+      <p>Motion is functional, not decorative. Every animation communicates state change or draws attention to live data. Always wrap in <code style="font-family:monospace;font-size:12px;background:var(--surface-3);padding:2px 6px;border-radius:4px;">@media (prefers-reduced-motion: no-preference)</code>.</p>
+    </div>
+  </div>
+  <div class="grid-2">
+    <div class="card-sm">
+      <h4>Easing Functions</h4>
+      <div style="margin-top:12px;display:flex;flex-direction:column;gap:8px;font-size:13px">
+        <div class="flex justify-between"><span style="color:var(--text-secondary)">Enter (elements appearing)</span><span class="mono text-xs" style="color:var(--leaf)">ease-out 200ms</span></div>
+        <div class="flex justify-between"><span style="color:var(--text-secondary)">Exit (elements leaving)</span><span class="mono text-xs" style="color:var(--leaf)">ease-in 150ms</span></div>
+        <div class="flex justify-between"><span style="color:var(--text-secondary)">Interactive (hover/focus)</span><span class="mono text-xs" style="color:var(--leaf)">ease 120ms</span></div>
+        <div class="flex justify-between"><span style="color:var(--text-secondary)">Live feed pulse</span><span class="mono text-xs" style="color:var(--leaf)">ease-in-out 2s loop</span></div>
+        <div class="flex justify-between"><span style="color:var(--text-secondary)">Number count-up</span><span class="mono text-xs" style="color:var(--leaf)">ease-out 800ms</span></div>
+      </div>
+    </div>
+    <div class="card-sm">
+      <h4>Animation Inventory</h4>
+      <div style="margin-top:12px;display:flex;flex-direction:column;gap:8px;font-size:13px">
+        <div><span class="badge badge-success" style="margin-right:8px">Use</span><span style="color:var(--text-secondary)">Count-up on stat cards (on load)</span></div>
+        <div><span class="badge badge-success" style="margin-right:8px">Use</span><span style="color:var(--text-secondary)">Live dot pulse (green/blue breathing)</span></div>
+        <div><span class="badge badge-success" style="margin-right:8px">Use</span><span style="color:var(--text-secondary)">Feed item slide-in from right</span></div>
+        <div><span class="badge badge-success" style="margin-right:8px">Use</span><span style="color:var(--text-secondary)">Toast fade-in from top</span></div>
+        <div><span class="badge" style="background:rgba(239,68,68,0.1);color:var(--red);border:0.5px solid rgba(239,68,68,0.3);margin-right:8px">Avoid</span><span style="color:var(--text-secondary)">Looping background animations</span></div>
+        <div><span class="badge" style="background:rgba(239,68,68,0.1);color:var(--red);border:0.5px solid rgba(239,68,68,0.3);margin-right:8px">Avoid</span><span style="color:var(--text-secondary)">Parallax or scroll-triggered effects</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── BUTTONS ── -->
+<div class="section" id="buttons">
+  <div class="section-header">
+    <div class="section-num">05</div>
+    <div><h2>Buttons</h2></div>
+  </div>
+
+  <div class="demo-box">
+    <h4 style="margin-bottom:16px">Button Variants</h4>
+    <div class="flex gap-12" style="flex-wrap:wrap;align-items:center">
+      <button class="btn btn-primary">Issue credit to wallet</button>
+      <button class="btn btn-sky">Buy credit</button>
+      <button class="btn btn-secondary">Save as draft</button>
+      <button class="btn btn-ghost">View certificate</button>
+      <button class="btn btn-danger">Remove listing</button>
+    </div>
+    <hr class="sep">
+    <h4 style="margin-bottom:16px">Sizes</h4>
+    <div class="flex gap-12" style="align-items:center;flex-wrap:wrap">
+      <button class="btn btn-primary btn-lg">Estimate carbon →</button>
+      <button class="btn btn-primary">Verify and continue</button>
+      <button class="btn btn-primary btn-sm">Log new practice</button>
+    </div>
+    <hr class="sep">
+    <h4 style="margin-bottom:16px">Special: Dual entry CTA (Landing Page)</h4>
+    <div class="flex gap-12">
+      <button class="btn btn-primary btn-lg" style="min-width:180px">🌾 I'm a farmer</button>
+      <button class="btn btn-sky btn-lg" style="min-width:180px">🏢 I'm a CSR buyer</button>
+    </div>
+  </div>
+
+  <div class="rule-block mt-20">
+    <div class="rule-title">Button copy rules</div>
+    Always use verb + object: "Issue credit", "Buy credit", "Log practice", "Estimate carbon". Never use vague labels like "Submit", "Proceed", or "Click here". The button must say exactly what happens next.
+  </div>
+</div>
+
+<!-- ── INPUTS ── -->
+<div class="section" id="inputs">
+  <div class="section-header">
+    <div class="section-num">06</div>
+    <div><h2>Inputs & Forms</h2></div>
+  </div>
+
+  <div class="demo-box">
+    <div class="grid-2">
+      <div>
+        <h4 style="margin-bottom:14px">Text inputs</h4>
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <div>
+            <label class="form-label">Mobile number</label>
+            <div class="flex gap-8">
+              <div class="input" style="width:56px;text-align:center;flex-shrink:0">+91</div>
+              <input class="input" placeholder="98765 43210" style="flex:1">
+            </div>
+          </div>
+          <div>
+            <label class="form-label">7/12 document ID</label>
+            <input class="input" placeholder="e.g. MH-NAS-2024-XXXXXX">
+          </div>
+          <div>
+            <label class="form-label">Work email <span style="color:var(--text-muted)">(CSR buyer)</span></label>
+            <input class="input" placeholder="priya@tatamotors.com">
+          </div>
+        </div>
+      </div>
+      <div>
+        <h4 style="margin-bottom:14px">OTP input</h4>
+        <div class="otp-row">
+          <div class="otp-box">7</div>
+          <div class="otp-box">3</div>
+          <div class="otp-box active">4</div>
+          <div class="otp-box empty">_</div>
+          <div class="otp-box empty">_</div>
+          <div class="otp-box empty">_</div>
+        </div>
+        <p class="text-xs text-muted" style="text-align:center;margin-top:8px">OTP sent to +91 98765 43210 · expires in 4:32</p>
+        <hr class="sep">
+        <h4 style="margin-bottom:14px">Range slider</h4>
+        <label class="form-label">Land area (acres) <span style="color:var(--leaf);float:right">5</span></label>
+        <input type="range" min="1" max="20" value="5" style="width:100%;accent-color:var(--leaf)">
+        <div class="flex justify-between" style="margin-top:4px">
+          <span class="text-xs text-muted">1 acre</span>
+          <span class="text-xs text-muted">20 acres</span>
+        </div>
+        <hr class="sep">
+        <h4 style="margin-bottom:14px">Select / dropdown</h4>
+        <label class="form-label">Crop type</label>
+        <select class="input" style="appearance:none;cursor:pointer">
+          <option>Wheat / गेहूँ</option>
+          <option>Rice / धान</option>
+          <option>Soybean / सोयाबीन</option>
+          <option>Cotton / कपास</option>
+        </select>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── CARDS ── -->
+<div class="section" id="cards">
+  <div class="section-header">
+    <div class="section-num">07</div>
+    <div><h2>Cards & Surfaces</h2></div>
+  </div>
+
+  <div class="grid-2">
+    <div>
+      <h4 style="margin-bottom:12px">Stat cards (dashboard summary)</h4>
+      <div class="grid-3">
+        <div class="stat-card">
+          <div class="stat-label">Total earned</div>
+          <div class="stat-value">₹4,820</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Credits issued</div>
+          <div class="stat-value" style="color:#5BC8E8">12</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">CO₂ sequestered</div>
+          <div class="stat-value" style="color:var(--text-primary);font-size:20px">840 kg</div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <h4 style="margin-bottom:12px">Credit listing card (marketplace)</h4>
+      <div class="credit-listing">
+        <div class="credit-listing-top">
+          <div>
+            <div class="credit-farmer">Rajan Patil</div>
+            <div class="credit-location">Nashik, MH</div>
+          </div>
+          <div class="credit-price">₹560</div>
+        </div>
+        <div class="credit-details">
+          112 kg CO₂ &nbsp;·&nbsp; Wheat &nbsp;·&nbsp; No-till<br>
+          Jul 3
+        </div>
+        <div class="flex justify-between items-center">
+          <span class="credit-id">CC-7821</span>
+          <button class="btn btn-sky btn-sm">Buy credit</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h3>Upload / drag zone</h3>
+  <div class="demo-box" style="border:1.5px dashed var(--border-strong);background:var(--surface-1);text-align:center;padding:32px;cursor:pointer" onmouseenter="this.style.borderColor='var(--leaf)'" onmouseleave="this.style.borderColor='var(--border-strong)'">
+    <div style="font-size:28px;margin-bottom:8px">📸</div>
+    <div style="font-size:14px;color:var(--text-secondary)">Drag land photo or tap to upload</div>
+    <div style="font-size:11px;color:var(--text-muted);margin-top:4px">Optional — strengthens credit verification</div>
+  </div>
+</div>
+
+<!-- ── BADGES ── -->
+<div class="section" id="badges">
+  <div class="section-header">
+    <div class="section-num">08</div>
+    <div><h2>Badges & Status Indicators</h2></div>
+  </div>
+  <div class="demo-box">
+    <div class="flex gap-12" style="flex-wrap:wrap;align-items:center">
+      <span class="badge badge-success"><span class="badge-dot"></span>Available</span>
+      <span class="badge badge-sold"><span class="badge-dot"></span>Sold</span>
+      <span class="badge badge-pending"><span class="badge-dot"></span>Pending</span>
+      <span class="badge" style="background:rgba(239,68,68,0.1);color:var(--red);border:0.5px solid rgba(239,68,68,0.3)"><span class="badge-dot"></span>Rejected</span>
+      <span class="badge badge-success" style="border-radius:4px;font-size:10px">Uploaded ✓</span>
+      <span class="badge badge-sold" style="border-radius:4px;font-size:10px">🌿 Farmer</span>
+      <span class="badge" style="background:rgba(26,107,138,0.2);color:#5BC8E8;border:0.5px solid rgba(26,107,138,0.4);border-radius:4px;font-size:10px">🏢 CSR Buyer</span>
+    </div>
+  </div>
+  <div class="rule-block mt-12">
+    <div class="rule-title">Live pulse dot</div>
+    The green pulsing dot before "Live activity" indicates real-time data. CSS keyframe: scale from 1 → 1.4 → 1, opacity 1 → 0.4 → 1, 2s loop. Only use on live data sections.
+  </div>
+</div>
+
+<!-- ── NOTIFICATIONS ── -->
+<div class="section" id="notifications">
+  <div class="section-header">
+    <div class="section-num">09</div>
+    <div><h2>Notifications & Toasts</h2></div>
+  </div>
+  <div class="demo-box">
+    <div class="toast toast-success">
+      <div class="toast-icon">✓</div>
+      <div>
+        <div style="font-size:13px;color:var(--text-primary);font-weight:500">Credit issued to wallet</div>
+        <div style="font-size:11px;color:var(--text-muted)">124 kg CO₂ · Wheat · No-till · ₹620</div>
+      </div>
+    </div>
+    <div class="toast toast-info">
+      <div class="toast-icon" style="background:rgba(91,200,232,0.2);color:#5BC8E8">🔔</div>
+      <div>
+        <div style="font-size:13px;color:var(--text-primary);font-weight:500">CC-7821 purchased by Tata Motors</div>
+        <div style="font-size:11px;color:var(--text-muted)">₹560 will be transferred in 24 hrs</div>
+      </div>
+    </div>
+    <div class="toast toast-warn">
+      <div class="toast-icon">⚡</div>
+      <div>
+        <div style="font-size:13px;color:var(--text-primary);font-weight:500">OTP expires in 1:00</div>
+        <div style="font-size:11px;color:var(--text-muted)">Enter the code or request a new one</div>
+      </div>
+    </div>
+  </div>
+  <div class="rule-block mt-12">
+    <div class="rule-title">Toast placement</div>
+    Toasts appear top-center on mobile, top-right on desktop. Auto-dismiss after 5s. Success toasts can stay for 3s. Error toasts persist until the user dismisses. Maximum 3 toasts visible at once.
+  </div>
+</div>
+
+<!-- ── LANGUAGE SWITCHER ── -->
+<div class="section" id="lang">
+  <div class="section-header">
+    <div class="section-num">10</div>
+    <div>
+      <h2>Language Switcher</h2>
+      <p>A first-class feature on the farmer portal. Language selection persists in localStorage and is associated with the farmer's profile. Supported: English, हिंदी, मराठी, ਪੰਜਾਬੀ, తెలుగు, ಕನ್ನಡ.</p>
+    </div>
+  </div>
+  <div class="demo-box">
+    <h4 style="margin-bottom:14px">Language toggle — in farmer nav bar</h4>
+    <div class="flex gap-8" style="flex-wrap:wrap">
+      <span class="lang-tag active">🇬🇧 EN</span>
+      <span class="lang-tag">HI हिंदी</span>
+      <span class="lang-tag">MR मराठी</span>
+      <span class="lang-tag">PA ਪੰਜਾਬੀ</span>
+      <span class="lang-tag">TE తెలుగు</span>
+      <span class="lang-tag">KN ಕನ್ನಡ</span>
+    </div>
+    <hr class="sep">
+    <h4 style="margin-bottom:14px">Bilingual dropdown labels (Log Practice form)</h4>
+    <div class="grid-2">
+      <div>
+        <label class="form-label">Crop type / फसल का प्रकार</label>
+        <select class="input" style="appearance:none">
+          <option>Wheat / गेहूँ</option>
+          <option>Rice / धान</option>
+          <option>Soybean / सोयाबीन</option>
+        </select>
+      </div>
+      <div>
+        <label class="form-label">Practice type / कृषि पद्धति</label>
+        <select class="input" style="appearance:none">
+          <option>No-till / बिना जुताई</option>
+          <option>Cover crop / आवरण फसल</option>
+          <option>Reduced pesticide / कम कीटनाशक</option>
+        </select>
+      </div>
+    </div>
+    <div class="rule-block mt-12">
+      Default labels show English / Regional side-by-side in dropdowns. When user switches to a full language mode, the entire UI re-renders in that language, but the document ID, credit IDs, and price values always stay in Latin numerals for clarity.
+    </div>
+  </div>
+</div>
+
+<!-- ── LANDING PAGE ── -->
+<div class="section" id="landing">
+  <div class="section-header">
+    <div class="section-num">11</div>
+    <div>
+      <h2>Page: Landing Page</h2>
+      <p><strong style="color:var(--text-primary)">URL:</strong> carboncredit.in &nbsp;|&nbsp; <strong style="color:var(--text-primary)">Audience:</strong> First-time visitors (farmers and CSR teams) &nbsp;|&nbsp; <strong style="color:var(--text-primary)">Goal:</strong> Clear split into the two user journeys within 5 seconds.</p>
+    </div>
+  </div>
+
+  <div class="wireframe">
+    <div class="wf-bar">
+      <div class="wf-dot"></div><div class="wf-dot"></div><div class="wf-dot"></div>
+      <div class="wf-url">carboncredit.in</div>
+    </div>
+    <div class="wf-nav">
+      <div class="wf-nav-logo">🌿 CarbonCredit</div>
+      <div class="wf-nav-links"><span>How it works</span><span>About</span><span>Contact</span></div>
+      <button class="btn btn-secondary btn-sm">Log in</button>
+    </div>
+    <div class="wf-hero">
+      <div style="font-size:36px;margin-bottom:12px">🌿</div>
+      <div class="wf-h1">Carbon credits for every farmer.<br>Verified. Tradeable. Impactful.</div>
+      <div class="wf-p">Farmers log sustainable practices. An ML model estimates carbon sequestration. CSR buyers purchase verified micro-credits — creating a direct income layer for rural India.</div>
+      <div class="wf-btn-row">
+        <button class="btn btn-primary btn-lg">🌾 I'm a farmer</button>
+        <button class="btn btn-sky btn-lg">🏢 I'm a CSR buyer</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="rule-block mt-20">
+    <div class="rule-title">Landing page: what NOT to include</div>
+    Remove the stats row (farmers onboarded, CO₂, income). These are not yet meaningful before user trust is established and may feel like vanity metrics to a first-time visitor. The two CTAs should be the only action on the page.
+  </div>
+  <div class="rule-block info mt-8">
+    <div class="rule-title">Below the fold (scroll) — optional additions</div>
+    A short "How it works" section with three steps (Log → ML estimates → Buyer purchases) is acceptable below the hero, but keep it concise. No more content than this on the landing page.
+  </div>
+</div>
+
+<!-- ── FARMER LOGIN ── -->
+<div class="section" id="farmer-login">
+  <div class="section-header">
+    <div class="section-num">12</div>
+    <div>
+      <h2>Page: Farmer Login</h2>
+      <p><strong style="color:var(--text-primary)">URL:</strong> /farmer/login &nbsp;|&nbsp; Design as per the uploaded mockup — no changes. Notes below clarify implementation details.</p>
+    </div>
+  </div>
+  <div class="grid-2">
+    <div>
+      <h4 style="margin-bottom:12px">Login flow specification</h4>
+      <table class="spec-table">
+        <thead><tr><th>Element</th><th>Specification</th></tr></thead>
+        <tbody>
+          <tr><td>Mobile input</td><td>+91 prefix chip + 10-digit field. Auto-advance to OTP on completion.</td></tr>
+          <tr><td>OTP boxes</td><td>6 individual boxes, 44×52px, green-accented active box. Auto-advance on each digit.</td></tr>
+          <tr><td>Timer</td><td>Harvest gold countdown. Resend OTP link activates at 0:00.</td></tr>
+          <tr><td>7/12 upload</td><td>Drag or tap. Accepted: PDF, JPG, PNG under 5MB. Show "Uploaded ✓" badge on success.</td></tr>
+          <tr><td>Language select</td><td>Shown on login page so farmers can set preference before entering the portal.</td></tr>
+          <tr><td>Error state</td><td>Invalid OTP → shake animation on boxes + red border. Do NOT clear the entered digits.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div>
+      <div class="otp-row" style="margin-top:24px">
+        <div class="otp-box">7</div>
+        <div class="otp-box">3</div>
+        <div class="otp-box active">4</div>
+        <div class="otp-box empty">_</div>
+        <div class="otp-box empty">_</div>
+        <div class="otp-box empty">_</div>
+      </div>
+      <div class="rule-block mt-12 warn">
+        <div class="rule-title">7/12 verification note</div>
+        The 7/12 (Satbara) is a Maharashtra land record. Allow equivalent documents for other states: Pahani (Andhra/Telangana), RoR (Karnataka), Jamabandi (Punjab/Haryana). Show a "What document do I need?" tooltip.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── FARMER DASHBOARD ── -->
+<div class="section" id="farmer-dash">
+  <div class="section-header">
+    <div class="section-num">13</div>
+    <div>
+      <h2>Page: Farmer Dashboard</h2>
+      <p><strong style="color:var(--text-primary)">URL:</strong> /farmer/dashboard &nbsp;|&nbsp; Single-column, mobile-first. Sections in order: greeting → summary stats → credit wallet → live activity → referral.</p>
+    </div>
+  </div>
+
+  <div class="wireframe">
+    <div class="wf-nav">
+      <div class="wf-nav-logo">🌿 CarbonCredit</div>
+      <div class="wf-nav-links">
+        <span class="active">Dashboard</span>
+        <span>Log practice</span>
+        <span>Credits</span>
+        <span>Refer</span>
+      </div>
+      <div class="flex items-center gap-8">
+        <span class="lang-tag active" style="font-size:10px">EN ▾</span>
+        <span class="badge badge-sold" style="font-size:10px">🌾 Rajan Patil</span>
+      </div>
+    </div>
+    <div class="wf-section">
+      <p style="font-size:12px;color:var(--text-muted);margin-bottom:12px">Good morning, Rajan. Your farm in Nashik, MH.</p>
+
+      <div class="grid-3 mb-16">
+        <div class="stat-card"><div class="stat-label">Total earned</div><div class="stat-value">₹4,820</div></div>
+        <div class="stat-card"><div class="stat-label">Credits issued</div><div class="stat-value" style="color:#5BC8E8">12</div></div>
+        <div class="stat-card"><div class="stat-label">CO₂ sequestered</div><div class="stat-value" style="color:var(--text-primary);font-size:20px">840 kg</div></div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="flex justify-between items-center mb-8">
+            <h3 style="margin:0;font-size:14px">Credit wallet</h3>
+            <button class="btn btn-primary btn-sm" style="font-size:12px">+ Log new practice</button>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:4px">
+            <div class="feed-item">
+              <div><div class="feed-text" style="font-size:13px">Wheat · No-till · 80 kg</div><div class="feed-time">Tata Motors · ₹400</div></div>
+              <span class="badge badge-sold" style="margin-left:auto">Sold</span>
+            </div>
+            <div class="feed-item">
+              <div><div class="feed-text" style="font-size:13px">Rice · Cover crop · 112 kg</div><div class="feed-time">Infosys · ₹560</div></div>
+              <span class="badge badge-sold" style="margin-left:auto">Sold</span>
+            </div>
+            <div class="feed-item">
+              <div><div class="feed-text" style="font-size:13px">Soy · No-till · 96 kg</div><div class="feed-time">Listed Jul 10</div></div>
+              <span class="badge badge-success" style="margin-left:auto">Available</span>
+            </div>
+            <div class="feed-item">
+              <div><div class="feed-text" style="font-size:13px">Wheat · Reduced pest. · 68 kg</div><div class="feed-time">Listed Jul 5</div></div>
+              <span class="badge badge-success" style="margin-left:auto">Available</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="flex items-center gap-8 mb-12">
+            <div style="width:8px;height:8px;border-radius:50%;background:var(--leaf);animation:pulse 2s infinite"></div>
+            <h3 style="margin:0;font-size:14px;color:var(--text-primary)">Live activity</h3>
+          </div>
+          <div class="feed-item">
+            <div class="feed-dot feed-dot-blue"></div>
+            <div class="feed-body">
+              <div class="feed-text">CC-7821 purchased by Tata Motors for ₹560</div>
+              <div class="feed-time">11 min ago</div>
+            </div>
+          </div>
+          <div class="feed-item">
+            <div class="feed-dot feed-dot-green"></div>
+            <div class="feed-body">
+              <div class="feed-text">Sunita Devi (Punjab) issued credit — 148 kg</div>
+              <div class="feed-time">24 min ago</div>
+            </div>
+          </div>
+          <div class="feed-item">
+            <div class="feed-dot feed-dot-blue"></div>
+            <div class="feed-body">
+              <div class="feed-text">CC-7614 purchased by Infosys Foundation ₹740</div>
+              <div class="feed-time">38 min ago</div>
+            </div>
+          </div>
+          <hr class="sep">
+          <div class="grid-2">
+            <div class="stat-card" style="padding:12px"><div class="stat-label">Referred</div><div class="stat-value" style="font-size:20px">3</div></div>
+            <div class="stat-card" style="padding:12px"><div class="stat-label">Bonus earned</div><div class="stat-value" style="font-size:20px">₹150</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card mt-12">
+        <h3 style="font-size:14px;margin-bottom:12px;color:var(--text-primary)">🤝 Refer a farmer — earn ₹50 per referral</h3>
+        <div class="flex gap-8" style="flex-wrap:wrap">
+          <div class="input" style="flex:1;font-family:monospace;font-size:13px;color:var(--leaf);background:var(--surface-1)">carboncredit.in/r/RAJAN7821</div>
+          <button class="btn btn-secondary btn-sm">Copy link</button>
+          <button class="btn btn-ghost btn-sm">Share via WhatsApp</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="innovation-card mt-20">
+    <div class="innovation-title">💡 Suggested innovation: WhatsApp share for referral</div>
+    <div class="innovation-body">Because farmers are already on WhatsApp, the referral share should deep-link to a pre-written WhatsApp message in the farmer's preferred language. This removes all friction from the referral flow — no copy-pasting needed.</div>
+  </div>
+</div>
+
+<!-- ── LOG PRACTICE ── -->
+<div class="section" id="log-practice">
+  <div class="section-header">
+    <div class="section-num">14</div>
+    <div>
+      <h2>Page: Log Practice</h2>
+      <p><strong style="color:var(--text-primary)">URL:</strong> /farmer/log-practice &nbsp;|&nbsp; No design changes from the mockup. Implementation notes below.</p>
+    </div>
+  </div>
+
+  <div class="rule-block">
+    <div class="rule-title">Live result panel</div>
+    The right panel (Estimated result) must update in real-time as the user changes dropdowns and sliders — without requiring them to click "Estimate carbon" first. The button confirms and locks the result for credit issuance.
+  </div>
+  <div class="rule-block info">
+    <div class="rule-title">Model attribution</div>
+    Always show "Model: XGBoost · ICRISAT soil data · R² 0.81" under the result. This builds trust with a data-aware user and answers the "how does this number come from?" question before a judge or buyer asks.
+  </div>
+  <div class="rule-block warn">
+    <div class="rule-title">Bilingual dropdowns</div>
+    Every option in Crop type and Practice type must show both English and the local language name, separated by a slash. The form label should also be bilingual. See Language Switcher section for the full approach.
+  </div>
+
+  <div class="innovation-card mt-12">
+    <div class="innovation-title">💡 Suggested innovation: practice photo AI hint</div>
+    <div class="innovation-body">When a farmer uploads a photo of their field, run a lightweight image classifier (can be a pre-trained MobileNet on "no-till" vs "tilled" vs "cover crop" visual patterns) to auto-suggest the practice type. Show it as a suggestion chip below the upload zone: "We think this looks like no-till farming. Is that right?" — one tap to confirm. Reduces form friction significantly for farmers with lower literacy.</div>
+  </div>
+</div>
+
+<!-- ── BUYER LOGIN ── -->
+<div class="section" id="buyer-login">
+  <div class="section-header">
+    <div class="section-num">15</div>
+    <div>
+      <h2>Page: CSR Buyer Login</h2>
+      <p><strong style="color:var(--text-primary)">URL:</strong> /buyer/login &nbsp;|&nbsp; Design matches the uploaded mockup. Uses sky blue (#1A6B8A) as the portal accent. Corporate email validation is important.</p>
+    </div>
+  </div>
+  <div class="rule-block warn">
+    <div class="rule-title">Corporate email enforcement</div>
+    Client-side: validate that the email domain is not gmail.com, yahoo.com, hotmail.com, or outlook.com. Show the warning in amber immediately on blur: "Gmail, Yahoo, or personal emails are not accepted." Server-side: maintain a verified corporate domain allowlist.
+  </div>
+</div>
+
+<!-- ── BUYER DASHBOARD ── -->
+<div class="section" id="buyer-dash">
+  <div class="section-header">
+    <div class="section-num">16</div>
+    <div>
+      <h2>Page: Buyer Dashboard</h2>
+      <p><strong style="color:var(--text-primary)">URL:</strong> /buyer/dashboard &nbsp;|&nbsp; Desktop-first, data-dense. Nav tabs: Dashboard · Marketplace. Accent color: sky blue.</p>
+    </div>
+  </div>
+
+  <div class="wireframe">
+    <div class="wf-nav" style="background:var(--surface-2)">
+      <div class="wf-nav-logo" style="color:#5BC8E8">🌿 CarbonCredit</div>
+      <div class="wf-nav-links">
+        <span class="active" style="color:#5BC8E8">Dashboard</span>
+        <span>Marketplace</span>
+      </div>
+      <span class="badge badge-sold">🏢 Tata Motors CSR</span>
+    </div>
+    <div class="wf-section">
+      <div class="grid-4 mb-16">
+        <div class="stat-card"><div class="stat-label">Credits bought</div><div class="stat-value" style="color:#5BC8E8">1,240</div></div>
+        <div class="stat-card"><div class="stat-label">CO₂ offset</div><div class="stat-value" style="color:var(--leaf)">148 t</div></div>
+        <div class="stat-card"><div class="stat-label">Total spent</div><div class="stat-value" style="color:var(--text-primary);font-size:20px">₹6.2L</div></div>
+        <div class="stat-card"><div class="stat-label">Farmers supported</div><div class="stat-value" style="color:var(--leaf)">84</div></div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="flex justify-between items-center mb-12">
+            <h3 style="margin:0;font-size:14px;color:var(--text-primary)">Purchase history</h3>
+            <button class="btn btn-ghost btn-sm">Export CSV</button>
+          </div>
+          <table style="width:100%;font-size:12px;border-collapse:collapse">
+            <thead><tr style="color:var(--text-muted)"><th style="text-align:left;padding:6px 0;font-weight:500">Credit ID</th><th style="text-align:left;padding:6px 0;font-weight:500">Farmer</th><th style="text-align:left;padding:6px 0;font-weight:500">kg CO₂</th><th style="text-align:right;padding:6px 0;font-weight:500">₹</th></tr></thead>
+            <tbody>
+              <tr style="border-top:0.5px solid var(--border)"><td style="padding:8px 0;color:var(--text-primary)">CC-7821</td><td style="padding:8px 0;color:var(--text-secondary)">Rajan Patil</td><td style="padding:8px 0;color:var(--text-secondary)">112</td><td style="padding:8px 0;color:var(--leaf);text-align:right">₹560</td></tr>
+              <tr style="border-top:0.5px solid var(--border)"><td style="padding:8px 0;color:var(--text-primary)">CC-7614</td><td style="padding:8px 0;color:var(--text-secondary)">Sunita Devi</td><td style="padding:8px 0;color:var(--text-secondary)">148</td><td style="padding:8px 0;color:var(--leaf);text-align:right">₹740</td></tr>
+              <tr style="border-top:0.5px solid var(--border)"><td style="padding:8px 0;color:var(--text-primary)">CC-7803</td><td style="padding:8px 0;color:var(--text-secondary)">Mohan Reddy</td><td style="padding:8px 0;color:var(--text-secondary)">76</td><td style="padding:8px 0;color:var(--leaf);text-align:right">₹380</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div>
+          <div class="card mb-12">
+            <div class="flex items-center gap-8 mb-12">
+              <div style="width:8px;height:8px;border-radius:50%;background:#5BC8E8"></div>
+              <h3 style="margin:0;font-size:14px;color:var(--text-primary)">Live activity</h3>
+            </div>
+            <div class="feed-item"><div class="feed-dot" style="background:#5BC8E8"></div><div class="feed-body"><div class="feed-text">Wipro CSR purchased 200 kg from Maharashtra</div><div class="feed-time">3 min ago</div></div></div>
+            <div class="feed-item"><div class="feed-dot feed-dot-green"></div><div class="feed-body"><div class="feed-text">New credits listed — Kavita Bai, MP · 96 kg</div><div class="feed-time">12 min ago</div></div></div>
+          </div>
+          <div class="card">
+            <h3 style="margin:0 0 12px;font-size:14px;color:var(--text-primary)">📜 Certificates</h3>
+            <div style="display:flex;flex-direction:column;gap:8px">
+              <div class="flex justify-between items-center">
+                <div><div style="font-size:13px;color:var(--text-primary)">Q2 2025 — 580 kg CO₂</div><div class="feed-time">84 farmers · Jul 1</div></div>
+                <button class="btn btn-ghost btn-sm">Download PDF</button>
+              </div>
+              <div class="flex justify-between items-center">
+                <div><div style="font-size:13px;color:var(--text-primary)">Q1 2025 — 660 kg CO₂</div><div class="feed-time">72 farmers · Apr 1</div></div>
+                <button class="btn btn-ghost btn-sm">Download PDF</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── MARKETPLACE ── -->
+<div class="section" id="marketplace">
+  <div class="section-header">
+    <div class="section-num">17</div>
+    <div>
+      <h2>Page: Buying Marketplace</h2>
+      <p><strong style="color:var(--text-primary)">URL:</strong> /buyer/marketplace &nbsp;|&nbsp; Two-panel layout: credit heatmap (left) + filter + listings (right).</p>
+    </div>
+  </div>
+
+  <div class="wireframe">
+    <div class="wf-section" style="padding:16px">
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="font-size:14px;color:var(--text-primary);margin-bottom:12px">🗺 Credit heatmap — India</h3>
+          <div class="heatmap-preview">
+            <div class="hm-cell" style="background:rgba(46,204,113,0.6);color:var(--ink)">Punjab<br><span style="font-size:9px">312</span></div>
+            <div class="hm-cell" style="background:rgba(46,204,113,0.5);color:var(--ink)">Haryana<br><span style="font-size:9px">278</span></div>
+            <div class="hm-cell" style="background:rgba(46,204,113,0.2);color:var(--leaf)">Bihar<br><span style="font-size:9px">98</span></div>
+            <div class="hm-cell" style="background:rgba(46,204,113,0.3);color:var(--leaf)">Rajasthan<br><span style="font-size:9px">204</span></div>
+            <div class="hm-cell" style="background:rgba(46,204,113,0.55);color:var(--ink)">UP<br><span style="font-size:9px">256</span></div>
+            <div class="hm-cell" style="background:rgba(46,204,113,0.7);color:var(--ink)">MH<br><span style="font-size:9px">344</span></div>
+            <div class="hm-cell" style="background:rgba(46,204,113,0.65);color:var(--ink)">MP<br><span style="font-size:9px">298</span></div>
+            <div class="hm-cell" style="background:rgba(46,204,113,0.4);color:var(--leaf)">Telangana<br><span style="font-size:9px">176</span></div>
+            <div class="hm-cell" style="background:rgba(46,204,113,0.35);color:var(--leaf)">Gujarat<br><span style="font-size:9px">188</span></div>
+            <div class="hm-cell" style="background:rgba(46,204,113,0.45);color:var(--ink)">Karnataka<br><span style="font-size:9px">220</span></div>
+          </div>
+          <div class="flex gap-8 mt-8" style="flex-wrap:wrap">
+            <span class="text-xs text-muted flex items-center gap-4"><span style="width:10px;height:10px;border-radius:2px;background:rgba(46,204,113,0.15);display:inline-block"></span>Low</span>
+            <span class="text-xs text-muted flex items-center gap-4"><span style="width:10px;height:10px;border-radius:2px;background:rgba(46,204,113,0.35);display:inline-block"></span>Medium</span>
+            <span class="text-xs text-muted flex items-center gap-4"><span style="width:10px;height:10px;border-radius:2px;background:rgba(46,204,113,0.6);display:inline-block"></span>High</span>
+            <span class="text-xs text-muted flex items-center gap-4"><span style="width:10px;height:10px;border-radius:2px;background:rgba(46,204,113,0.85);display:inline-block"></span>Very high</span>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3 style="font-size:14px;color:var(--text-primary);margin-bottom:12px">🔍 Filters</h3>
+          <div style="display:flex;flex-direction:column;gap:10px">
+            <div>
+              <label class="form-label">State / region</label>
+              <select class="input" style="appearance:none;font-size:13px"><option>All states</option></select>
+            </div>
+            <div>
+              <label class="form-label">Crop type</label>
+              <select class="input" style="appearance:none;font-size:13px"><option>All crops</option></select>
+            </div>
+            <div>
+              <label class="form-label">Farming practice</label>
+              <select class="input" style="appearance:none;font-size:13px"><option>All practices</option></select>
+            </div>
+            <div class="grid-2">
+              <div><label class="form-label">Price min (₹)</label><input class="input" placeholder="Min" style="font-size:13px"></div>
+              <div><label class="form-label">Price max (₹)</label><input class="input" placeholder="Max" style="font-size:13px"></div>
+            </div>
+            <div>
+              <label class="form-label">Sort by</label>
+              <select class="input" style="appearance:none;font-size:13px"><option>Price: low to high</option><option>CO₂: high to low</option><option>Most recent</option></select>
+            </div>
+            <button class="btn btn-sky full">Apply filters</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-20">
+        <div class="flex justify-between items-center mb-12">
+          <h3 style="margin:0;font-size:14px;color:var(--text-primary)">Available credits <span style="color:var(--text-muted)">— 28 listings</span></h3>
+        </div>
+        <div class="grid-3">
+          <div class="credit-listing">
+            <div class="credit-listing-top"><div><div class="credit-farmer">Rajan Patil</div><div class="credit-location">Nashik, MH</div></div><div class="credit-price">₹560</div></div>
+            <div class="credit-details">112 kg CO₂ &nbsp;·&nbsp; Wheat &nbsp;·&nbsp; No-till<br>Jul 3</div>
+            <div class="flex justify-between items-center"><span class="credit-id">CC-7821</span><button class="btn btn-sky btn-sm">Buy credit</button></div>
+          </div>
+          <div class="credit-listing">
+            <div class="credit-listing-top"><div><div class="credit-farmer">Sunita Devi</div><div class="credit-location">Ludhiana, PB</div></div><div class="credit-price">₹740</div></div>
+            <div class="credit-details">148 kg CO₂ &nbsp;·&nbsp; Rice &nbsp;·&nbsp; Cover crops<br>Jun 28</div>
+            <div class="flex justify-between items-center"><span class="credit-id">CC-7614</span><button class="btn btn-sky btn-sm">Buy credit</button></div>
+          </div>
+          <div class="credit-listing">
+            <div class="credit-listing-top"><div><div class="credit-farmer">Kavita Bai</div><div class="credit-location">Vidisha, MP</div></div><div class="credit-price">₹480</div></div>
+            <div class="credit-details">96 kg CO₂ &nbsp;·&nbsp; Cotton &nbsp;·&nbsp; No-till<br>Jul 5</div>
+            <div class="flex justify-between items-center"><span class="credit-id">CC-7834</span><button class="btn btn-sky btn-sm">Buy credit</button></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── INNOVATIONS ── -->
+<div class="section" id="innovations">
+  <div class="section-header">
+    <div class="section-num">18</div>
+    <div>
+      <h2>Suggested Innovations</h2>
+      <p>Beyond the specified screens — these additions increase interactivity, reduce friction, and could make the product stand out in the hackathon and in real use.</p>
+    </div>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:12px">
+    <div class="innovation-card">
+      <div class="innovation-title">🌾 Farmer Portal — Voice input for practice logging</div>
+      <div class="innovation-body">Many Indian farmers are comfortable speaking but not typing. Add a microphone button to the Log Practice form. Use the Web Speech API (with Devanagari/regional language support) so a farmer can say "गेहूँ, बिना जुताई, पांच एकड़" and have it auto-fill the form fields. Label it "Voice fill (बोलकर भरें)".</div>
+    </div>
+    <div class="innovation-card">
+      <div class="innovation-title">📊 Farmer Portal — "What can I earn?" estimator on landing</div>
+      <div class="innovation-body">On the farmer landing page, before login, add a simple 3-field estimator: [land size] + [crop] + [practice] → shows estimated ₹ income per season. No login required. This is the single most powerful conversion tool for farmer onboarding. Shows the value before asking for any commitment.</div>
+    </div>
+    <div class="innovation-card">
+      <div class="innovation-title">🏆 Farmer Portal — Community leaderboard (optional, opt-in)</div>
+      <div class="innovation-body">Show a "Top farmers this month" mini-widget on the dashboard — first name + state + CO₂ kg. Opt-in only. Creates a community feeling and social proof. This is especially effective in FPO-aggregated onboarding where farmers know each other.</div>
+    </div>
+    <div class="innovation-card">
+      <div class="innovation-title">🌍 Buyer Portal — Impact certificate auto-generator</div>
+      <div class="innovation-body">When a buyer purchases credits, auto-generate a branded PDF certificate in the background. Show a preview in the dashboard and a one-click download. The certificate should include: company name, total tCO₂e offset, number of farmers supported, region map, and the CarbonCredit.in verification QR code. CSR teams will use this directly in annual reports — extremely high value for the buyer.</div>
+    </div>
+    <div class="innovation-card">
+      <div class="innovation-title">🔔 Farmer Portal — WhatsApp notifications</div>
+      <div class="innovation-body">When a farmer's credit is sold, send a WhatsApp Business API message in their preferred language: "आपका क्रेडिट CC-7821 Tata Motors ने ₹560 में खरीदा। 24 घंटे में UPI पेमेंट आएगा।" This is infinitely more effective than an in-app notification for a farmer who opens the app once a week.</div>
+    </div>
+    <div class="innovation-card">
+      <div class="innovation-title">📈 Buyer Portal — "Price trend" sparkline on each listing</div>
+      <div class="innovation-body">On each credit listing card, show a tiny 7-day price sparkline for credits from that state/crop combination. Helps CSR buyers understand if prices are rising (buy now) or stable. One extra data point that adds significant perceived value for a data-aware buyer.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── ACCESSIBILITY ── -->
+<div class="section" id="accessibility">
+  <div class="section-header">
+    <div class="section-num">19</div>
+    <div><h2>Accessibility</h2></div>
+  </div>
+  <div class="grid-2">
+    <div class="card-sm">
+      <h4>Minimum standards</h4>
+      <div style="display:flex;flex-direction:column;gap:8px;margin-top:10px;font-size:13px;color:var(--text-secondary)">
+        <div>✓ All interactive elements keyboard-navigable (Tab order)</div>
+        <div>✓ Focus rings visible (3px leaf-green outline, not removed)</div>
+        <div>✓ Color contrast: text on surface-2 meets AA (4.5:1)</div>
+        <div>✓ Leaf green #2ECC71 on ink (#0D1F15) = 7.3:1 — AAA</div>
+        <div>✓ All icons have aria-label</div>
+        <div>✓ OTP boxes labeled for screen readers</div>
+        <div>✓ Images have alt text</div>
+        <div>✓ Error states announced via aria-live="polite"</div>
+      </div>
+    </div>
+    <div class="card-sm">
+      <h4>Farmer-specific accessibility</h4>
+      <div style="display:flex;flex-direction:column;gap:8px;margin-top:10px;font-size:13px;color:var(--text-secondary)">
+        <div>✓ Touch targets minimum 44×44px on mobile</div>
+        <div>✓ Font size never below 14px on farmer portal</div>
+        <div>✓ Button labels always include icon + text (never icon-only)</div>
+        <div>✓ No time-limited actions except OTP (always offer extend)</div>
+        <div>✓ Error messages in the user's selected language</div>
+        <div>✓ "What document do I need?" help tooltips on all verification fields</div>
+        <div>✓ Crop/practice dropdowns scroll-searchable</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── MOBILE ── -->
+<div class="section" id="mobile">
+  <div class="section-header">
+    <div class="section-num">20</div>
+    <div>
+      <h2>Mobile Behaviour</h2>
+      <p>The farmer portal is used almost exclusively on mobile (often a budget Android device). The buyer portal is desktop-first but must be functional on mobile for approvals on the go.</p>
+    </div>
+  </div>
+  <table class="spec-table">
+    <thead>
+      <tr><th>Element</th><th>Mobile behaviour</th><th>Breakpoint</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Farmer nav</td><td>Bottom tab bar (4 items: Dashboard, Log, Credits, Refer). Icon + label.</td><td>&lt; 768px</td></tr>
+      <tr><td>Stat cards</td><td>Horizontal scroll row (snap-to each card) — 3 cards visible at once</td><td>&lt; 768px</td></tr>
+      <tr><td>Credit wallet</td><td>Full-width list. No grid.</td><td>&lt; 768px</td></tr>
+      <tr><td>Log Practice</td><td>Single column. Estimated result panel moves below the form.</td><td>&lt; 768px</td></tr>
+      <tr><td>Buyer dashboard</td><td>Collapsible sidebar → hamburger menu. Stats → 2×2 grid.</td><td>&lt; 1024px</td></tr>
+      <tr><td>Marketplace</td><td>Heatmap collapses to a "Filter by state" dropdown. Credits go to 1-column list.</td><td>&lt; 768px</td></tr>
+      <tr><td>Language switcher</td><td>Appears in the hamburger menu on mobile (farmer portal).</td><td>&lt; 768px</td></tr>
+    </tbody>
+  </table>
+</div>
+
+</main>
+</div>
+
+<style>
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(1.5); }
+}
+</style>
+
+<script>
+// Smooth scroll nav
+document.querySelectorAll('.nav-item').forEach(item => {
+  item.addEventListener('click', function(e) {
+    const href = this.getAttribute('href');
+    if (href && href.startsWith('#')) {
+      e.preventDefault();
+      const target = document.querySelector(href);
+      if (target) {
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+        this.classList.add('active');
+      }
+    }
+  });
+});
+
+// Active nav on scroll
+const sections = document.querySelectorAll('[id]');
+const navItems = document.querySelectorAll('.nav-item[href]');
+
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const id = entry.target.getAttribute('id');
+      navItems.forEach(item => {
+        item.classList.remove('active');
+        if (item.getAttribute('href') === '#' + id) {
+          item.classList.add('active');
+        }
+      });
+    }
+  });
+}, { rootMargin: '-30% 0px -60% 0px' });
+
+sections.forEach(s => observer.observe(s));
+</script>
+</body>
+</html>

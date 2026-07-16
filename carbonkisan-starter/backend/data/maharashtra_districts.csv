@@ -1,0 +1,37 @@
+code,name,rainfall_zone,dominant_soil_type,soil_modifier,verified,notes
+MH_AHILYANAGAR,Ahilyanagar (Ahmednagar),medium,vertisol,1.05,FALSE,placeholder - rain-shadow pockets present
+MH_AKOLA,Akola,medium,vertisol,1.10,FALSE,placeholder
+MH_AMRAVATI,Amravati,medium,vertisol,1.10,FALSE,placeholder
+MH_BEED,Beed,low,vertisol,0.95,FALSE,placeholder - Marathwada drought-prone
+MH_BHANDARA,Bhandara,high,inceptisol,1.15,FALSE,placeholder
+MH_BULDHANA,Buldhana,medium,vertisol,1.05,FALSE,placeholder
+MH_CHANDRAPUR,Chandrapur,medium,vertisol,1.10,FALSE,placeholder
+MH_CSAMBHAJINAGAR,Chhatrapati Sambhajinagar (Aurangabad),low,vertisol,1.01,FALSE,placeholder
+MH_DHARASHIV,Dharashiv (Osmanabad),low,vertisol,0.95,FALSE,placeholder - Marathwada drought-prone
+MH_DHULE,Dhule,medium,vertisol,1.00,FALSE,placeholder
+MH_GADCHIROLI,Gadchiroli,high,laterite,1.15,FALSE,placeholder - forested; sparse soil data
+MH_GONDIA,Gondia,high,inceptisol,1.15,FALSE,placeholder
+MH_HINGOLI,Hingoli,low,vertisol,0.95,FALSE,placeholder - Marathwada drought-prone
+MH_JALGAON,Jalgaon,medium,vertisol,1.05,FALSE,placeholder
+MH_JALNA,Jalna,low,vertisol,0.95,FALSE,placeholder - Marathwada drought-prone
+MH_KOLHAPUR,Kolhapur,high,laterite,1.20,FALSE,placeholder - Western Ghats influence
+MH_LATUR,Latur,low,vertisol,0.95,FALSE,placeholder - Marathwada drought-prone
+MH_MUMBAI_CITY,Mumbai City,high,laterite,1.00,FALSE,placeholder - negligible farmland
+MH_MUMBAI_SUBURBAN,Mumbai Suburban,high,laterite,1.00,FALSE,placeholder - negligible farmland
+MH_NAGPUR,Nagpur,high,vertisol,1.23,FALSE,placeholder
+MH_NANDED,Nanded,low,vertisol,0.98,FALSE,placeholder
+MH_NANDURBAR,Nandurbar,medium,vertisol,1.00,FALSE,placeholder
+MH_NASHIK,Nashik,medium,inceptisol,1.05,FALSE,placeholder
+MH_PALGHAR,Palghar,high,laterite,1.18,FALSE,placeholder
+MH_PARBHANI,Parbhani,low,vertisol,0.95,FALSE,placeholder - Marathwada drought-prone
+MH_PUNE,Pune,medium,vertisol,1.18,FALSE,placeholder
+MH_RAIGAD,Raigad,high,laterite,1.18,FALSE,placeholder
+MH_RATNAGIRI,Ratnagiri,high,laterite,1.18,FALSE,placeholder
+MH_SANGLI,Sangli,medium,vertisol,1.05,FALSE,placeholder
+MH_SATARA,Satara,medium,vertisol,1.08,FALSE,placeholder - ghat/plain mix
+MH_SINDHUDURG,Sindhudurg,high,laterite,1.18,FALSE,placeholder
+MH_SOLAPUR,Solapur,low,vertisol,0.98,FALSE,placeholder - drought-prone
+MH_THANE,Thane,high,laterite,1.15,FALSE,placeholder
+MH_WARDHA,Wardha,medium,vertisol,1.10,FALSE,placeholder
+MH_WASHIM,Washim,medium,vertisol,1.05,FALSE,placeholder
+MH_YAVATMAL,Yavatmal,medium,vertisol,1.08,FALSE,placeholder

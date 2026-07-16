@@ -1,0 +1,11 @@
+{
+  "name": "carbn-kisan",
+  "version": "1.0.0",
+  "description": "Carbon Kisan — India's farmer-led carbon credit marketplace",
+  "scripts": {
+    "dev": "npx serve . --listen 3000",
+    "start": "npx serve . --listen 3000"
+  },
+  "keywords": ["carbon-credits", "farmers", "india", "CSR"],
+  "license": "MIT"
+}

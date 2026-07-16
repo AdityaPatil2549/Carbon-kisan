@@ -1,0 +1,28 @@
+# Python
+venv/
+__pycache__/
+*.pyc
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+
+# Node
+node_modules/
+dist/
+.vite/
+
+# Env files — NEVER commit real secrets
+.env
+.env.local
+!.env.example
+
+# ML artifacts (regenerate via train.py — don't bloat the repo with binaries)
+backend/app/ml/model.pkl
+backend/app/ml/explainer.pkl
+backend/data/train.csv
+
+# OS/editor
+.DS_Store
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json

@@ -1,0 +1,854 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CarbonKisan — Frontend PRD</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --soil: #2C1A0E; --leaf: #1A4A2E; --leaf-mid: #2D7A4F; --leaf-light: #4FAE7A;
+    --sky: #E8F4EC; --gold: #C8922A; --gold-light: #F5E4C0; --ink: #1C1C1A;
+    --muted: #6B6B62; --rule: #D6D4CC; --page: #F7F5F0; --white: #FFFFFF;
+    --err: #B3261E; --err-bg: #FCEAE9;
+    --mono: 'JetBrains Mono', monospace; --sans: 'Space Grotesk', sans-serif; --serif: 'Fraunces', serif;
+    --dur-fast: 120ms; --dur-mid: 220ms; --ease: cubic-bezier(.4,0,.2,1);
+  }
+  * { box-sizing: border-box; margin:0; padding:0; }
+  html { scroll-behavior: smooth; }
+  body { font-family: var(--sans); background: var(--page); color: var(--ink); line-height:1.6; font-size:15px; }
+  ::selection { background: var(--gold-light); }
+
+  /* ===== HERO ===== */
+  .hero { background: var(--soil); padding: 48px 40px 40px; position: relative; overflow: hidden; }
+  .hero::before { content:''; position:absolute; inset:0; background: radial-gradient(ellipse at 85% 20%, rgba(79,174,122,.16) 0%, transparent 55%); }
+  .hero-eyebrow { font-family: var(--mono); font-size:11px; letter-spacing:.12em; color: var(--leaf-light); text-transform:uppercase; margin-bottom:14px; }
+  .hero-title { font-family: var(--serif); font-size:38px; font-weight:600; color:#fff; line-height:1.1; }
+  .hero-title em { font-style:italic; color: var(--leaf-light); }
+  .hero-sub { font-size:14px; color:rgba(255,255,255,.6); max-width:600px; margin-top:8px; }
+
+  /* ===== TAB NAV ===== */
+  .tabnav { position: sticky; top:0; z-index:50; background: var(--white); border-bottom:1px solid var(--rule); display:flex; overflow-x:auto; padding: 0 24px; }
+  .tabnav button { font-family: var(--sans); font-size:13px; font-weight:500; color: var(--muted); background:none; border:none; padding:16px 16px; cursor:pointer; white-space:nowrap; border-bottom:2px solid transparent; transition: color var(--dur-fast) var(--ease), border-color var(--dur-fast) var(--ease); }
+  .tabnav button:hover { color: var(--ink); }
+  .tabnav button.active { color: var(--leaf-mid); border-bottom-color: var(--leaf-mid); }
+
+  .page { max-width: 1040px; margin:0 auto; padding: 40px 32px 100px; }
+  .tabpanel { display:none; animation: fadeIn var(--dur-mid) var(--ease); }
+  .tabpanel.active { display:block; }
+  @keyframes fadeIn { from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);} }
+
+  h2.section-title { font-family: var(--serif); font-size:26px; font-weight:600; margin-bottom:6px; }
+  p.section-sub { color: var(--muted); font-size:13.5px; margin-bottom:28px; max-width:640px; }
+  h3.sub-title { font-family: var(--serif); font-size:18px; font-weight:600; margin: 32px 0 14px; }
+
+  /* ===== SITEMAP ===== */
+  .sitemap { display:flex; flex-direction:column; gap:28px; }
+  .sitemap-row { display:flex; align-items:center; gap:14px; flex-wrap:wrap; }
+  .sitemap-lane-label { font-family: var(--mono); font-size:10px; letter-spacing:.08em; color: var(--muted); text-transform:uppercase; min-width:90px; }
+  .node { font-size:12.5px; font-weight:500; padding:10px 16px; border-radius:9px; border:1px solid var(--rule); background: var(--white); cursor:pointer; transition: all var(--dur-fast) var(--ease); }
+  .node:hover { border-color: var(--leaf-mid); transform: translateY(-1px); box-shadow: 0 4px 10px rgba(0,0,0,.06); }
+  .node.entry { background: var(--soil); color:#fff; border-color: var(--soil); }
+  .node.public { background: var(--gold-light); border-color: var(--gold); }
+  .arrow { color: var(--rule); font-size:16px; }
+
+  /* ===== DESIGN SYSTEM ===== */
+  .swatch-grid { display:grid; grid-template-columns: repeat(auto-fill, minmax(140px,1fr)); gap:12px; }
+  .swatch { border-radius:10px; overflow:hidden; border:1px solid var(--rule); cursor:pointer; position:relative; }
+  .swatch-color { height:64px; }
+  .swatch-label { padding:8px 10px; background:var(--white); font-family:var(--mono); font-size:11px; }
+  .swatch-copied { position:absolute; top:6px; right:6px; background:var(--ink); color:#fff; font-size:10px; padding:2px 6px; border-radius:5px; opacity:0; transition: opacity var(--dur-fast) var(--ease); }
+  .swatch-copied.show { opacity:1; }
+
+  .type-row { display:flex; align-items:baseline; gap:20px; padding:14px 0; border-bottom:1px solid var(--rule); }
+  .type-sample-display { font-family: var(--serif); }
+  .type-sample-body { font-family: var(--sans); }
+  .type-sample-mono { font-family: var(--mono); }
+  .type-meta { font-size:11px; color:var(--muted); font-family:var(--mono); min-width:170px; }
+
+  .space-row { display:flex; align-items:center; gap:12px; margin-bottom:8px; }
+  .space-bar { background: var(--leaf-mid); height:14px; border-radius:3px; }
+  .space-label { font-family:var(--mono); font-size:11px; color:var(--muted); min-width:90px; }
+
+  /* ===== SCREEN CARDS ===== */
+  .screen-card { border:1px solid var(--rule); border-radius:14px; overflow:hidden; margin-bottom:28px; background:var(--white); scroll-margin-top: 80px; }
+  .screen-head { padding:18px 22px; border-bottom:1px solid var(--rule); }
+  .screen-badge { font-family:var(--mono); font-size:10px; letter-spacing:.08em; color:var(--leaf-mid); text-transform:uppercase; }
+  .screen-name { font-family:var(--serif); font-size:20px; font-weight:600; margin:4px 0 6px; }
+  .screen-purpose { font-size:13px; color:var(--muted); }
+  .screen-body { display:grid; grid-template-columns: 320px 1fr; }
+  @media (max-width: 720px) { .screen-body { grid-template-columns: 1fr; } }
+
+  .preview-pane { background: var(--page); padding:20px; border-right:1px solid var(--rule); }
+  .state-toggles { display:flex; gap:6px; margin-bottom:14px; flex-wrap:wrap; }
+  .state-btn { font-family:var(--mono); font-size:10px; padding:4px 10px; border-radius:99px; border:1px solid var(--rule); background:var(--white); cursor:pointer; color:var(--muted); }
+  .state-btn.active { background:var(--soil); color:#fff; border-color:var(--soil); }
+  .device-frame { background:var(--white); border-radius:12px; border:1px solid var(--rule); padding:16px; min-height:280px; }
+
+  .meta-pane { padding:20px 22px; }
+  .meta-block { margin-bottom:18px; }
+  .meta-label { font-family:var(--mono); font-size:10px; letter-spacing:.08em; color:var(--muted); text-transform:uppercase; margin-bottom:8px; }
+  .tag-row { display:flex; flex-wrap:wrap; gap:6px; }
+  .tag { font-size:11px; padding:3px 9px; border-radius:99px; background:var(--sky); color:var(--leaf-mid); font-family:var(--mono); }
+  .tag.evt { background:#F3E5F5; color:#6A1B9A; }
+  .interaction-list { font-size:13px; color:var(--ink); padding-left:18px; }
+  .interaction-list li { margin-bottom:5px; }
+  .a11y-note { font-size:12.5px; color:var(--muted); background:var(--sky); padding:10px 12px; border-radius:8px; }
+
+  /* ===== MINI UI PRIMITIVES (used inside device-frame previews) ===== */
+  .mini-practice-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+  .mini-practice { border:1px solid var(--rule); border-radius:9px; padding:10px; cursor:pointer; font-size:11px; background:var(--white); transition: all var(--dur-fast) var(--ease); }
+  .mini-practice.sel { border-color:var(--leaf-mid); background:var(--sky); }
+  .mini-icon { font-size:18px; margin-bottom:4px; }
+  .mini-slider-label { font-size:11px; font-weight:600; margin:14px 0 4px; }
+  .mini-estimate-box { margin-top:14px; padding:14px; background:var(--sky); border-radius:10px; }
+  .mini-estimate-value { font-family:var(--serif); font-size:22px; font-weight:600; }
+  .mini-estimate-sub { font-size:11px; color:var(--muted); }
+  .shap-bar-row { display:flex; align-items:center; gap:6px; margin-top:6px; font-size:10px; }
+  .shap-bar-track { flex:1; background:var(--rule); border-radius:3px; height:8px; overflow:hidden; }
+  .shap-bar-fill { height:100%; background:var(--leaf-mid); }
+  .shap-label { min-width:88px; color:var(--muted); }
+
+  .mini-card-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+  .mini-listing-card { border:1px solid var(--rule); border-radius:9px; padding:10px; background:var(--white); }
+  .mini-listing-price { font-family:var(--mono); font-size:13px; font-weight:600; margin-top:4px; }
+  .mini-buy-btn { width:100%; margin-top:6px; padding:6px; font-size:10px; background:var(--leaf-mid); color:#fff; border:none; border-radius:6px; cursor:pointer; }
+
+  .skeleton { background: linear-gradient(90deg, var(--rule) 25%, #e8e6de 37%, var(--rule) 63%); background-size:400% 100%; animation: shimmer 1.4s ease infinite; border-radius:6px; }
+  @keyframes shimmer { 0%{background-position:100% 50%;} 100%{background-position:0 50%;} }
+
+  .error-box { background: var(--err-bg); border:1px solid var(--err); color:var(--err); border-radius:9px; padding:12px; font-size:12px; }
+  .empty-box { text-align:center; padding:30px 10px; color:var(--muted); font-size:12px; }
+
+  .impact-stat-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+  .impact-stat { background:var(--sky); border-radius:9px; padding:10px; text-align:center; }
+  .impact-stat-val { font-family:var(--serif); font-size:18px; font-weight:600; }
+  .impact-stat-label { font-size:10px; color:var(--muted); }
+
+  /* ===== COMPONENT LIBRARY ===== */
+  .comp-card { border:1px solid var(--rule); border-radius:12px; margin-bottom:10px; overflow:hidden; background:var(--white); cursor:pointer; }
+  .comp-head { padding:14px 18px; display:flex; align-items:center; gap:10px; }
+  .comp-name { font-weight:600; font-size:14px; flex:1; }
+  .comp-file { font-family:var(--mono); font-size:11px; color:var(--muted); }
+  .chev { transition: transform var(--dur-fast) var(--ease); color:var(--muted); }
+  .chev.open { transform: rotate(180deg); }
+  .comp-detail { max-height:0; overflow:hidden; transition: max-height var(--dur-mid) var(--ease); border-top:1px solid transparent; }
+  .comp-detail.open { max-height:600px; border-top-color: var(--rule); }
+  .comp-detail-inner { padding:16px 18px; }
+  .props-table { width:100%; border-collapse:collapse; font-size:12px; margin-top:8px; }
+  .props-table th { text-align:left; font-family:var(--mono); font-size:10px; color:var(--muted); text-transform:uppercase; padding:6px 10px; border-bottom:1px solid var(--rule); }
+  .props-table td { padding:8px 10px; border-bottom:1px solid var(--rule); }
+
+  /* ===== TABLES ===== */
+  table.spec { width:100%; border-collapse:collapse; font-size:13px; margin: 14px 0 24px; }
+  table.spec th { text-align:left; font-family:var(--mono); font-size:10px; letter-spacing:.08em; color:var(--muted); text-transform:uppercase; padding:8px 14px; border-bottom:2px solid var(--rule); background:var(--page); }
+  table.spec td { padding:11px 14px; border-bottom:1px solid var(--rule); }
+  table.spec tr:nth-child(even) td { background: var(--page); }
+
+  /* ===== RESPONSIVE DEMO ===== */
+  .resize-controls { display:flex; align-items:center; gap:12px; margin-bottom:14px; }
+  .resize-controls input[type=range] { flex:1; }
+  .resize-width-label { font-family:var(--mono); font-size:12px; min-width:60px; }
+  .resize-frame-wrap { background: var(--page); border-radius:12px; padding:20px; display:flex; justify-content:center; overflow-x:auto; }
+  .resize-frame { background:var(--white); border:1px solid var(--rule); border-radius:10px; padding:16px; transition: width var(--dur-fast) linear; }
+
+  /* ===== CHECKLIST ===== */
+  .check-item { display:flex; align-items:flex-start; gap:10px; padding:10px 0; border-bottom:1px solid var(--rule); }
+  .check-item input { margin-top:3px; width:16px; height:16px; accent-color: var(--leaf-mid); cursor:pointer; }
+  .check-item label { font-size:13.5px; cursor:pointer; }
+  .check-item .check-note { font-size:11.5px; color:var(--muted); display:block; margin-top:2px; }
+
+  .callout { background: var(--gold-light); border:1px solid var(--gold); border-radius:10px; padding:14px 18px; font-size:13px; margin: 16px 0; }
+  .callout strong { color:var(--soil); }
+
+  footer { background: var(--soil); padding:24px 32px; color:rgba(255,255,255,.4); font-family:var(--mono); font-size:11px; text-align:center; }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-eyebrow">CarbonKisan · Frontend Product Requirements Document</div>
+  <div class="hero-title">Every screen. Every state. <em>Interactive.</em></div>
+  <div class="hero-sub">Not a description of the UI — working previews of it. Click the practice cards, drag the sliders, toggle the error states. If it moves here, it's specified; if it's specified, you can click it.</div>
+</div>
+
+<div class="tabnav" id="tabnav">
+  <button data-tab="sitemap" class="active">Sitemap</button>
+  <button data-tab="design">Design System</button>
+  <button data-tab="screens">Screens</button>
+  <button data-tab="components">Components</button>
+  <button data-tab="states">States &amp; Errors</button>
+  <button data-tab="responsive">Responsive</button>
+  <button data-tab="a11y">Accessibility &amp; Perf</button>
+  <button data-tab="handoff">Handoff</button>
+</div>
+
+<div class="page">
+
+  <!-- ============ SITEMAP ============ -->
+  <div class="tabpanel active" id="tab-sitemap">
+    <h2 class="section-title">Information architecture</h2>
+    <p class="section-sub">Three lanes, one shared design system. Click any screen to jump to its full spec.</p>
+
+    <div class="sitemap">
+      <div class="sitemap-row">
+        <span class="sitemap-lane-label">Entry</span>
+        <div class="node entry" onclick="jumpTo('scr-onboarding')">Landing / Language select</div>
+      </div>
+      <div class="sitemap-row">
+        <span class="sitemap-lane-label">Farmer</span>
+        <div class="node" onclick="jumpTo('scr-onboarding')">Onboarding + OTP</div>
+        <span class="arrow">→</span>
+        <div class="node" onclick="jumpTo('scr-estimator')">Carbon Estimator</div>
+        <span class="arrow">→</span>
+        <div class="node" onclick="jumpTo('scr-mylistings')">My Listings</div>
+      </div>
+      <div class="sitemap-row">
+        <span class="sitemap-lane-label">Buyer</span>
+        <div class="node">Buyer login</div>
+        <span class="arrow">→</span>
+        <div class="node" onclick="jumpTo('scr-marketplace')">Marketplace Browse</div>
+        <span class="arrow">→</span>
+        <div class="node" onclick="jumpTo('scr-checkout')">Listing Detail + Checkout</div>
+        <span class="arrow">→</span>
+        <div class="node public">Certificate PDF</div>
+      </div>
+      <div class="sitemap-row">
+        <span class="sitemap-lane-label">Admin</span>
+        <div class="node" onclick="jumpTo('scr-admin')">Review Queue</div>
+      </div>
+      <div class="sitemap-row">
+        <span class="sitemap-lane-label">Public</span>
+        <div class="node public" onclick="jumpTo('scr-impact')">/impact dashboard</div>
+        <div class="node public">/verify/:certificate_id</div>
+      </div>
+    </div>
+
+    <div class="callout">
+      <strong>Read this before building:</strong> Farmer screens are mobile-first, icon-led, minimal typing (PRD §5.1 — low-literacy, intermittent-connectivity persona). Buyer and Admin screens are desktop-first, English, information-dense. Do not reuse Farmer UI patterns for Buyer screens or vice versa — they're solving different problems for different people.
+    </div>
+  </div>
+
+  <!-- ============ DESIGN SYSTEM ============ -->
+  <div class="tabpanel" id="tab-design">
+    <h2 class="section-title">Design tokens</h2>
+    <p class="section-sub">Click any swatch to copy its hex value.</p>
+
+    <div class="swatch-grid" id="swatch-grid"></div>
+
+    <h3 class="sub-title">Type scale</h3>
+    <div id="type-scale"></div>
+
+    <h3 class="sub-title">Spacing scale (4px base unit)</h3>
+    <div id="space-scale"></div>
+
+    <h3 class="sub-title">Radius &amp; elevation</h3>
+    <table class="spec">
+      <thead><tr><th>Token</th><th>Value</th><th>Usage</th></tr></thead>
+      <tbody>
+        <tr><td><code>--radius-sm</code></td><td>6px</td><td>Tags, badges, small buttons</td></tr>
+        <tr><td><code>--radius-md</code></td><td>9–10px</td><td>Cards, inputs, listing cards</td></tr>
+        <tr><td><code>--radius-lg</code></td><td>12–14px</td><td>Modals, device frames, major containers</td></tr>
+        <tr><td><code>--elevation-1</code></td><td><code>0 4px 10px rgba(0,0,0,.06)</code></td><td>Hover lift on interactive cards only — never on static content</td></tr>
+        <tr><td><code>--elevation-2</code></td><td><code>0 12px 32px rgba(0,0,0,.12)</code></td><td>Modals and the purchase confirmation dialog only</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ============ SCREENS ============ -->
+  <div class="tabpanel" id="tab-screens">
+    <h2 class="section-title">Screen specifications</h2>
+    <p class="section-sub">Four flagship screens below are fully interactive prototypes — real state toggles, real interactions. Three supporting screens have complete specs with static previews.</p>
+
+    <!-- SCREEN: Onboarding -->
+    <div class="screen-card" id="scr-onboarding">
+      <div class="screen-head">
+        <div class="screen-badge">Farmer · P0</div>
+        <div class="screen-name">Onboarding + OTP</div>
+        <div class="screen-purpose">Phone number → OTP → language select → done. Under 60 seconds, per PRD FR-1.1.</div>
+      </div>
+      <div class="screen-body">
+        <div class="preview-pane">
+          <div class="device-frame" style="text-align:center;">
+            <div style="font-size:32px;">🌾</div>
+            <div style="font-family:var(--serif); font-size:16px; font-weight:600; margin:10px 0;">CarbonKisan</div>
+            <input type="tel" placeholder="Phone number" class="tap-target" style="width:100%; padding:10px; border:1px solid var(--rule); border-radius:8px; font-size:13px; margin-bottom:8px;">
+            <button style="width:100%; padding:10px; background:var(--leaf-mid); color:#fff; border:none; border-radius:8px; font-size:13px;">Send OTP</button>
+            <div style="display:flex; gap:6px; justify-content:center; margin-top:14px;">
+              <span class="tag">मराठी</span><span class="tag">हिंदी</span><span class="tag">English</span>
+            </div>
+          </div>
+        </div>
+        <div class="meta-pane">
+          <div class="meta-block"><div class="meta-label">Components</div><div class="tag-row"><span class="tag">PhoneInput</span><span class="tag">OTPInput</span><span class="tag">LanguageToggle</span><span class="tag">Button</span></div></div>
+          <div class="meta-block"><div class="meta-label">Key interactions</div>
+            <ul class="interaction-list">
+              <li>Phone field auto-formats as +91 XXXXX-XXXXX while typing</li>
+              <li>OTP auto-advances focus per digit, auto-submits on 6th digit</li>
+              <li>Resend OTP link disabled for 30s with visible countdown</li>
+              <li>Language choice persists to farmer profile immediately — before OTP verification even completes</li>
+            </ul>
+          </div>
+          <div class="meta-block"><div class="meta-label">Analytics events</div><div class="tag-row"><span class="tag evt">farmer_registered</span></div></div>
+          <div class="meta-block"><div class="meta-label">Accessibility</div><div class="a11y-note">Numeric keypad forced via <code>inputmode="numeric"</code> on phone/OTP fields. OTP boxes are a single labelled input group for screen readers, not 6 separate unlabelled inputs.</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SCREEN: Estimator — FULLY INTERACTIVE -->
+    <div class="screen-card" id="scr-estimator">
+      <div class="screen-head">
+        <div class="screen-badge">Farmer · P0 · Live prototype</div>
+        <div class="screen-name">Carbon Estimator</div>
+        <div class="screen-purpose">The core differentiator. Practice → area → live SHAP-explained estimate. Try it — click a practice, drag the slider.</div>
+      </div>
+      <div class="screen-body">
+        <div class="preview-pane">
+          <div class="state-toggles">
+            <button class="state-btn active" onclick="setEstState('default', this)">Default</button>
+            <button class="state-btn" onclick="setEstState('loading', this)">Loading</button>
+            <button class="state-btn" onclick="setEstState('error', this)">Error</button>
+          </div>
+          <div class="device-frame" id="est-frame">
+            <!-- populated by JS -->
+          </div>
+        </div>
+        <div class="meta-pane">
+          <div class="meta-block"><div class="meta-label">Components</div><div class="tag-row"><span class="tag">PracticeSelector</span><span class="tag">Slider</span><span class="tag">ShapBreakdownChart</span><span class="tag">Button</span><span class="tag">ErrorBanner</span></div></div>
+          <div class="meta-block"><div class="meta-label">Key interactions</div>
+            <ul class="interaction-list">
+              <li>Practice card selection is required before "Get estimate" enables (button stays disabled, not hidden — PRD copy principle: never punish exploration)</li>
+              <li>Area slider updates a live hectare label on every drag frame, not just on release</li>
+              <li>Form state persists to localStorage on every field change (FR-12.1) — a dropped connection mid-flow never loses farmer input</li>
+              <li>SHAP breakdown bars animate in sequentially (80ms stagger) on estimate arrival — the one deliberate motion moment on this screen</li>
+            </ul>
+          </div>
+          <div class="meta-block"><div class="meta-label">Analytics events</div><div class="tag-row"><span class="tag evt">estimate_generated</span></div></div>
+          <div class="meta-block"><div class="meta-label">Accessibility</div><div class="a11y-note">Practice cards use <code>aria-pressed</code>, not just visual border color — colorblind-safe. Slider has visible numeric value, never relies on thumb position alone.</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SCREEN: My Listings -->
+    <div class="screen-card" id="scr-mylistings">
+      <div class="screen-head">
+        <div class="screen-badge">Farmer · P0</div>
+        <div class="screen-name">My Listings</div>
+        <div class="screen-purpose">Lifetime earnings summary at top, listing cards below with status badges.</div>
+      </div>
+      <div class="screen-body">
+        <div class="preview-pane">
+          <div class="device-frame">
+            <div style="background:var(--sky); border-radius:9px; padding:12px; margin-bottom:10px; text-align:center;">
+              <div style="font-family:var(--serif); font-size:20px; font-weight:600;">₹8,420</div>
+              <div style="font-size:10px; color:var(--muted);">Total lifetime earnings</div>
+            </div>
+            <div style="display:flex; justify-content:space-between; align-items:center; padding:8px 0; border-bottom:1px solid var(--rule); font-size:11px;">
+              <span>No-till + cover crop · 2.5ha</span>
+              <span class="tag" style="background:var(--gold-light); color:var(--soil);">Live</span>
+            </div>
+            <div style="display:flex; justify-content:space-between; align-items:center; padding:8px 0; border-bottom:1px solid var(--rule); font-size:11px;">
+              <span>Agroforestry · 1.2ha</span>
+              <span class="tag">Sold</span>
+            </div>
+          </div>
+        </div>
+        <div class="meta-pane">
+          <div class="meta-block"><div class="meta-label">Components</div><div class="tag-row"><span class="tag">EarningsSummary</span><span class="tag">ListingRow</span><span class="tag">StatusBadge</span></div></div>
+          <div class="meta-block"><div class="meta-label">Status badge color mapping</div>
+            <ul class="interaction-list">
+              <li><strong>pending_verification</strong> — gold badge, "Under review"</li>
+              <li><strong>live</strong> — leaf-green badge, "For sale"</li>
+              <li><strong>sold</strong> — muted grey badge, "Sold"</li>
+              <li><strong>expired / rejected</strong> — error-red badge, with tap-to-see-reason</li>
+            </ul>
+          </div>
+          <div class="meta-block"><div class="meta-label">Accessibility</div><div class="a11y-note">Status is never color-only — every badge carries a text label, per WCAG 1.4.1.</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SCREEN: Marketplace — INTERACTIVE FILTERING -->
+    <div class="screen-card" id="scr-marketplace">
+      <div class="screen-head">
+        <div class="screen-badge">Buyer · P0 · Live prototype</div>
+        <div class="screen-name">Marketplace Browse</div>
+        <div class="screen-purpose">Filter by practice type — try clicking a filter chip below.</div>
+      </div>
+      <div class="screen-body">
+        <div class="preview-pane">
+          <div class="state-toggles">
+            <button class="state-btn active" onclick="setMktState('default', this)">Default</button>
+            <button class="state-btn" onclick="setMktState('empty', this)">Empty filter</button>
+            <button class="state-btn" onclick="setMktState('loading', this)">Loading</button>
+          </div>
+          <div style="display:flex; gap:6px; margin-bottom:10px; flex-wrap:wrap;" id="mkt-filters"></div>
+          <div class="device-frame" id="mkt-frame"></div>
+        </div>
+        <div class="meta-pane">
+          <div class="meta-block"><div class="meta-label">Components</div><div class="tag-row"><span class="tag">FilterChip</span><span class="tag">ListingCard</span><span class="tag">EmptyState</span><span class="tag">SkeletonGrid</span></div></div>
+          <div class="meta-block"><div class="meta-label">Key interactions</div>
+            <ul class="interaction-list">
+              <li>Filter chips are multi-select toggle buttons, not a dropdown — buyers scan faster with visible options (persona is desktop, has screen space)</li>
+              <li>Grid re-filters client-side instantly (&lt;300ms, PRD FR-5.5) — no server round-trip at MVP listing volume</li>
+              <li>Farmer identity shown as first-name + district only — never full name or phone, enforced by the API response shape itself, not just UI hiding</li>
+            </ul>
+          </div>
+          <div class="meta-block"><div class="meta-label">Analytics events</div><div class="tag-row"><span class="tag evt">listing_viewed</span></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SCREEN: Checkout -->
+    <div class="screen-card" id="scr-checkout">
+      <div class="screen-head">
+        <div class="screen-badge">Buyer · P0</div>
+        <div class="screen-name">Listing Detail + Checkout</div>
+        <div class="screen-purpose">Full SHAP transparency + explicit 15% fee disclosure before payment — trust-building by design, not accident.</div>
+      </div>
+      <div class="screen-body">
+        <div class="preview-pane">
+          <div class="device-frame">
+            <div style="font-size:11px; color:var(--muted);">Pune · No-till + cover crop</div>
+            <div style="font-family:var(--serif); font-size:20px; font-weight:600; margin:6px 0;">1.79 t CO2e</div>
+            <div style="background:var(--page); border-radius:8px; padding:10px; font-size:11px; margin:10px 0;">
+              <div style="display:flex; justify-content:space-between;"><span>Credit price</span><span>₹2,148</span></div>
+              <div style="display:flex; justify-content:space-between; color:var(--muted);"><span>Platform fee (15%)</span><span>—</span></div>
+              <div style="display:flex; justify-content:space-between; font-weight:600; border-top:1px solid var(--rule); margin-top:4px; padding-top:4px;"><span>Total</span><span>₹2,148</span></div>
+            </div>
+            <button style="width:100%; padding:10px; background:var(--leaf-mid); color:#fff; border:none; border-radius:8px; font-size:13px;">Buy Now — Razorpay</button>
+          </div>
+        </div>
+        <div class="meta-pane">
+          <div class="meta-block"><div class="meta-label">Components</div><div class="tag-row"><span class="tag">ShapBreakdownChart</span><span class="tag">FeeDisclosure</span><span class="tag">PurchaseModal</span><span class="tag">RazorpayCheckout</span></div></div>
+          <div class="meta-block"><div class="meta-label">Key interactions</div>
+            <ul class="interaction-list">
+              <li>"Buy Now" opens a confirmation modal (FR-6.1) before Razorpay launches — one extra step, deliberate, prevents accidental corporate procurement clicks</li>
+              <li>Fee split shown explicitly, never buried — PRD explicitly calls this a trust-building requirement, not optional</li>
+              <li>Post-payment: certificate download button appears within 5 seconds (FR-6.5 target) with a determinate progress indicator, not an infinite spinner</li>
+            </ul>
+          </div>
+          <div class="meta-block"><div class="meta-label">Analytics events</div><div class="tag-row"><span class="tag evt">purchase_initiated</span><span class="tag evt">purchase_completed</span><span class="tag evt">certificate_downloaded</span></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SCREEN: Impact — LIVE STATS -->
+    <div class="screen-card" id="scr-impact">
+      <div class="screen-head">
+        <div class="screen-badge">Public · P0 · Live prototype</div>
+        <div class="screen-name">Impact Dashboard</div>
+        <div class="screen-purpose">The screenshot-worthy page. No login. This is what judges pull up.</div>
+      </div>
+      <div class="screen-body">
+        <div class="preview-pane">
+          <div class="state-toggles">
+            <button class="state-btn active" onclick="setImpactState('default', this)">Default</button>
+            <button class="state-btn" onclick="setImpactState('loading', this)">Loading</button>
+          </div>
+          <div class="device-frame" id="impact-frame"></div>
+        </div>
+        <div class="meta-pane">
+          <div class="meta-block"><div class="meta-label">Components</div><div class="tag-row"><span class="tag">StatCard</span><span class="tag">DistrictBarChart</span></div></div>
+          <div class="meta-block"><div class="meta-label">Key interactions</div>
+            <ul class="interaction-list">
+              <li>Auto-refreshes every 30s (FR-8.4) — numbers visibly tick up during a live demo without a manual reload, which is the single most persuasive 3 seconds of your pitch</li>
+              <li>Numbers must exactly match underlying DB aggregates (FR-8.3 acceptance criteria) — this page gets the most judge scrutiny of any screen in the product</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SCREEN: Admin -->
+    <div class="screen-card" id="scr-admin">
+      <div class="screen-head">
+        <div class="screen-badge">Admin · P1</div>
+        <div class="screen-name">Review Queue</div>
+        <div class="screen-purpose">Flagged listings only — not a general listing manager. Queue empties when nothing is anomalous.</div>
+      </div>
+      <div class="screen-body">
+        <div class="preview-pane">
+          <div class="device-frame">
+            <div style="border:1px solid var(--rule); border-radius:8px; padding:10px; font-size:11px;">
+              <div style="display:flex; justify-content:space-between;"><span>Estimate 95th percentile flag</span><span class="tag" style="background:var(--gold-light); color:var(--soil);">Review</span></div>
+              <div style="color:var(--muted); margin-top:4px;">2.5ha · Nagpur · claimed 3.1 t CO2e (district avg: 1.4 t)</div>
+              <div style="display:flex; gap:6px; margin-top:8px;">
+                <button style="flex:1; padding:6px; background:var(--leaf-mid); color:#fff; border:none; border-radius:6px; font-size:10px;">Approve</button>
+                <button style="flex:1; padding:6px; background:var(--err); color:#fff; border:none; border-radius:6px; font-size:10px;">Reject</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="meta-pane">
+          <div class="meta-block"><div class="meta-label">Components</div><div class="tag-row"><span class="tag">FlagCard</span><span class="tag">RejectReasonModal</span></div></div>
+          <div class="meta-block"><div class="meta-label">Key interactions</div>
+            <ul class="interaction-list">
+              <li>Reject requires a non-empty reason (FR-10.3) — the Reject button opens a modal, it never fires directly</li>
+              <li>Every action writes to admin_audit_log invisibly — no UI for this, it's a backend guarantee, but the admin should never feel watched by the interface itself</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ COMPONENTS ============ -->
+  <div class="tabpanel" id="tab-components">
+    <h2 class="section-title">Component library</h2>
+    <p class="section-sub">Click any component to see its props and states.</p>
+    <div id="comp-list"></div>
+  </div>
+
+  <!-- ============ STATES & ERRORS ============ -->
+  <div class="tabpanel" id="tab-states">
+    <h2 class="section-title">States &amp; error copy standards</h2>
+    <p class="section-sub">Per the product's writing principle: errors don't apologize and are never vague. Every error below names what happened and what to do.</p>
+
+    <h3 class="sub-title">Error copy — approved vs rejected</h3>
+    <table class="spec">
+      <thead><tr><th>Situation</th><th style="color:var(--err)">✕ Don't write</th><th style="color:var(--leaf-mid)">✓ Write instead</th></tr></thead>
+      <tbody>
+        <tr><td>Estimate API fails</td><td>"Oops! Something went wrong."</td><td>"Couldn't reach the server. Check your connection and try again."</td></tr>
+        <tr><td>Price outside allowed band</td><td>"Invalid price"</td><td>"Price must be within 40% of ₹2,148 — try between ₹1,289 and ₹3,007."</td></tr>
+        <tr><td>Duplicate payment webhook</td><td>"Error 409"</td><td>"This purchase was already completed. Check your email for the certificate."</td></tr>
+        <tr><td>Empty marketplace filter result</td><td>"No results found"</td><td>"No listings match these filters yet. Try widening your price range or district."</td></tr>
+        <tr><td>Session expired mid-form</td><td>"Unauthorized"</td><td>"Your session expired. Your entries are saved — log in again to continue."</td></tr>
+      </tbody>
+    </table>
+
+    <h3 class="sub-title">Loading pattern decision table</h3>
+    <table class="spec">
+      <thead><tr><th>Situation</th><th>Pattern</th><th>Why</th></tr></thead>
+      <tbody>
+        <tr><td>Estimate calculation (&lt;800ms target)</td><td>Button spinner, not skeleton</td><td>Sub-second — a skeleton would flash and feel broken</td></tr>
+        <tr><td>Marketplace listing grid</td><td>Skeleton cards (3-6 grey placeholders)</td><td>Content shape is known in advance — skeleton sets accurate expectation</td></tr>
+        <tr><td>Impact dashboard first load</td><td>Skeleton stat cards</td><td>Same reasoning — known shape, variable content</td></tr>
+        <tr><td>Certificate PDF generation</td><td>Determinate progress text ("Generating certificate…")</td><td>Has a real multi-second duration the user should feel is progressing, not stuck</td></tr>
+      </tbody>
+    </table>
+
+    <h3 class="sub-title">Empty state copy</h3>
+    <table class="spec">
+      <thead><tr><th>Screen</th><th>Empty state copy</th></tr></thead>
+      <tbody>
+        <tr><td>My Listings, first-time farmer</td><td>"You haven't listed any credits yet. Estimate your first practice to see what it's worth."</td></tr>
+        <tr><td>Marketplace, over-filtered</td><td>"No listings match these filters yet. Try widening your price range or district."</td></tr>
+        <tr><td>Admin queue, nothing flagged</td><td>"Nothing needs review right now."</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ============ RESPONSIVE ============ -->
+  <div class="tabpanel" id="tab-responsive">
+    <h2 class="section-title">Responsive strategy</h2>
+    <p class="section-sub">Drag the slider to see the Estimator screen reflow live, from phone width to desktop.</p>
+
+    <table class="spec">
+      <thead><tr><th>Breakpoint</th><th>Range</th><th>Primary users</th></tr></thead>
+      <tbody>
+        <tr><td>Mobile</td><td>320px – 639px</td><td>Farmer PWA — this is the default, designed-for width, not an afterthought</td></tr>
+        <tr><td>Tablet</td><td>640px – 1023px</td><td>Admin console on the go</td></tr>
+        <tr><td>Desktop</td><td>1024px+</td><td>Buyer dashboard — this is the default, designed-for width for buyers</td></tr>
+      </tbody>
+    </table>
+
+    <div class="resize-controls">
+      <span class="resize-width-label" id="resize-label">375px</span>
+      <input type="range" min="320" max="900" value="375" id="resize-slider" oninput="updateResize(this.value)">
+    </div>
+    <div class="resize-frame-wrap">
+      <div class="resize-frame" id="resize-frame" style="width:375px;">
+        <div class="mini-practice-grid" id="resize-practice-grid"></div>
+      </div>
+    </div>
+    <p style="font-size:12px; color:var(--muted); margin-top:10px;">Below ~420px the practice grid collapses from 2 columns to 1 — try dragging past that point. This is the only breakpoint-driven layout change on this screen; everything else scales fluidly.</p>
+  </div>
+
+  <!-- ============ A11Y + PERF ============ -->
+  <div class="tabpanel" id="tab-a11y">
+    <h2 class="section-title">Accessibility checklist</h2>
+    <p class="section-sub">WCAG 2.1 AA target for buyer/admin, low-literacy-optimized for farmer. Check items off as you verify them.</p>
+    <div id="a11y-checklist"></div>
+
+    <h3 class="sub-title">Performance budget</h3>
+    <table class="spec">
+      <thead><tr><th>Metric</th><th>Target</th><th>Applies to</th></tr></thead>
+      <tbody>
+        <tr><td>First Contentful Paint (Slow 3G)</td><td>&lt; 3s</td><td>Farmer PWA</td></tr>
+        <tr><td>Total page weight, farmer flow</td><td>&lt; 500KB</td><td>Farmer PWA (PRD FR-12.3)</td></tr>
+        <tr><td>Icon/image format</td><td>WebP, &lt; 30KB each</td><td>All screens</td></tr>
+        <tr><td>Largest Contentful Paint</td><td>&lt; 2.5s</td><td>Buyer Marketplace</td></tr>
+        <tr><td>Cumulative Layout Shift</td><td>&lt; 0.1</td><td>All screens — listing grid must reserve card height before content loads</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ============ HANDOFF ============ -->
+  <div class="tabpanel" id="tab-handoff">
+    <h2 class="section-title">Developer handoff checklist</h2>
+    <p class="section-sub">Before you consider a screen "done," it passes every row below.</p>
+    <table class="spec">
+      <thead><tr><th>Check</th><th>Reference</th></tr></thead>
+      <tbody>
+        <tr><td>Every interactive element has a visible keyboard focus state</td><td>frontend-design skill, restraint section</td></tr>
+        <tr><td>Every color-coded status also has a text label</td><td>WCAG 1.4.1, §tab-screens My Listings</td></tr>
+        <tr><td>Every error message names what happened + what to do next</td><td>§tab-states copy table</td></tr>
+        <tr><td>Form state persists to localStorage on the farmer flow</td><td>PRD FR-12.1</td></tr>
+        <tr><td>All farmer-facing strings pulled from i18n files, zero hardcoded text</td><td>PRD FR-11.4, <code>frontend/src/locales/*.json</code></td></tr>
+        <tr><td>Tap targets ≥ 44×44px on farmer PWA</td><td>PRD §12.5, <code>.tap-target</code> CSS class</td></tr>
+        <tr><td><code>prefers-reduced-motion</code> respected — SHAP bar stagger and all transitions disabled</td><td>frontend-design skill, motion section</td></tr>
+        <tr><td>Component matches the props table in §tab-components exactly</td><td>This document</td></tr>
+      </tbody>
+    </table>
+    <div class="callout"><strong>This document is a companion, not a replacement</strong> — it covers frontend surface only. For data model, API contracts, and backend logic, see <code>CarbonKisan_PRD.md</code> and <code>CarbonKisan_TechStack.md</code> in the same <code>docs/</code> folder.</div>
+  </div>
+
+</div>
+
+<footer>CarbonKisan — Frontend PRD — AMIEE Hackathon</footer>
+
+<script>
+// ===== TAB SWITCHING =====
+document.getElementById('tabnav').addEventListener('click', (e) => {
+  if (e.target.tagName !== 'BUTTON') return;
+  document.querySelectorAll('.tabnav button').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tabpanel').forEach(p => p.classList.remove('active'));
+  e.target.classList.add('active');
+  document.getElementById('tab-' + e.target.dataset.tab).classList.add('active');
+});
+
+function jumpTo(id) {
+  document.querySelectorAll('.tabnav button').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tabpanel').forEach(p => p.classList.remove('active'));
+  document.querySelector('[data-tab="screens"]').classList.add('active');
+  document.getElementById('tab-screens').classList.add('active');
+  setTimeout(() => document.getElementById(id).scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
+}
+
+// ===== DESIGN SYSTEM: SWATCHES =====
+const colors = [
+  ['--soil', '#2C1A0E'], ['--leaf', '#1A4A2E'], ['--leaf-mid', '#2D7A4F'], ['--leaf-light', '#4FAE7A'],
+  ['--sky', '#E8F4EC'], ['--gold', '#C8922A'], ['--gold-light', '#F5E4C0'], ['--ink', '#1C1C1A'],
+  ['--muted', '#6B6B62'], ['--page', '#F7F5F0'],
+];
+document.getElementById('swatch-grid').innerHTML = colors.map(([name, hex]) => `
+  <div class="swatch" onclick="copySwatch('${hex}', this)">
+    <div class="swatch-color" style="background:${hex}"></div>
+    <div class="swatch-label">${name}<br>${hex}</div>
+    <div class="swatch-copied">Copied</div>
+  </div>`).join('');
+
+function copySwatch(hex, el) {
+  navigator.clipboard.writeText(hex).catch(() => {});
+  const badge = el.querySelector('.swatch-copied');
+  badge.classList.add('show');
+  setTimeout(() => badge.classList.remove('show'), 1000);
+}
+
+document.getElementById('type-scale').innerHTML = `
+  <div class="type-row"><div class="type-sample-display" style="font-size:32px; font-weight:600;">Fraunces 600</div><div class="type-meta">display / headlines</div></div>
+  <div class="type-row"><div class="type-sample-display" style="font-size:22px; font-style:italic;">Fraunces italic</div><div class="type-meta">emphasis / brand moments</div></div>
+  <div class="type-row"><div class="type-sample-body" style="font-size:15px; font-weight:500;">Space Grotesk 500 — body and UI text</div><div class="type-meta">interface / all labels</div></div>
+  <div class="type-row"><div class="type-sample-mono" style="font-size:13px;">JetBrains Mono — ₹2,148 / cert IDs</div><div class="type-meta">numbers / data / code</div></div>
+`;
+
+const spaces = [4,8,12,16,24,32,48,64];
+document.getElementById('space-scale').innerHTML = spaces.map(px => `
+  <div class="space-row"><span class="space-label">${px}px</span><div class="space-bar" style="width:${px*3}px"></div></div>
+`).join('');
+
+// ===== ESTIMATOR PROTOTYPE =====
+const practices = [
+  { id:'no_till', icon:'🚜', label:'No-till', rate:0.73 },
+  { id:'cover_crop', icon:'🌱', label:'Cover crop', rate:1.31 },
+  { id:'combo', icon:'🌾', label:'No-till + cover', rate:1.43 },
+  { id:'agroforestry', icon:'🌳', label:'Agroforestry', rate:0.67 },
+];
+let selectedPractice = 'combo';
+let areaHa = 2.5;
+let estState = 'default';
+
+function renderEstimator() {
+  const frame = document.getElementById('est-frame');
+  if (estState === 'loading') {
+    frame.innerHTML = `<div class="skeleton" style="height:16px; width:60%; margin-bottom:10px;"></div>
+      <div class="skeleton" style="height:80px; margin-bottom:10px;"></div>
+      <div class="skeleton" style="height:40px;"></div>`;
+    return;
+  }
+  if (estState === 'error') {
+    frame.innerHTML = `<div class="error-box"><strong>Couldn't reach the server.</strong><br>Check your connection and try again.</div>
+      <button style="margin-top:10px; width:100%; padding:8px; background:var(--soil); color:#fff; border:none; border-radius:8px; font-size:12px;" onclick="setEstState('default', document.querySelector('.state-btn'))">Retry</button>`;
+    return;
+  }
+  const rate = practices.find(p => p.id === selectedPractice).rate;
+  const co2e = (rate * areaHa).toFixed(2);
+  const inr = Math.round(co2e * 1800 * 0.85);
+  frame.innerHTML = `
+    <div class="mini-practice-grid">
+      ${practices.map(p => `
+        <div class="mini-practice ${p.id === selectedPractice ? 'sel' : ''}" onclick="selectPractice('${p.id}')">
+          <div class="mini-icon">${p.icon}</div>${p.label}
+        </div>`).join('')}
+    </div>
+    <div class="mini-slider-label">Land area: ${areaHa} ha</div>
+    <input type="range" min="0.5" max="10" step="0.1" value="${areaHa}" style="width:100%;" oninput="updateArea(this.value)">
+    <div class="mini-estimate-box">
+      <div class="mini-estimate-value">₹${inr.toLocaleString('en-IN')}</div>
+      <div class="mini-estimate-sub">${co2e} t CO2e estimated</div>
+      <div class="shap-bar-row"><span class="shap-label">Your practice</span><div class="shap-bar-track"><div class="shap-bar-fill" style="width:${Math.min(100, rate*45)}%"></div></div></div>
+      <div class="shap-bar-row"><span class="shap-label">Your soil</span><div class="shap-bar-track"><div class="shap-bar-fill" style="width:22%"></div></div></div>
+      <div class="shap-bar-row"><span class="shap-label">Your rainfall</span><div class="shap-bar-track"><div class="shap-bar-fill" style="width:8%"></div></div></div>
+    </div>`;
+}
+function selectPractice(id) { selectedPractice = id; renderEstimator(); }
+function updateArea(v) { areaHa = parseFloat(v); renderEstimator(); }
+function setEstState(s, btn) {
+  estState = s;
+  document.querySelectorAll('#tab-screens .screen-card:nth-of-type(2) .state-btn, [onclick*="setEstState"]').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  renderEstimator();
+}
+renderEstimator();
+
+// ===== MARKETPLACE PROTOTYPE =====
+const mktListings = [
+  { district:'Pune', practice:'combo', co2e:1.79, price:2148 },
+  { district:'Nashik', practice:'agroforestry', co2e:0.84, price:1310 },
+  { district:'Nagpur', practice:'no_till', co2e:1.61, price:1955 },
+  { district:'Solapur', practice:'cover_crop', co2e:2.10, price:2680 },
+];
+let mktState = 'default';
+let mktFilter = null;
+document.getElementById('mkt-filters').innerHTML = practices.map(p =>
+  `<span class="tag" style="cursor:pointer;" onclick="toggleMktFilter('${p.id}', this)">${p.icon} ${p.label}</span>`
+).join('');
+
+function toggleMktFilter(id, el) {
+  mktFilter = mktFilter === id ? null : id;
+  document.querySelectorAll('#mkt-filters .tag').forEach(t => t.style.background = 'var(--sky)');
+  if (mktFilter) el.style.background = 'var(--leaf-mid)', el.style.color = '#fff';
+  else document.querySelectorAll('#mkt-filters .tag').forEach(t => { t.style.background=''; t.style.color=''; });
+  renderMkt();
+}
+function setMktState(s, btn) {
+  mktState = s;
+  btn.parentElement.querySelectorAll('.state-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderMkt();
+}
+function renderMkt() {
+  const frame = document.getElementById('mkt-frame');
+  if (mktState === 'loading') {
+    frame.innerHTML = `<div class="mini-card-grid">${Array(4).fill('<div class="skeleton" style="height:90px;"></div>').join('')}</div>`;
+    return;
+  }
+  if (mktState === 'empty') {
+    frame.innerHTML = `<div class="empty-box">No listings match these filters yet.<br>Try widening your price range or district.</div>`;
+    return;
+  }
+  const filtered = mktFilter ? mktListings.filter(l => l.practice === mktFilter) : mktListings;
+  if (filtered.length === 0) {
+    frame.innerHTML = `<div class="empty-box">No listings match these filters yet.<br>Try widening your price range or district.</div>`;
+    return;
+  }
+  frame.innerHTML = `<div class="mini-card-grid">${filtered.map(l => `
+    <div class="mini-listing-card">
+      <div style="font-size:10px; color:var(--muted);">${l.district}</div>
+      <div style="font-size:11px; font-weight:600;">${l.co2e} t CO2e</div>
+      <div class="mini-listing-price">₹${l.price.toLocaleString('en-IN')}</div>
+      <button class="mini-buy-btn">Buy Now</button>
+    </div>`).join('')}</div>`;
+}
+renderMkt();
+
+// ===== IMPACT PROTOTYPE =====
+let impactState = 'default';
+function setImpactState(s, btn) {
+  impactState = s;
+  btn.parentElement.querySelectorAll('.state-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderImpact();
+}
+function renderImpact() {
+  const frame = document.getElementById('impact-frame');
+  if (impactState === 'loading') {
+    frame.innerHTML = `<div class="impact-stat-grid">${Array(4).fill('<div class="skeleton" style="height:52px;"></div>').join('')}</div>`;
+    return;
+  }
+  frame.innerHTML = `<div class="impact-stat-grid">
+    <div class="impact-stat"><div class="impact-stat-val">18.4 t</div><div class="impact-stat-label">CO2e listed</div></div>
+    <div class="impact-stat"><div class="impact-stat-val">₹31,240</div><div class="impact-stat-label">Farmer income</div></div>
+    <div class="impact-stat"><div class="impact-stat-val">12</div><div class="impact-stat-label">Farmers</div></div>
+    <div class="impact-stat"><div class="impact-stat-val">5</div><div class="impact-stat-label">Districts</div></div>
+  </div>`;
+}
+renderImpact();
+
+// ===== COMPONENT LIBRARY =====
+const components = [
+  { name:'PracticeSelector', file:'components/PracticeSelector.jsx', props:[['value','string','currently selected practice_type'],['onChange','function','fires with new practice_type on click']], states:'default, selected, disabled (during loading)' },
+  { name:'ShapBreakdownChart', file:'components/ShapBreakdownChart.jsx', props:[['breakdown','object','{base_practice, soil_modifier, rainfall_zone, area_scaling}']], states:'populated, empty (hidden entirely, never shown blank)' },
+  { name:'ListingCard', file:'components/ListingCard.jsx (to be extracted from Marketplace.jsx)', props:[['listing','object','full listing record incl. joined estimate + farmer']], states:'default, sold (dimmed, Buy button replaced with "Sold")' },
+  { name:'StatusBadge', file:'new — extract from MyListings', props:[['status','enum','pending_verification | live | sold | expired | rejected']], states:'5 color/label variants, see §tab-screens My Listings' },
+  { name:'FilterChip', file:'new — used in Marketplace', props:[['label','string',''],['active','boolean',''],['onToggle','function','']], states:'default, active, hover' },
+  { name:'Slider', file:'wraps native input[type=range]', props:[['min','number',''],['max','number',''],['value','number',''],['onChange','function','']], states:'default, focus (visible ring), disabled' },
+  { name:'PurchaseModal', file:'new — Checkout flow', props:[['listing','object',''],['onConfirm','function',''],['onCancel','function','']], states:'default, processing (button spinner), error' },
+  { name:'LanguageToggle', file:'new — Onboarding', props:[['value','mr|hi|en',''],['onChange','function','']], states:'default — no loading/error, purely local state' },
+];
+document.getElementById('comp-list').innerHTML = components.map((c, i) => `
+  <div class="comp-card">
+    <div class="comp-head" onclick="toggleComp(${i})">
+      <span class="comp-name">${c.name}</span>
+      <span class="comp-file">${c.file}</span>
+      <span class="chev" id="chev-${i}">▾</span>
+    </div>
+    <div class="comp-detail" id="detail-${i}">
+      <div class="comp-detail-inner">
+        <table class="props-table">
+          <thead><tr><th>Prop</th><th>Type</th><th>Notes</th></tr></thead>
+          <tbody>${c.props.map(p => `<tr><td>${p[0]}</td><td>${p[1]}</td><td>${p[2]}</td></tr>`).join('')}</tbody>
+        </table>
+        <div style="margin-top:10px; font-size:12px; color:var(--muted);"><strong>States:</strong> ${c.states}</div>
+      </div>
+    </div>
+  </div>`).join('');
+function toggleComp(i) {
+  document.getElementById('detail-' + i).classList.toggle('open');
+  document.getElementById('chev-' + i).classList.toggle('open');
+}
+
+// ===== RESPONSIVE DEMO =====
+function updateResize(v) {
+  document.getElementById('resize-label').textContent = v + 'px';
+  document.getElementById('resize-frame').style.width = v + 'px';
+  const grid = document.getElementById('resize-practice-grid');
+  grid.style.gridTemplateColumns = v < 420 ? '1fr' : '1fr 1fr';
+}
+document.getElementById('resize-practice-grid').innerHTML = practices.map(p => `
+  <div class="mini-practice ${p.id === 'combo' ? 'sel' : ''}"><div class="mini-icon">${p.icon}</div>${p.label}</div>
+`).join('');
+updateResize(375);
+
+// ===== A11Y CHECKLIST =====
+const a11yItems = [
+  ['Color contrast ≥ 4.5:1 for all body text', 'Verified against the palette in §tab-design'],
+  ['Every practice card / filter chip keyboard-operable (Tab + Enter/Space)', 'Not just click handlers — onKeyDown required'],
+  ['Slider has a visible numeric value alongside the thumb', 'Never rely on thumb position alone'],
+  ['Status badges carry a text label, not color alone', 'WCAG 1.4.1'],
+  ['Farmer PWA tap targets ≥ 44×44px', 'PRD §12.5'],
+  ['Screen reader announces estimate result on arrival', 'aria-live="polite" region around the estimate box'],
+  ['Reduced-motion respected — SHAP bar animation and modal transitions disabled', 'prefers-reduced-motion media query'],
+];
+document.getElementById('a11y-checklist').innerHTML = a11yItems.map((item, i) => `
+  <div class="check-item">
+    <input type="checkbox" id="a11y-${i}">
+    <label for="a11y-${i}">${item[0]}<span class="check-note">${item[1]}</span></label>
+  </div>`).join('');
+</script>
+
+</body>
+</html>

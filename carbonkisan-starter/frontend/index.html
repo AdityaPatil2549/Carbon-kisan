@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Carbon Kisan — Carbon Credits for Every Farmer</title>
+  <meta name="description" content="Carbon Kisan connects rural Indian farmers with urban CSR buyers through verifiable carbon credits. Log sustainable farming practices, earn income, and make an impact.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/styles.css">
+  <style>
+    /* ── LANDING PAGE SPECIFIC ── */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 80px 24px 60px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background:
+        radial-gradient(ellipse 60% 50% at 50% 0%, rgba(46,204,113,0.12) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 40% at 20% 60%, rgba(26,107,138,0.08) 0%, transparent 60%);
+      pointer-events: none;
+    }
+
+    .hero-leaf-bg {
+      position: absolute;
+      top: -60px;
+      right: -80px;
+      font-size: 280px;
+      opacity: 0.04;
+      pointer-events: none;
+      transform: rotate(-15deg);
+      user-select: none;
+    }
+
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(46,204,113,0.1);
+      border: 0.5px solid rgba(46,204,113,0.3);
+      border-radius: 999px;
+      padding: 5px 16px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--leaf);
+      letter-spacing: 0.5px;
+      margin-bottom: 28px;
+      animation: fadeInDown 0.6s ease-out both;
+    }
+
+    .hero-title {
+      font-size: clamp(36px, 6vw, 64px);
+      font-weight: 700;
+      color: var(--text-primary);
+      line-height: 1.1;
+      letter-spacing: -1px;
+      margin-bottom: 20px;
+      max-width: 700px;
+      animation: fadeInUp 0.7s ease-out 0.1s both;
+    }
+
+    .hero-title span {
+      color: var(--leaf);
+    }
+
+    .hero-subtitle {
+      font-size: clamp(15px, 2vw, 18px);
+      color: var(--text-secondary);
+      line-height: 1.7;
+      max-width: 520px;
+      margin-bottom: 40px;
+      animation: fadeInUp 0.7s ease-out 0.2s both;
+    }
+
+    .hero-ctas {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      justify-content: center;
+      animation: fadeInUp 0.7s ease-out 0.3s both;
+    }
+
+    .hero-cta-farmer {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--leaf);
+      color: var(--ink);
+      border: none;
+      border-radius: var(--radius-lg);
+      padding: 16px 32px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 24px rgba(46,204,113,0.3);
+    }
+
+    .hero-cta-farmer:hover {
+      background: #34d978;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 32px rgba(46,204,113,0.4);
+    }
+
+    .hero-cta-buyer {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--sky);
+      color: white;
+      border: none;
+      border-radius: var(--radius-lg);
+      padding: 16px 32px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 24px rgba(26,107,138,0.3);
+    }
+
+    .hero-cta-buyer:hover {
+      background: var(--sky-dim);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 32px rgba(26,107,138,0.4);
+    }
+
+    /* ── ESTIMATOR SECTION ── */
+    .estimator-section {
+      padding: 80px 24px;
+      background: var(--surface-1);
+      border-top: 0.5px solid var(--border);
+      border-bottom: 0.5px solid var(--border);
+    }
+
+    .estimator-section .container {
+      max-width: 800px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .estimator-card {
+      background: var(--surface-2);
+      border: 0.5px solid var(--border-strong);
+      border-radius: var(--radius-xl);
+      padding: 40px;
+      margin-top: 32px;
+    }
+
+    .estimator-fields {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .estimator-result {
+      background: linear-gradient(135deg, rgba(46,204,113,0.1), rgba(26,107,138,0.06));
+      border: 0.5px solid var(--leaf);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      text-align: center;
+      opacity: 0;
+      transform: translateY(8px);
+      transition: all 0.4s ease;
+    }
+
+    .estimator-result.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .estimator-result-amount {
+      font-size: 48px;
+      font-weight: 700;
+      color: var(--leaf);
+      line-height: 1;
+    }
+
+    .estimator-result-label {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-top: 6px;
+    }
+
+    .estimator-result-co2 {
+      font-size: 14px;
+      color: var(--text-secondary);
+      margin-top: 8px;
+    }
+
+    /* ── HOW IT WORKS ── */
+    .how-section {
+      padding: 80px 24px;
+      position: relative;
+    }
+
+    .how-section::before {
+      content: '';
+      position: absolute;
+      top: 20%;
+      left: 10%;
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(46,204,113,0.05) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .how-steps-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 32px;
+      margin-top: 56px;
+      position: relative;
+    }
+    
+    .how-card {
+      background: rgba(16, 32, 53, 0.4);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255,255,255,0.05);
+      border-radius: 24px;
+      padding: 40px;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.4s ease;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      text-align: left;
+    }
+    .how-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: radial-gradient(circle at top right, rgba(46,204,113,0.08) 0%, transparent 60%);
+      opacity: 0;
+      transition: opacity 0.4s ease;
+      pointer-events: none;
+    }
+    .how-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(46,204,113,0.3);
+      box-shadow: 0 12px 40px rgba(0,0,0,0.4), 0 0 20px rgba(46,204,113,0.1);
+    }
+    .how-card:hover::before {
+      opacity: 1;
+    }
+    .how-card-icon-wrap {
+      width: 64px;
+      height: 64px;
+      background: linear-gradient(135deg, rgba(46,204,113,0.15), rgba(26,107,138,0.1));
+      border: 1px solid rgba(46,204,113,0.2);
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      margin-bottom: 8px;
+    }
+    .how-card-num {
+      position: absolute;
+      top: 32px;
+      right: 32px;
+      font-size: 80px;
+      font-weight: 800;
+      color: rgba(255,255,255,0.03);
+      line-height: 1;
+      pointer-events: none;
+      user-select: none;
+    }
+    .how-card-title {
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+    .how-card-desc {
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.7;
+    }
+    .how-card-tags {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: auto;
+      padding-top: 16px;
+    }
+    .how-tag {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--leaf);
+      background: rgba(46,204,113,0.1);
+      padding: 4px 12px;
+      border-radius: 99px;
+      border: 0.5px solid rgba(46,204,113,0.2);
+    }
+    
+    @media (max-width: 768px) {
+      .how-steps-grid { grid-template-columns: 1fr; }
+    }
+
+    /* ── TRUST BAR ── */
+    .trust-bar-container {
+      padding: 40px 24px;
+      background: linear-gradient(180deg, transparent 0%, rgba(16, 32, 53, 0.4) 100%);
+      position: relative;
+    }
+    
+    .trust-bar {
+      max-width: 1200px;
+      margin: 0 auto;
+      background: rgba(16, 32, 53, 0.6);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 20px;
+      padding: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    }
+
+    .trust-item {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex: 1 1 auto;
+      white-space: nowrap;
+      gap: 12px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      transition: all 0.3s ease;
+      background: rgba(255,255,255,0.02);
+      padding: 10px 18px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.03);
+    }
+
+    .trust-item:hover {
+      color: var(--text-primary);
+      background: rgba(46, 204, 113, 0.05);
+      border-color: rgba(46, 204, 113, 0.2);
+      transform: translateY(-2px);
+    }
+
+    .trust-item-icon {
+      font-size: 22px;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+    }
+
+    /* ── LIVE TICKER ── */
+    .ticker-section {
+      padding: 20px 0;
+      margin-top: 96px; /* Offset for fixed floating navbar */
+      background: var(--surface-2);
+      overflow: hidden;
+      border-top: 0.5px solid var(--border);
+    }
+
+    .ticker-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0 20px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      white-space: nowrap;
+    }
+
+    .ticker-pulse {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--leaf);
+      animation: pulse 2s infinite;
+    }
+
+    .ticker-track {
+      display: flex;
+      gap: 0;
+      white-space: nowrap;
+    }
+
+    .ticker-inner {
+      display: flex;
+      gap: 48px;
+      animation: ticker 30s linear infinite;
+      white-space: nowrap;
+    }
+
+    .ticker-item {
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    .ticker-item .highlight {
+      color: var(--leaf);
+      font-weight: 600;
+    }
+
+    .ticker-item .buyer-highlight {
+      color: #5BC8E8;
+    }
+
+    @keyframes ticker {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+
+    /* ── FOOTER ── */
+    .footer {
+      background: var(--surface-1);
+      border-top: 0.5px solid var(--border);
+      padding: 48px 24px 32px;
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 40px;
+      max-width: 1200px;
+      margin: 0 auto 40px;
+    }
+
+    .footer-brand-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .footer-brand-icon {
+      width: 32px;
+      height: 32px;
+      background: var(--leaf);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+    }
+
+    .footer-brand-name {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--leaf);
+    }
+
+    .footer-brand-desc {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.7;
+      max-width: 240px;
+    }
+
+    .footer-col-title {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      margin-bottom: 16px;
+    }
+
+    .footer-links {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .footer-link {
+      font-size: 13px;
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+
+    .footer-link:hover {
+      color: var(--leaf);
+    }
+
+    .footer-bottom {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding-top: 24px;
+      border-top: 0.5px solid var(--border);
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .footer-bottom-text {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .footer-bottom-langs {
+      display: flex;
+      gap: 12px;
+    }
+
+    .footer-lang {
+      font-size: 12px;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: color 0.15s;
+    }
+
+    .footer-lang:hover {
+      color: var(--leaf);
+    }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeInDown {
+      from { opacity: 0; transform: translateY(-16px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 768px) {
+      .estimator-fields {
+        grid-template-columns: 1fr;
+      }
+
+      .how-steps {
+        grid-template-columns: 1fr;
+      }
+
+      .how-steps::before {
+        display: none;
+      }
+
+      .trust-bar {
+        gap: 24px;
+      }
+
+      .footer-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .footer-grid > div:first-child {
+        grid-column: 1 / -1;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── NAVBAR ── -->
+<nav class="navbar" id="main-nav">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-brand">
+      <div class="nav-brand-icon">🌿</div>
+      <div>
+        <div class="nav-brand-name">Carbon Kisan</div>
+      </div>
+    </a>
+    <div class="nav-links">
+      <a href="#how-it-works" class="nav-link" data-i18n="nav_how">How it works</a>
+      <a href="#about" class="nav-link" data-i18n="nav_about">About</a>
+      <a href="marketplace.html" class="nav-link" data-i18n="nav_marketplace">Marketplace</a>
+    </div>
+    <div class="nav-actions">
+      <div class="lang-switcher" id="landing-lang">
+        <button class="lang-tag active" data-lang="en">EN ▾</button>
+      </div>
+      <a href="farmer-login.html" class="btn btn-secondary btn-sm" data-i18n="btn_login">Log in</a>
+    </div>
+    <button class="hamburger" id="hamburger" aria-label="Toggle menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+  <div class="mobile-menu" id="mobile-menu">
+    <div class="mobile-menu-inner">
+      <a href="#how-it-works" class="mobile-link" onclick="closeMobileMenu()" data-i18n="nav_how">How it works</a>
+      <a href="#about" class="mobile-link" onclick="closeMobileMenu()" data-i18n="nav_about">About</a>
+      <a href="marketplace.html" class="mobile-link" data-i18n="nav_marketplace">Marketplace</a>
+      <div class="mobile-lang-switcher" style="margin-top:12px">
+        <button class="lang-tag active" data-lang="en">🇬🇧 English</button>
+        <button class="lang-tag" data-lang="hi">हिंदी</button>
+        <button class="lang-tag" data-lang="mr">मराठी</button>
+      </div>
+      <div class="mobile-menu-ctas">
+        <a href="farmer-login.html" class="btn btn-primary" style="flex:1" data-i18n="btn_farmer">🌾 I'm a farmer</a>
+        <a href="buyer-login.html" class="btn btn-sky" style="flex:1" data-i18n="btn_buyer">🏢 I'm a CSR buyer</a>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- ── LIVE TICKER ── -->
+<div class="ticker-section">
+  <div style="display:flex;align-items:center;overflow:hidden">
+    <div class="ticker-label">
+      <div class="ticker-pulse"></div>
+      LIVE
+    </div>
+    <div class="ticker-track">
+      <div class="ticker-inner" id="ticker">
+        <span class="ticker-item">CC-7821 purchased by <span class="buyer-highlight">Tata Motors</span> for <span class="highlight">₹560</span></span>
+        <span class="ticker-item">Sunita Devi (Punjab) issued credit — <span class="highlight">0.148 t CO₂</span></span>
+        <span class="ticker-item">CC-7614 purchased by <span class="buyer-highlight">Infosys Foundation</span> for <span class="highlight">₹740</span></span>
+        <span class="ticker-item">Kavita Bai (MP) issued credit — <span class="highlight">0.096 t CO₂</span></span>
+        <span class="ticker-item">CC-7803 purchased by <span class="buyer-highlight">Wipro CSR</span> for <span class="highlight">₹380</span></span>
+        <span class="ticker-item">Mohan Reddy (Telangana) issued credit — <span class="highlight">0.124 t CO₂</span></span>
+        <!-- Duplicate for seamless loop -->
+        <span class="ticker-item">CC-7821 purchased by <span class="buyer-highlight">Tata Motors</span> for <span class="highlight">₹560</span></span>
+        <span class="ticker-item">Sunita Devi (Punjab) issued credit — <span class="highlight">0.148 t CO₂</span></span>
+        <span class="ticker-item">CC-7614 purchased by <span class="buyer-highlight">Infosys Foundation</span> for <span class="highlight">₹740</span></span>
+        <span class="ticker-item">Kavita Bai (MP) issued credit — <span class="highlight">0.096 t CO₂</span></span>
+        <span class="ticker-item">CC-7803 purchased by <span class="buyer-highlight">Wipro CSR</span> for <span class="highlight">₹380</span></span>
+        <span class="ticker-item">Mohan Reddy (Telangana) issued credit — <span class="highlight">0.124 t CO₂</span></span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── HERO ── -->
+<section class="hero" id="hero">
+  <div class="hero-leaf-bg">🌿</div>
+  <div class="hero-eyebrow" data-i18n="hero_eyebrow">
+    <span>🌱</span>
+    <span>India's first farmer-led carbon marketplace</span>
+  </div>
+  <h1 class="hero-title" data-i18n="hero_title">
+    Carbon credits for<br>
+    <span>every farmer.</span>
+  </h1>
+  <p class="hero-subtitle" data-i18n="hero_sub">
+    Log sustainable farming practices. Our ML model estimates carbon sequestration. CSR buyers purchase verified micro-credits — creating direct income for rural India.
+  </p>
+  <div class="hero-ctas">
+    <div style="display:flex;flex-direction:column;gap:10px;align-items:center">
+      <span style="font-size:12px;color:var(--text-muted);font-weight:600;text-transform:uppercase;letter-spacing:0.8px">🌾 For Farmers</span>
+      <div style="display:flex;gap:10px">
+        <a href="farmer-login.html?mode=login" class="hero-cta-farmer" id="farmer-login-cta" style="padding:14px 24px;font-size:15px">
+          Log in
+        </a>
+        <a href="farmer-login.html?mode=signup" class="hero-cta-farmer" id="farmer-signup-cta" style="padding:14px 24px;font-size:15px;background:transparent;border:1.5px solid rgba(46,204,113,0.5);color:var(--leaf)">
+          Sign up free
+        </a>
+      </div>
+    </div>
+    <div style="width:1px;height:60px;background:var(--border);margin:0 8px"></div>
+    <a href="buyer-login.html" class="hero-cta-buyer" id="buyer-cta" data-i18n="btn_buyer">
+      🏢 I'm a CSR buyer
+    </a>
+  </div>
+</section>
+
+
+
+<!-- ── HOW IT WORKS ── -->
+<section class="how-section container" id="how-it-works">
+  <div style="text-align:center">
+    <div class="section-eyebrow">Simple process</div>
+    <h2 class="section-title" data-i18n="how_title">How Carbon Kisan works</h2>
+    <p class="section-subtitle" data-i18n="how_sub">The complete lifecycle from sustainable farming to verified credits.</p>
+  </div>
+  <div class="how-steps-grid">
+    <div class="how-card">
+      <div class="how-card-num">1</div>
+      <div class="how-card-icon-wrap">📝</div>
+      <h3 class="how-card-title">Onboard & Verify Land</h3>
+      <p class="how-card-desc">Farmers register on the platform by submitting basic details and 7/12 land records. We verify the ownership and farm boundaries securely.</p>
+      <div class="how-card-tags">
+        <span class="how-tag">Secure Auth</span>
+        <span class="how-tag">Document Verification</span>
+      </div>
+    </div>
+    <div class="how-card">
+      <div class="how-card-num">2</div>
+      <div class="how-card-icon-wrap">📱</div>
+      <h3 class="how-card-title">Log Sustainable Practice</h3>
+      <p class="how-card-desc">Using a simple mobile interface (in local language), farmers report sustainable actions like no-till, cover cropping, or reduced pesticide usage.</p>
+      <div class="how-card-tags">
+        <span class="how-tag">Localization</span>
+        <span class="how-tag">Mobile First</span>
+      </div>
+    </div>
+    <div class="how-card">
+      <div class="how-card-num">3</div>
+      <div class="how-card-icon-wrap">🤖</div>
+      <h3 class="how-card-title">ML Carbon Verification</h3>
+      <p class="how-card-desc">Our proprietary XGBoost model, trained on ICRISAT soil data (R² 0.81), processes the logged data to accurately calculate CO₂ sequestration.</p>
+      <div class="how-card-tags">
+        <span class="how-tag">Machine Learning</span>
+        <span class="how-tag">High Accuracy</span>
+      </div>
+    </div>
+    <div class="how-card">
+      <div class="how-card-num">4</div>
+      <div class="how-card-icon-wrap">💰</div>
+      <h3 class="how-card-title">Instant UPI Payouts</h3>
+      <p class="how-card-desc">Verified credits are listed on our marketplace. Once a CSR team purchases them, the farmer receives an instant UPI payout and WhatsApp alert.</p>
+      <div class="how-card-tags">
+        <span class="how-tag">Instant Settlement</span>
+        <span class="how-tag">WhatsApp API</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── TRUST BAR ── -->
+<div class="trust-bar-container" id="about">
+  <div class="trust-bar">
+    <div class="trust-item">
+      <span class="trust-item-icon">🔒</span>
+      <span data-i18n="trust_land">7/12 document verified land ownership</span>
+    </div>
+    <div class="trust-item">
+      <span class="trust-item-icon">🤖</span>
+      <span data-i18n="trust_ml">ML-verified carbon sequestration</span>
+    </div>
+    <div class="trust-item">
+      <span class="trust-item-icon">💬</span>
+      <span data-i18n="trust_wa">WhatsApp notifications in your language</span>
+    </div>
+    <div class="trust-item">
+      <span class="trust-item-icon">📜</span>
+      <span data-i18n="trust_cert">Downloadable CSR impact certificates</span>
+    </div>
+    <div class="trust-item">
+      <span class="trust-item-icon">⚡</span>
+      <span data-i18n="trust_upi">UPI payment within 24 hours</span>
+    </div>
+  </div>
+</div>
+
+<!-- ── FOOTER ── -->
+<footer class="footer">
+  <div class="footer-grid">
+    <div>
+      <div class="footer-brand-logo">
+        <div class="footer-brand-icon">🌿</div>
+        <div class="footer-brand-name">Carbon Kisan</div>
+      </div>
+      <p class="footer-brand-desc">India's first farmer-led carbon marketplace. Verifiable. Transparent. Impactful.</p>
+    </div>
+    <div>
+      <div class="footer-col-title">For Farmers</div>
+      <div class="footer-links">
+        <a href="farmer-login.html" class="footer-link">Login / Register</a>
+        <a href="farmer-dashboard.html" class="footer-link">Dashboard</a>
+        <a href="log-practice.html" class="footer-link">Log Practice</a>
+        <a href="#" class="footer-link">Refer a farmer</a>
+      </div>
+    </div>
+    <div>
+      <div class="footer-col-title">For CSR Buyers</div>
+      <div class="footer-links">
+        <a href="buyer-login.html" class="footer-link">Login</a>
+        <a href="buyer-dashboard.html" class="footer-link">Dashboard</a>
+        <a href="marketplace.html" class="footer-link">Marketplace</a>
+        <a href="#" class="footer-link">Impact certificates</a>
+      </div>
+    </div>
+    <div>
+      <div class="footer-col-title">Company</div>
+      <div class="footer-links">
+        <a href="#" class="footer-link">About us</a>
+        <a href="#" class="footer-link">Contact</a>
+        <a href="#" class="footer-link">Privacy policy</a>
+        <a href="#" class="footer-link">Terms of service</a>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div class="footer-bottom-text">© 2026 Carbon Kisan. All rights reserved.</div>
+    <div class="footer-bottom-langs">
+      <span class="footer-lang" data-lang="hi">हिंदी</span>
+      <span class="footer-lang" data-lang="mr">मराठी</span>
+    </div>
+  </div>
+</footer>
+
+<script src="/js/main.js"></script>
+<script>
+
+</script>
+</body>
+</html>

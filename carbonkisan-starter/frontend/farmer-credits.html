@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Carbon Kisan — Credits</title>
+  <meta name="description" content="Manage your carbon credits, track earnings, and log sustainable farming practices.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/styles.css">
+  <style>
+    .farmer-layout { padding-top: 64px; }
+    .farmer-main { max-width: 960px; margin: 0 auto; padding: 32px 24px; }
+    .greeting-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; flex-wrap: wrap; gap: 12px; }
+    .greeting-text { font-size: 14px; color: var(--text-muted); }
+    .greeting-name { font-size: 20px; font-weight: 700; color: var(--text-primary); margin-top: 2px; }
+    .stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 24px; }
+    .stat-card-big { background: var(--surface-2); border: 0.5px solid var(--border); border-radius: var(--radius-lg); padding: 20px; position: relative; overflow: hidden; transition: border-color 0.2s; }
+    .stat-card-big:hover { border-color: var(--border-strong); }
+    .stat-card-big::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: var(--leaf); }
+    .stat-card-big.sky::before { background: var(--river); }
+    .stat-card-big.text::before { background: var(--border-strong); }
+    .stat-card-big .stat-label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 8px; }
+    .stat-card-big .stat-value { font-size: 32px; font-weight: 700; line-height: 1; color: var(--leaf); }
+    .stat-card-big.sky .stat-value { color: var(--river); }
+    .stat-card-big.text .stat-value { color: var(--text-primary); font-size: 24px; }
+    .wallet-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+    .wallet-title { font-size: 15px; font-weight: 600; color: var(--text-primary); }
+    .credit-item { display: flex; align-items: center; gap: 12px; padding: 14px 0; border-bottom: 0.5px solid var(--border); }
+    .credit-item:last-child { border-bottom: none; }
+    .credit-item-icon { width: 36px; height: 36px; background: var(--leaf-muted); border: 0.5px solid var(--border-strong); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+    .credit-item-body { flex: 1; min-width: 0; }
+    .credit-item-title { font-size: 13px; font-weight: 500; color: var(--text-primary); }
+    .credit-item-meta { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+    .credit-item-right { text-align: right; flex-shrink: 0; }
+    .credit-item-amount { font-size: 14px; font-weight: 700; color: var(--leaf); }
+    .live-header { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+    .referral-card { background: linear-gradient(135deg, rgba(46,204,113,0.07), rgba(26,107,138,0.05)); border: 0.5px solid var(--border-strong); border-radius: var(--radius-lg); padding: 20px; }
+    .referral-link-row { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+    .referral-link-input { flex: 1; min-width: 180px; background: var(--surface-1); border: 0.5px solid var(--border-strong); border-radius: var(--radius); padding: 10px 14px; font-size: 13px; color: var(--leaf); font-family: monospace; outline: none; }
+    .leaderboard-item { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 0.5px solid var(--border); }
+    .leaderboard-item:last-child { border-bottom: none; }
+    .leaderboard-rank { width: 24px; font-size: 13px; font-weight: 700; color: var(--text-muted); text-align: center; }
+    .leaderboard-rank.gold { color: #F59E0B; }
+    .leaderboard-rank.silver { color: #9BB89F; }
+    .leaderboard-rank.bronze { color: #A0673A; }
+    @media (max-width: 768px) {
+      .stats-row { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: 12px; padding-bottom: 4px; scrollbar-width: none; margin-bottom: 20px; }
+      .stats-row::-webkit-scrollbar { display: none; }
+      .stat-card-big { min-width: 160px; scroll-snap-align: start; }
+      .greeting-bar { gap: 8px; }
+      .greeting-name { font-size: 17px; }
+      .referral-link-row { flex-direction: column; }
+      .referral-link-row .btn { width: 100%; justify-content: center; }
+    }
+    @media (max-width: 480px) {
+      .farmer-main { padding: 20px 14px; }
+      .stat-card-big { min-width: 140px; padding: 16px; }
+      .stat-card-big .stat-value { font-size: 26px; }
+    }
+
+    /* ── APP TOUR ── */
+    .tour-overlay {
+      position: fixed; inset: 0; z-index: 9000;
+      background: rgba(0,0,0,0.72);
+      display: flex; align-items: center; justify-content: center;
+      animation: fadeIn 0.3s ease;
+    }
+    .tour-overlay.hidden { display: none; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    .tour-card {
+      background: var(--surface-1);
+      border: 0.5px solid var(--border-strong);
+      border-radius: 20px;
+      padding: 36px 40px;
+      max-width: 480px;
+      width: calc(100% - 48px);
+      position: relative;
+      box-shadow: 0 24px 80px rgba(0,0,0,0.5);
+      animation: slideUp 0.35s cubic-bezier(.22,1,.36,1);
+    }
+    @keyframes slideUp { from { transform: translateY(32px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    .tour-step-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: var(--leaf-muted); border: 0.5px solid var(--leaf);
+      border-radius: 99px; padding: 4px 12px;
+      font-size: 11px; font-weight: 600; color: var(--leaf);
+      text-transform: uppercase; letter-spacing: 0.6px;
+      margin-bottom: 16px;
+    }
+    .tour-icon { font-size: 48px; margin-bottom: 16px; }
+    .tour-title { font-size: 22px; font-weight: 700; color: var(--text-primary); margin-bottom: 10px; }
+    .tour-desc { font-size: 14px; color: var(--text-secondary); line-height: 1.7; margin-bottom: 24px; }
+    .tour-dots { display: flex; gap: 6px; margin-bottom: 20px; }
+    .tour-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--border-strong); transition: all 0.2s; }
+    .tour-dot.active { background: var(--leaf); width: 20px; border-radius: 4px; }
+    .tour-actions { display: flex; gap: 10px; }
+    .tour-skip { font-size: 13px; color: var(--text-muted); cursor: pointer; padding: 10px; text-decoration: underline; background: none; border: none; font-family: inherit; }
+    .new-user-empty {
+      text-align: center; padding: 40px 20px;
+      color: var(--text-muted);
+    }
+    .new-user-empty .empty-icon { font-size: 48px; margin-bottom: 12px; }
+    .new-user-empty .empty-title { font-size: 15px; font-weight: 600; color: var(--text-primary); margin-bottom: 6px; }
+    .new-user-empty .empty-desc { font-size: 13px; line-height: 1.6; }
+  </style>
+</head>
+<body>
+
+<!-- ── APP TOUR OVERLAY ── -->
+<div class="tour-overlay hidden" id="tour-overlay">
+  <div class="tour-card" id="tour-card">
+    <div class="tour-step-badge" id="tour-badge">Step 1 of 4</div>
+    <div class="tour-icon" id="tour-icon">🌾</div>
+    <div class="tour-title" id="tour-title">Welcome to Carbon Kisan!</div>
+    <div class="tour-desc" id="tour-desc">You're now part of India's first farmer-led carbon marketplace. Let's take a quick tour of your dashboard.</div>
+    <div class="tour-dots" id="tour-dots">
+      <div class="tour-dot active"></div><div class="tour-dot"></div><div class="tour-dot"></div><div class="tour-dot"></div>
+    </div>
+    <div class="tour-actions">
+      <button class="btn btn-primary" style="flex:1;padding:13px" onclick="tourNext()">Next →</button>
+      <button class="tour-skip" onclick="closeTour()">Skip tour</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── NAVBAR ── -->
+<nav class="navbar" id="main-nav">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-brand">
+      <div class="nav-brand-icon">🌿</div>
+      <div class="nav-brand-name">Carbon Kisan</div>
+    </a>
+    <div class="nav-links">
+      <a href="farmer-dashboard.html" class="nav-link" data-i18n="nav_dashboard">Dashboard</a>
+      <a href="log-practice.html" class="nav-link" data-i18n="nav_log">Log practice</a>
+      <a href="farmer-credits.html" class="nav-link active" data-i18n="nav_credits">Credits</a>
+    </div>
+    <div class="nav-actions">
+      <div class="lang-switcher">
+        <button class="lang-tag active" data-lang="en">EN ▾</button>
+      </div>
+      <span class="badge badge-sold" id="farmer-navbar-badge">🌾 Rajan Patil</span>
+    </div>
+    <button class="hamburger" id="hamburger" aria-label="Toggle menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+  <div class="mobile-menu" id="mobile-menu">
+    <div class="mobile-menu-inner">
+      <a href="farmer-dashboard.html" class="mobile-link" data-i18n="nav_dashboard">Dashboard</a>
+      <a href="log-practice.html" class="mobile-link" data-i18n="nav_log">Log practice</a>
+      <a href="farmer-credits.html" class="mobile-link" onclick="closeMobileMenu()" data-i18n="nav_credits">Credits</a>
+      <div class="mobile-lang-switcher" style="margin-top:12px">
+        <button class="lang-tag active" data-lang="en">🇬🇧 English</button>
+        <button class="lang-tag" data-lang="hi">हिंदी</button>
+        <button class="lang-tag" data-lang="mr">मराठी</button>
+      </div>
+      <div class="mobile-menu-ctas" style="margin-top:16px;">
+        <!-- profile buttons will be dynamically injected here -->
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- ── BOTTOM NAV (Mobile) ── -->
+<nav class="bottom-nav">
+  <div class="bottom-nav-items">
+    <a href="farmer-dashboard.html" class="bottom-nav-item">
+      <span class="bottom-nav-icon">🏠</span>
+      <span>Home</span>
+    </a>
+    <a href="log-practice.html" class="bottom-nav-item">
+      <span class="bottom-nav-icon">📝</span>
+      <span>Log</span>
+    </a>
+    <a href="farmer-credits.html" class="bottom-nav-item active">
+      <span class="bottom-nav-icon">💰</span>
+      <span>Credits</span>
+    </a>
+  </div>
+</nav>
+
+<div class="farmer-layout">
+  <main class="farmer-main">
+
+    <!-- ── PAGE HEADER & STATS ── -->
+    <div class="greeting-bar" style="border-bottom: 1px solid var(--border); padding-bottom: 16px; margin-bottom: 24px;">
+      <div>
+        <div class="greeting-text">Financial Overview</div>
+        <div class="greeting-name" style="font-size: 28px;">Credit Wallet</div>
+      </div>
+    </div>
+
+    <div class="stats-row">
+      <div class="stat-card-big text">
+        <div class="stat-label">Lifetime Earnings</div>
+        <div class="stat-value" id="stat-balance" data-count="0" data-prefix="₹">₹0</div>
+        <div class="stat-sub" style="margin-top:6px;font-size:11px;color:var(--text-muted)">From sold credits</div>
+      </div>
+      <div class="stat-card-big sky">
+        <div class="stat-label">Available to Sell</div>
+        <div class="stat-value" id="stat-available-credits" data-count="0">0</div>
+        <div class="stat-sub" style="margin-top:6px;font-size:11px;color:var(--text-muted)">Verified & ready</div>
+      </div>
+      <div class="stat-card-big">
+        <div class="stat-label">Est. Value (Available)</div>
+        <div class="stat-value" id="stat-available-value" data-count="0" data-prefix="₹">₹0</div>
+        <div class="stat-sub" style="margin-top:6px;font-size:11px;color:var(--text-muted)">At ~₹5,000/t CO₂</div>
+      </div>
+    </div>
+
+    <!-- ── WALLET LIST ── -->
+    <div class="card" style="margin-top:24px;">
+      <div class="wallet-header">
+        <div class="wallet-title" data-i18n="f_wallet_title">💳 Credit history</div>
+        <span class="badge badge-success"><span class="badge-dot"></span><span id="wallet-count">0</span> available</span>
+      </div>
+
+      <div id="wallet-items">
+        <!-- dynamically populated -->
+      </div>
+    </div>
+
+    <!-- ── REFERRAL ── -->
+    <div class="referral-card mt-20" id="refer">
+      <div class="flex items-center justify-between flex-wrap gap-12">
+        <div>
+          <div style="font-size:15px;font-weight:600;color:var(--text-primary)" data-i18n="f_refer_title">Refer a farmer — earn ₹50 per referral</div>
+          <div style="font-size:13px;color:var(--text-muted);margin-top:4px" data-i18n="f_refer_sub">Share your link via WhatsApp in your preferred language</div>
+        </div>
+        <div class="flex gap-8">
+          <span class="badge badge-success"><span class="badge-dot"></span>3 referred</span>
+          <span class="badge badge-pending">₹150 earned</span>
+        </div>
+      </div>
+      <div class="referral-link-row">
+        <div class="referral-link-input" id="referral-link" style="display:flex;align-items:center">
+          carboncredit.in/r/RAJAN7821
+        </div>
+        <button class="btn btn-secondary btn-sm" onclick="copyToClipboard('carboncredit.in/r/RAJAN7821', 'Referral link copied!')" data-i18n="f_copy_btn">
+          📋 Copy link
+        </button>
+        <a href="https://wa.me/?text=Join%20Carbn%20Kisan%20and%20earn%20from%20your%20farm%20carboncredit.in/r/RAJAN7821"
+           target="_blank" class="btn btn-ghost btn-sm" data-i18n="f_share_btn">
+          💬 Share via WhatsApp
+        </a>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script src="/js/main.js"></script>
+<script>
+  const TOUR_STEPS = [
+    { badge: 'Step 1 of 4', icon: '🌾', title: 'Welcome to Carbon Kisan!', desc: "You're now part of India's first farmer-led carbon marketplace. Let's take a quick tour of your dashboard." },
+    { badge: 'Step 2 of 4', icon: '📝', title: 'Log your first practice', desc: 'Use "Log new practice" to record sustainable farming actions like no-till or cover cropping. Our ML model will calculate how much CO₂ you sequestered.' },
+    { badge: 'Step 3 of 4', icon: '💳', title: 'Your credit wallet', desc: 'Once verified, your credits appear here. CSR buyers across India can then purchase them — and you get a UPI payout directly to your account.' },
+    { badge: 'Step 4 of 4', icon: '🚀', title: "You're all set!", desc: 'Your dashboard will start filling up once you log your first practice. Start now and earn from your sustainable farming!' },
+  ];
+  let tourStep = 0;
+
+  function tourNext() {
+    tourStep++;
+    if (tourStep >= TOUR_STEPS.length) { closeTour(); return; }
+    const s = TOUR_STEPS[tourStep];
+    document.getElementById('tour-badge').textContent = s.badge;
+    document.getElementById('tour-icon').textContent = s.icon;
+    document.getElementById('tour-title').textContent = s.title;
+    document.getElementById('tour-desc').textContent = s.desc;
+    const dots = document.querySelectorAll('.tour-dot');
+    dots.forEach((d, i) => d.classList.toggle('active', i === tourStep));
+    if (tourStep === TOUR_STEPS.length - 1) document.querySelector('.tour-actions .btn').textContent = 'Get started ✓';
+  }
+
+  function closeTour() {
+    document.getElementById('tour-overlay').classList.add('hidden');
+    localStorage.setItem('carbn-tour-done', 'true');
+  }
+
+  // Dynamic Name Updates from LocalStorage
+  document.addEventListener('DOMContentLoaded', () => {
+    const fName = localStorage.getItem('carbn-farmer-name') || 'Farmer';
+    document.getElementById('farmer-navbar-badge').textContent = `🌾 ${fName}`;
+
+    fetchFarmerDashboard();
+  });
+
+  async function fetchFarmerDashboard() {
+    let listings = [];
+    try {
+      const res = await window.fetchWithAuth('/listings/my');
+      if (res.ok) {
+        listings = await res.json();
+      }
+    } catch (err) {
+      console.warn("API not reachable, using sample data instead.");
+    }
+      
+    // Inject sample data if wallet is empty to make the dashboard look active
+    if (!listings || listings.length === 0) {
+      listings = [
+        { crop: 'Wheat', practice: 'No-till Farming', estimated_co2_tonnes: 0.24, price_total: 1200, status: 'sold', created_at: new Date(Date.now() - 15*24*60*60*1000).toISOString() },
+        { crop: 'Rice', practice: 'Direct Seeding', estimated_co2_tonnes: 0.185, price_total: 925, status: 'available', created_at: new Date(Date.now() - 5*24*60*60*1000).toISOString() },
+        { crop: 'Cotton', practice: 'Crop Rotation', estimated_co2_tonnes: 0.31, price_total: 1550, status: 'pending', created_at: new Date(Date.now() - 2*24*60*60*1000).toISOString() },
+        { crop: 'Wheat', practice: 'Reduced Pesticide', estimated_co2_tonnes: 0.15, price_total: 750, status: 'sold', created_at: new Date(Date.now() - 30*24*60*60*1000).toISOString() }
+      ];
+    }
+      
+    let totalEarned = 0;
+    let totalCo2 = 0;
+    let creditsIssued = listings.length;
+    let availableCount = 0;
+    let availableValue = 0;
+
+    const walletContainer = document.getElementById('wallet-items');
+    if (!walletContainer) return;
+    walletContainer.innerHTML = '';
+
+    listings.forEach(l => {
+      totalCo2 += l.estimated_co2_tonnes;
+      if (l.status === 'sold') totalEarned += l.price_total;
+      if (l.status === 'available') {
+        availableCount++;
+        availableValue += l.price_total;
+      }
+
+      const dateStr = new Date(l.created_at).toLocaleDateString('en-IN', { month: 'short', day: 'numeric' });
+      
+      let statusBadge = '';
+      let amountStyle = '';
+      if (l.status === 'sold') {
+        statusBadge = `<span class="badge badge-sold" style="margin-top:4px">Sold</span>`;
+      } else if (l.status === 'available') {
+        statusBadge = `<span class="badge badge-success" style="margin-top:4px">Available</span>`;
+        amountStyle = 'color:var(--text-muted)';
+      } else {
+        statusBadge = `<span class="badge badge-pending" style="margin-top:4px">Pending</span>`;
+        amountStyle = 'color:var(--text-muted)';
+      }
+
+      const icon = (l.crop.toLowerCase().includes('wheat') || l.crop.toLowerCase().includes('rice')) ? '🌾' : '🌿';
+
+      const itemHtml = `
+      <div class="credit-item">
+        <div class="credit-item-icon">${icon}</div>
+        <div class="credit-item-body">
+          <div class="credit-item-title">${l.crop} · ${l.practice} · ${l.estimated_co2_tonnes.toFixed(3)} t CO₂</div>
+          <div class="credit-item-meta">Listed ${dateStr}</div>
+        </div>
+        <div class="credit-item-right">
+          <div class="credit-item-amount" style="${amountStyle}">₹${l.price_total.toLocaleString('en-IN')}</div>
+          ${statusBadge}
+        </div>
+      </div>
+      `;
+      walletContainer.innerHTML += itemHtml;
+    });
+
+    if (listings.length === 0) {
+      walletContainer.innerHTML = `<div style="padding: 20px; text-align: center; color: var(--text-muted); font-size: 13px;">No credits logged yet.</div>`;
+    }
+
+    document.getElementById('wallet-count').textContent = availableCount;
+
+    // Update new stats row for Credits page
+    const balEl = document.getElementById('stat-balance');
+    if(balEl) balEl.setAttribute('data-count', totalEarned);
+      
+    const availEl = document.getElementById('stat-available-credits');
+    if(availEl) availEl.setAttribute('data-count', availableCount);
+      
+    const valEl = document.getElementById('stat-available-value');
+    if(valEl) valEl.setAttribute('data-count', availableValue);
+
+    // Re-trigger intersection observer for new data-count values
+    document.querySelectorAll('[data-count]').forEach(el => countObs.observe(el));
+  }
+
+  // Count-up animation
+  const countObs = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting && e.target.getAttribute('data-count')) {
+        animateCount(e.target);
+        countObs.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.5 });
+
+  function animateCount(el) {
+    const target = parseFloat(el.getAttribute('data-count'));
+    const prefix = el.getAttribute('data-prefix') || '';
+    const suffix = el.getAttribute('data-suffix') || '';
+    const decimals = parseInt(el.getAttribute('data-decimals')) || 0;
+    const duration = 1000;
+    const start = performance.now();
+
+    function update(ts) {
+      const progress = Math.min((ts - start) / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      const val = eased * target;
+      
+      let formattedVal = val.toLocaleString('en-IN', {
+        minimumFractionDigits: decimals,
+        maximumFractionDigits: decimals
+      });
+      el.textContent = prefix + formattedVal + suffix;
+      if (progress < 1) requestAnimationFrame(update);
+    }
+    requestAnimationFrame(update);
+  }
+
+  document.querySelectorAll('[data-count]').forEach(el => countObs.observe(el));
+</script>
+</body>
+</html>

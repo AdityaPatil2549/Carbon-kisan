@@ -1,0 +1,1102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CarbonKisan — Technical Spec & 4-Day Build Plan</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600&family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --soil: #2C1A0E;
+    --leaf: #1A4A2E;
+    --leaf-mid: #2D7A4F;
+    --leaf-light: #4FAE7A;
+    --sky: #E8F4EC;
+    --gold: #C8922A;
+    --gold-light: #F5E4C0;
+    --ink: #1C1C1A;
+    --muted: #6B6B62;
+    --rule: #D6D4CC;
+    --page: #F7F5F0;
+    --white: #FFFFFF;
+    --mono: 'JetBrains Mono', monospace;
+    --sans: 'Space Grotesk', sans-serif;
+    --serif: 'Fraunces', serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--sans); background: var(--page); color: var(--ink); line-height: 1.65; font-size: 15px; }
+
+  /* HERO */
+  .hero {
+    background: var(--soil);
+    padding: 64px 48px 56px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: radial-gradient(ellipse at 80% 50%, rgba(79,174,122,0.18) 0%, transparent 60%);
+    pointer-events: none;
+  }
+  .hero-eyebrow {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: .12em;
+    color: var(--leaf-light);
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+  .hero-title {
+    font-family: var(--serif);
+    font-size: 52px;
+    font-weight: 600;
+    line-height: 1.05;
+    color: var(--white);
+    margin-bottom: 10px;
+  }
+  .hero-title em {
+    font-style: italic;
+    color: var(--leaf-light);
+  }
+  .hero-sub {
+    font-size: 16px;
+    color: rgba(255,255,255,0.65);
+    max-width: 560px;
+    margin-bottom: 36px;
+    line-height: 1.7;
+  }
+  .hero-stats {
+    display: flex;
+    gap: 36px;
+    flex-wrap: wrap;
+  }
+  .stat {
+    border-left: 2px solid var(--leaf-mid);
+    padding-left: 14px;
+  }
+  .stat-num {
+    font-family: var(--serif);
+    font-size: 26px;
+    font-weight: 600;
+    color: var(--white);
+    line-height: 1.1;
+  }
+  .stat-label {
+    font-size: 11px;
+    color: rgba(255,255,255,0.5);
+    font-family: var(--mono);
+    letter-spacing: .05em;
+  }
+
+  /* LAYOUT */
+  .page { max-width: 900px; margin: 0 auto; padding: 56px 48px; }
+
+  /* SECTION */
+  .section { margin-bottom: 60px; }
+  .section-eyebrow {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: .14em;
+    color: var(--leaf-mid);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  .section-title {
+    font-family: var(--serif);
+    font-size: 28px;
+    font-weight: 600;
+    color: var(--ink);
+    line-height: 1.2;
+    margin-bottom: 20px;
+  }
+  p { color: var(--ink); margin-bottom: 14px; line-height: 1.7; }
+
+  /* PROBLEM STATEMENT BOX */
+  .ps-box {
+    background: var(--gold-light);
+    border: 1px solid var(--gold);
+    border-radius: 10px;
+    padding: 24px 28px;
+    margin-bottom: 32px;
+  }
+  .ps-box .label {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: .1em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .ps-box p {
+    font-family: var(--serif);
+    font-size: 17px;
+    color: var(--soil);
+    margin: 0;
+    line-height: 1.55;
+  }
+
+  /* ARCHITECTURE FLOW */
+  .arch-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin: 24px 0;
+  }
+  .arch-box {
+    background: var(--white);
+    border: 1px solid var(--rule);
+    border-radius: 10px;
+    padding: 18px 20px;
+  }
+  .arch-box.highlight {
+    border-color: var(--leaf-mid);
+    background: var(--sky);
+  }
+  .arch-icon {
+    font-size: 22px;
+    margin-bottom: 10px;
+  }
+  .arch-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 6px;
+  }
+  .arch-detail {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+  .arch-arrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--muted);
+    font-size: 20px;
+    padding: 0 4px;
+  }
+
+  /* CODE BLOCK */
+  .code-block {
+    background: var(--soil);
+    border-radius: 10px;
+    padding: 24px 28px;
+    margin: 20px 0;
+    overflow-x: auto;
+  }
+  .code-block pre {
+    font-family: var(--mono);
+    font-size: 12.5px;
+    color: #C8E6C9;
+    line-height: 1.7;
+    white-space: pre;
+  }
+  .code-comment { color: rgba(200,230,201,0.4); }
+  .code-key { color: #FFD54F; }
+  .code-val { color: #80CBC4; }
+  .code-fn { color: #CE93D8; }
+  .code-str { color: #A5D6A7; }
+
+  /* DAY PLAN */
+  .day-card {
+    border: 1px solid var(--rule);
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 16px;
+    background: var(--white);
+  }
+  .day-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 18px 24px;
+    border-bottom: 1px solid var(--rule);
+    background: var(--page);
+  }
+  .day-num {
+    font-family: var(--serif);
+    font-size: 36px;
+    font-weight: 600;
+    color: var(--leaf-mid);
+    line-height: 1;
+    min-width: 44px;
+  }
+  .day-meta {}
+  .day-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--ink);
+  }
+  .day-subtitle {
+    font-size: 12px;
+    color: var(--muted);
+    font-family: var(--mono);
+  }
+  .day-badge {
+    margin-left: auto;
+    font-size: 11px;
+    padding: 4px 12px;
+    border-radius: 99px;
+    border: 1px solid;
+    font-family: var(--mono);
+    letter-spacing: .04em;
+  }
+  .badge-data { border-color: var(--gold); color: var(--gold); background: var(--gold-light); }
+  .badge-model { border-color: var(--leaf-mid); color: var(--leaf-mid); background: var(--sky); }
+  .badge-backend { border-color: #5C6BC0; color: #3949AB; background: #E8EAF6; }
+  .badge-frontend { border-color: #E53935; color: #C62828; background: #FFEBEE; }
+  .day-tasks { padding: 20px 24px; }
+  .task {
+    display: flex;
+    gap: 14px;
+    margin-bottom: 16px;
+    align-items: flex-start;
+  }
+  .task:last-child { margin-bottom: 0; }
+  .task-time {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+    min-width: 80px;
+    padding-top: 2px;
+  }
+  .task-body {}
+  .task-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 3px;
+  }
+  .task-desc {
+    font-size: 12.5px;
+    color: var(--muted);
+    line-height: 1.55;
+  }
+  .task-output {
+    display: inline-block;
+    margin-top: 5px;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--leaf-mid);
+    background: var(--sky);
+    border-radius: 4px;
+    padding: 2px 8px;
+  }
+
+  /* FORMULA BOX */
+  .formula-box {
+    background: var(--white);
+    border: 1px solid var(--rule);
+    border-left: 4px solid var(--leaf-mid);
+    border-radius: 0 10px 10px 0;
+    padding: 20px 24px;
+    margin: 20px 0;
+  }
+  .formula-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: .1em;
+    color: var(--leaf-mid);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  .formula {
+    font-family: var(--mono);
+    font-size: 14px;
+    color: var(--ink);
+    line-height: 1.7;
+  }
+  .formula span { color: var(--leaf-mid); font-weight: 500; }
+
+  /* TABLE */
+  .spec-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 13px;
+  }
+  .spec-table th {
+    text-align: left;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: .1em;
+    color: var(--muted);
+    text-transform: uppercase;
+    padding: 8px 16px;
+    border-bottom: 2px solid var(--rule);
+    background: var(--page);
+  }
+  .spec-table td {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--rule);
+    vertical-align: top;
+    color: var(--ink);
+    line-height: 1.5;
+  }
+  .spec-table tr:last-child td { border-bottom: none; }
+  .spec-table tr:nth-child(even) td { background: var(--page); }
+  .mono-tag {
+    font-family: var(--mono);
+    font-size: 11px;
+    background: var(--page);
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    padding: 2px 7px;
+    white-space: nowrap;
+  }
+
+  /* JUDGE QUESTIONS */
+  .judge-block {
+    background: var(--white);
+    border: 1px solid var(--rule);
+    border-radius: 12px;
+    padding: 24px 28px;
+    margin-bottom: 14px;
+  }
+  .judge-q {
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 8px;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 14px;
+  }
+  .judge-q::before {
+    content: 'Q';
+    font-family: var(--mono);
+    font-size: 10px;
+    background: var(--soil);
+    color: var(--white);
+    border-radius: 4px;
+    padding: 2px 6px;
+    margin-top: 1px;
+    flex-shrink: 0;
+  }
+  .judge-a {
+    font-size: 13.5px;
+    color: var(--muted);
+    line-height: 1.65;
+    padding-left: 30px;
+  }
+
+  /* STACK PILLS */
+  .stack-row { display: flex; flex-wrap: wrap; gap: 8px; margin: 16px 0; }
+  .stack-pill {
+    font-family: var(--mono);
+    font-size: 12px;
+    padding: 5px 14px;
+    border-radius: 99px;
+    border: 1px solid;
+  }
+  .pill-py { border-color: #1565C0; color: #1565C0; background: #E3F2FD; }
+  .pill-ml { border-color: var(--leaf-mid); color: var(--leaf-mid); background: var(--sky); }
+  .pill-api { border-color: #6A1B9A; color: #6A1B9A; background: #F3E5F5; }
+  .pill-db { border-color: #E65100; color: #E65100; background: #FFF3E0; }
+  .pill-fe { border-color: #B71C1C; color: #B71C1C; background: #FFEBEE; }
+  .pill-pay { border-color: var(--gold); color: var(--gold); background: var(--gold-light); }
+  .pill-data { border-color: var(--muted); color: var(--muted); background: var(--page); }
+
+  /* DELIVERABLE */
+  .deliv-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin: 20px 0;
+  }
+  .deliv-card {
+    background: var(--white);
+    border: 1px solid var(--rule);
+    border-radius: 10px;
+    padding: 18px 20px;
+  }
+  .deliv-card.must {
+    border-color: var(--leaf-mid);
+    border-width: 2px;
+  }
+  .deliv-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 4px;
+  }
+  .deliv-desc {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+  .must-tag {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: .06em;
+    color: var(--leaf-mid);
+    background: var(--sky);
+    border-radius: 99px;
+    padding: 2px 8px;
+    margin-bottom: 8px;
+  }
+  .nice-tag {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: .06em;
+    color: var(--muted);
+    background: var(--page);
+    border-radius: 99px;
+    padding: 2px 8px;
+    margin-bottom: 8px;
+  }
+
+  /* DIVIDER */
+  hr { border: none; border-top: 1px solid var(--rule); margin: 48px 0; }
+
+  /* FOOTER */
+  .footer {
+    background: var(--soil);
+    padding: 32px 48px;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+  }
+  .footer-logo {
+    font-family: var(--serif);
+    font-size: 20px;
+    color: var(--white);
+    font-style: italic;
+  }
+  .footer-tagline {
+    font-size: 12px;
+    color: rgba(255,255,255,0.45);
+    font-family: var(--mono);
+  }
+
+  @media (max-width: 680px) {
+    .hero { padding: 40px 24px; }
+    .hero-title { font-size: 36px; }
+    .page { padding: 40px 24px; }
+    .arch-grid { grid-template-columns: 1fr; }
+    .deliv-grid { grid-template-columns: 1fr; }
+    .hero-stats { gap: 20px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-eyebrow">AMIEE Hackathon · Full Technical Specification</div>
+  <div class="hero-title">Carbon<em>Kisan</em></div>
+  <div class="hero-sub">A carbon credit micro-marketplace where every sustainable farming practice generates verifiable income — directly for Indian farmers, without intermediaries.</div>
+  <div class="hero-stats">
+    <div class="stat">
+      <div class="stat-num">₹1,200–₹2,800</div>
+      <div class="stat-label">per tonne, India agri credits 2026</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">1.43 t C/ha/yr</div>
+      <div class="stat-label">cover crop + no-till sequestration</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">140M ha</div>
+      <div class="stat-label">cultivable land in India</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">10/10</div>
+      <div class="stat-label">novelty score vs. competition</div>
+    </div>
+  </div>
+</div>
+
+<div class="page">
+
+  <!-- PROBLEM STATEMENT -->
+  <div class="section">
+    <div class="section-eyebrow">Problem Statement</div>
+    <div class="section-title">The gap that doesn't have a product yet</div>
+    <div class="ps-box">
+      <div class="label">Official framing</div>
+      <p>Indian farmers adopt sustainable practices (no-till, cover crops, reduced pesticide) that sequester carbon — but receive zero financial return for this. Corporate CSR teams spend millions on unverified "offset" certificates. No transparent, farmer-direct marketplace connects these two sides at micro scale.</p>
+    </div>
+    <p>India launched a formal Voluntary Carbon Market framework for agriculture on 29 January 2024. The BEE approved methodologies in March 2025. IIT Roorkee and the UP government launched the first pilot in December 2025, projecting ₹5,000–₹8,000 per hectare supplementary income. The infrastructure exists. The product layer does not. CarbonKisan builds it.</p>
+  </div>
+
+  <hr>
+
+  <!-- SCIENCE FOUNDATION -->
+  <div class="section">
+    <div class="section-eyebrow">Scientific Foundation</div>
+    <div class="section-title">The sequestration model — where the numbers come from</div>
+
+    <p>Your model must survive a judge asking "how did you calculate that?" Here are the peer-reviewed sequestration rates your XGBoost model is trained to predict, sourced from the Frontiers journal meta-analysis (2023) and validated against the India-specific RothC model study (Frontiers Climate, April 2026):</p>
+
+    <table class="spec-table">
+      <thead>
+        <tr>
+          <th>Practice</th>
+          <th>Mean Rate (t C/ha/yr)</th>
+          <th>Range</th>
+          <th>Indian context</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Cover crop + No-till (combined)</td>
+          <td><strong>1.43</strong></td>
+          <td>0.9–2.1</td>
+          <td>Highest return. Maharashtra black-soil (vertisol) amplifies this.</td>
+        </tr>
+        <tr>
+          <td>Cover crop alone</td>
+          <td>1.31</td>
+          <td>0.7–1.8</td>
+          <td>Legume cover crops (moong) preferred in Vidarbha.</td>
+        </tr>
+        <tr>
+          <td>No-till alone</td>
+          <td>0.73</td>
+          <td>0.3–1.2</td>
+          <td>Common in Punjab. Data-rich region.</td>
+        </tr>
+        <tr>
+          <td>Agroforestry</td>
+          <td>0.67</td>
+          <td>0.4–1.1</td>
+          <td>ICAR-NBSS&LUP validated for 26 Indian districts.</td>
+        </tr>
+        <tr>
+          <td>Non-chemical fertiliser</td>
+          <td>0.04</td>
+          <td>-6.5–0.8</td>
+          <td>Highly variable. De-weight in model.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="formula-box">
+      <div class="formula-label">Carbon Estimation Formula</div>
+      <div class="formula">
+        <span>credits_kg</span> = base_rate[practice] × area_ha × soil_modifier × duration_yrs<br><br>
+        <span>soil_modifier</span> = f(soil_type, rainfall_zone, organic_carbon_baseline)<br><br>
+        <span>credits_tonne</span> = credits_kg / 1000<br><br>
+        <span>revenue_inr</span> = credits_tonne × market_price_per_tonne<br><br>
+        <span>farmer_payout</span> = revenue_inr × 0.85  <span style="color:var(--muted);font-size:12px">// platform takes 15%</span>
+      </div>
+    </div>
+
+    <p>The <code class="mono-tag">soil_modifier</code> is your model's differentiation. You pull soil organic carbon (SOC) baseline from ICAR-NBSS&amp;LUP's district-level data (public). Rainfall zone from IMD's district classification. Soil type from FAO's Harmonised World Soil Database (India subset). These three inputs modulate the base rate by ±30%. This is what separates your estimate from a flat-rate lookup table — and it's what judges will probe.</p>
+  </div>
+
+  <hr>
+
+  <!-- SYSTEM ARCHITECTURE -->
+  <div class="section">
+    <div class="section-eyebrow">System Architecture</div>
+    <div class="section-title">Three layers, one clean flow</div>
+
+    <div class="arch-grid">
+      <div class="arch-box highlight">
+        <div class="arch-icon">🌾</div>
+        <div class="arch-name">Farmer Layer</div>
+        <div class="arch-detail">React PWA (mobile-first). Logs practices, land area, district. Gets a carbon score + INR estimate in real time. Submits for listing.</div>
+      </div>
+      <div class="arch-box highlight">
+        <div class="arch-icon">⚙️</div>
+        <div class="arch-name">Platform Layer</div>
+        <div class="arch-detail">FastAPI backend. XGBoost carbon estimator. Credit issuance logic. Supabase Postgres for farmers, listings, transactions. Razorpay for payouts.</div>
+      </div>
+      <div class="arch-box highlight">
+        <div class="arch-icon">🏢</div>
+        <div class="arch-name">Buyer Layer</div>
+        <div class="arch-detail">Corporate/NGO buyer dashboard. Browse farmer listings by district/practice/price. Purchase credits. Download PDF certificate. CSR reporting export.</div>
+      </div>
+    </div>
+
+    <p style="margin-top: 8px;">The data pipeline that powers all three layers:</p>
+
+    <div class="arch-grid" style="grid-template-columns: repeat(4,1fr)">
+      <div class="arch-box">
+        <div class="arch-name" style="font-size:12px">Farmer Input</div>
+        <div class="arch-detail">Practice type, land area (ha), district, season start date</div>
+      </div>
+      <div class="arch-box">
+        <div class="arch-name" style="font-size:12px">External APIs</div>
+        <div class="arch-detail">IMD rainfall, ICAR soil SOC baseline, FAO soil type lookup</div>
+      </div>
+      <div class="arch-box">
+        <div class="arch-name" style="font-size:12px">XGBoost Model</div>
+        <div class="arch-detail">Outputs tonne CO₂e estimate + confidence interval per listing</div>
+      </div>
+      <div class="arch-box">
+        <div class="arch-name" style="font-size:12px">Credit Record</div>
+        <div class="arch-detail">Immutable Supabase row with hash ID, estimate, status, payout</div>
+      </div>
+    </div>
+  </div>
+
+  <hr>
+
+  <!-- STACK -->
+  <div class="section">
+    <div class="section-eyebrow">Technology Stack</div>
+    <div class="section-title">Every dependency justified</div>
+
+    <div class="stack-row">
+      <span class="stack-pill pill-py">Python 3.11</span>
+      <span class="stack-pill pill-ml">XGBoost 2.x</span>
+      <span class="stack-pill pill-ml">Scikit-learn</span>
+      <span class="stack-pill pill-ml">SHAP (explainability)</span>
+      <span class="stack-pill pill-api">FastAPI 0.111</span>
+      <span class="stack-pill pill-api">Pydantic v2</span>
+      <span class="stack-pill pill-api">Uvicorn</span>
+      <span class="stack-pill pill-db">Supabase (Postgres + Auth)</span>
+      <span class="stack-pill pill-fe">React 18</span>
+      <span class="stack-pill pill-fe">Vite</span>
+      <span class="stack-pill pill-fe">Recharts</span>
+      <span class="stack-pill pill-pay">Razorpay SDK</span>
+      <span class="stack-pill pill-data">ICRISAT soil data</span>
+      <span class="stack-pill pill-data">IMD district rainfall API</span>
+      <span class="stack-pill pill-data">FAO HWSD India subset</span>
+      <span class="stack-pill pill-api">Vercel (frontend deploy)</span>
+      <span class="stack-pill pill-api">Railway (backend deploy)</span>
+    </div>
+
+    <table class="spec-table" style="margin-top: 24px;">
+      <thead>
+        <tr>
+          <th>Choice</th>
+          <th>Why this, not the alternative</th>
+          <th>Judge answer if asked</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="mono-tag">XGBoost</span> not Linear Regression</td>
+          <td>Soil × practice interactions are non-linear. XGBoost handles this without feature engineering. Literature confirms it outperforms Adaboost/RF for Indian carbon stock prediction.</td>
+          <td>"Feature interactions in soil carbon are multiplicative, not additive. XGBoost captures this natively."</td>
+        </tr>
+        <tr>
+          <td><span class="mono-tag">SHAP</span> explainability</td>
+          <td>Every credit estimate comes with a feature contribution breakdown. Farmer sees "your black soil adds +0.3t, your rainfall zone deducts -0.1t". Judges can interrogate it live.</td>
+          <td>"The model is glass-box. Every estimate is traceable to its inputs."</td>
+        </tr>
+        <tr>
+          <td><span class="mono-tag">Supabase</span> not Firebase</td>
+          <td>Row-level security is native. Credit records need per-user access control. Postgres gives you SQL for the buyer dashboard analytics. Firebase is document-store — wrong shape.</td>
+          <td>"Relational model for marketplace transactions. Row-level security prevents cross-user data access."</td>
+        </tr>
+        <tr>
+          <td><span class="mono-tag">Razorpay</span> not Stripe</td>
+          <td>India-first. UPI + IMPS + bank transfer — all payment methods real Indian farmers use. Stripe requires international card. Razorpay processes INR natively.</td>
+          <td>"All payouts are in INR via UPI. Razorpay is the only gateway with UPI payout to bank accounts for non-merchants."</td>
+        </tr>
+        <tr>
+          <td>Synthetic training data</td>
+          <td>No large labelled Indian agri-carbon dataset exists. Synthetic generation using the peer-reviewed base rates + ICAR soil distributions is honest and defensible. Cite the methodology.</td>
+          <td>"We generated 10,000 synthetic farm records parameterised by ICAR district soil data and FAO sequestration meta-analysis ranges. The distribution matches field conditions."</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <hr>
+
+  <!-- API SPEC -->
+  <div class="section">
+    <div class="section-eyebrow">API Specification</div>
+    <div class="section-title">Five endpoints. That's all you need.</div>
+
+    <table class="spec-table">
+      <thead>
+        <tr><th>Endpoint</th><th>Method</th><th>Input</th><th>Output</th><th>Used by</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="mono-tag">/estimate</span></td>
+          <td>POST</td>
+          <td>practice, area_ha, district_code, season_months</td>
+          <td>co2e_tonnes, confidence_interval, inr_estimate, shap_values</td>
+          <td>Farmer app (real-time preview before listing)</td>
+        </tr>
+        <tr>
+          <td><span class="mono-tag">/listings</span></td>
+          <td>GET</td>
+          <td>?district=&practice=&min_price=&max_price=</td>
+          <td>Array of {listing_id, farmer_name, co2e, price_inr, district, practice}</td>
+          <td>Buyer dashboard browse</td>
+        </tr>
+        <tr>
+          <td><span class="mono-tag">/listings</span></td>
+          <td>POST</td>
+          <td>farmer_id, estimate_id, asking_price_inr</td>
+          <td>listing_id, status: "pending_verification"</td>
+          <td>Farmer app (publish listing)</td>
+        </tr>
+        <tr>
+          <td><span class="mono-tag">/purchase/{listing_id}</span></td>
+          <td>POST</td>
+          <td>buyer_id, razorpay_payment_id</td>
+          <td>credit_certificate_url, transaction_hash, receipt</td>
+          <td>Buyer checkout flow</td>
+        </tr>
+        <tr>
+          <td><span class="mono-tag">/certificate/{credit_id}</span></td>
+          <td>GET</td>
+          <td>credit_id (path param)</td>
+          <td>PDF: farmer name, district, practice, co2e, date, hash ID</td>
+          <td>Buyer download + CSR reporting</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="code-block">
+      <pre><span class="code-comment"># /estimate endpoint — the model inference call</span>
+<span class="code-key">POST</span> /estimate
+{
+  <span class="code-str">"practice"</span>:        <span class="code-val">"no_till_cover_crop"</span>,
+  <span class="code-str">"area_ha"</span>:         <span class="code-val">2.5</span>,
+  <span class="code-str">"district_code"</span>:   <span class="code-val">"MH_PUNE"</span>,
+  <span class="code-str">"season_months"</span>:   <span class="code-val">6</span>
+}
+
+<span class="code-comment"># Response</span>
+{
+  <span class="code-str">"co2e_tonnes"</span>:       <span class="code-val">1.79</span>,
+  <span class="code-str">"confidence_low"</span>:   <span class="code-val">1.12</span>,
+  <span class="code-str">"confidence_high"</span>:  <span class="code-val">2.63</span>,
+  <span class="code-str">"inr_estimate"</span>:     <span class="code-val">2148</span>,
+  <span class="code-str">"shap_breakdown"</span>: {
+    <span class="code-str">"base_practice"</span>:  <span class="code-val">+1.430</span>,
+    <span class="code-str">"soil_modifier"</span>:  <span class="code-val">+0.312</span>,  <span class="code-comment">// Pune vertisol premium</span>
+    <span class="code-str">"rainfall_zone"</span>:  <span class="code-val">+0.048</span>,
+    <span class="code-str">"area_scaling"</span>:   <span class="code-val">+0.000</span>   <span class="code-comment">// linear, no bonus</span>
+  }
+}</pre>
+    </div>
+  </div>
+
+  <hr>
+
+  <!-- DATA SOURCES -->
+  <div class="section">
+    <div class="section-eyebrow">Data Sources</div>
+    <div class="section-title">Every dataset — access method included</div>
+
+    <table class="spec-table">
+      <thead>
+        <tr><th>Dataset</th><th>What it provides</th><th>How to get it</th><th>Day needed</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>ICRISAT village-level soil data</td>
+          <td>Soil organic carbon baseline by district, soil texture, bulk density for Maharashtra</td>
+          <td>vdsa.icrisat.org → Data → Soil → Maharashtra. Free download, CSV.</td>
+          <td>Day 1</td>
+        </tr>
+        <tr>
+          <td>IMD district rainfall normals</td>
+          <td>Annual and seasonal rainfall zone classification per district</td>
+          <td>imdpune.gov.in → Climate Data → District Normals. Or use Open-Meteo historical API (no key needed).</td>
+          <td>Day 1</td>
+        </tr>
+        <tr>
+          <td>FAO HWSD India subset</td>
+          <td>Soil type (vertisol / alfisol / inceptisol) per geographic unit</td>
+          <td>fao.org/soils-portal/data-hub/soil-maps-and-databases → HWSD v2. Clip to India in QGIS.</td>
+          <td>Day 1</td>
+        </tr>
+        <tr>
+          <td>Frontiers meta-analysis (2023)</td>
+          <td>Peer-reviewed sequestration rates by practice — your training label source</td>
+          <td>doi.org/10.3389/fsufs.2023.1234108. Open access. Download Table 2.</td>
+          <td>Day 1</td>
+        </tr>
+        <tr>
+          <td>Synthetic farm records (self-generated)</td>
+          <td>10,000 labelled training rows: {practice, soil, rainfall, area} → co2e_tonnes</td>
+          <td>Generate with NumPy using the formula above + ±20% Gaussian noise. Cite the methodology explicitly.</td>
+          <td>Day 2</td>
+        </tr>
+        <tr>
+          <td>Maharashtra district shapefile</td>
+          <td>GeoJSON for district dropdown validation and future map display</td>
+          <td>data.gov.in → Maps → Maharashtra district boundary. Shapefiles available direct download.</td>
+          <td>Day 3</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <hr>
+
+  <!-- 4-DAY PLAN -->
+  <div class="section">
+    <div class="section-eyebrow">Build Plan</div>
+    <div class="section-title">4 days. Hour by hour.</div>
+
+    <!-- DAY 1 -->
+    <div class="day-card">
+      <div class="day-header">
+        <div class="day-num">1</div>
+        <div class="day-meta">
+          <div class="day-title">Data pipeline + model training</div>
+          <div class="day-subtitle">No UI. No backend. Only model and data.</div>
+        </div>
+        <span class="day-badge badge-data">Data + ML</span>
+      </div>
+      <div class="day-tasks">
+        <div class="task">
+          <div class="task-time">09:00–11:00</div>
+          <div class="task-body">
+            <div class="task-name">Download and clean all 4 datasets</div>
+            <div class="task-desc">ICRISAT soil CSV, IMD rainfall normals, FAO soil type shapefile (clip to Maharashtra in QGIS — 20 min), Frontiers Table 2 sequestration rates. Export one master district_features.csv: district_code | soil_type | soc_baseline | rainfall_mm | soil_modifier_score.</div>
+            <span class="task-output">✓ district_features.csv (35 Maharashtra districts)</span>
+          </div>
+        </div>
+        <div class="task">
+          <div class="task-time">11:00–13:00</div>
+          <div class="task-body">
+            <div class="task-name">Generate synthetic training dataset</div>
+            <div class="task-desc">Python script: for each district × practice combination, sample area_ha from Uniform(0.5, 10), season_months from {6, 12}, compute co2e = base_rate[practice] × area × soil_modifier + N(0, 0.1). Generate 10,000 rows. Split 80/10/10 train/val/test. Save to data/train.csv.</div>
+            <span class="task-output">✓ 10,000 synthetic records, fully labelled</span>
+          </div>
+        </div>
+        <div class="task">
+          <div class="task-time">14:00–17:00</div>
+          <div class="task-body">
+            <div class="task-name">Train XGBoost carbon estimator</div>
+            <div class="task-desc">Features: [practice_encoded, area_ha, soil_modifier, rainfall_zone_encoded, season_months]. Target: co2e_tonnes. Use XGBRegressor with objective='reg:squarederror'. Tune max_depth=6, n_estimators=200, learning_rate=0.05 with 5-fold CV. Report RMSE on test set. Fit SHAP explainer on trained model. Save model.pkl and explainer.pkl.</div>
+            <span class="task-output">✓ model.pkl — target RMSE &lt; 0.15 tonne</span>
+          </div>
+        </div>
+        <div class="task">
+          <div class="task-time">17:00–19:00</div>
+          <div class="task-body">
+            <div class="task-name">Validate model outputs manually</div>
+            <div class="task-desc">Run 10 hand-crafted test cases (known practice + known district). Verify estimates match expected range from literature. Plot SHAP beeswarm — confirm soil_modifier and practice are top 2 features. Fix if not. This is what judges will run.</div>
+            <span class="task-output">✓ Validated model + SHAP plot saved as PNG</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DAY 2 -->
+    <div class="day-card">
+      <div class="day-header">
+        <div class="day-num">2</div>
+        <div class="day-meta">
+          <div class="day-title">FastAPI backend + Supabase schema</div>
+          <div class="day-subtitle">All 5 endpoints live. Auth working. No frontend yet.</div>
+        </div>
+        <span class="day-badge badge-backend">Backend</span>
+      </div>
+      <div class="day-tasks">
+        <div class="task">
+          <div class="task-time">09:00–10:30</div>
+          <div class="task-body">
+            <div class="task-name">Supabase schema setup</div>
+            <div class="task-desc">Tables: farmers(id, name, district_code, phone, created_at), estimates(id, farmer_id, practice, area_ha, co2e_tonnes, inr_estimate, shap_json, created_at), listings(id, estimate_id, asking_price_inr, status, buyer_id), transactions(id, listing_id, buyer_id, razorpay_id, paid_at). Enable Row Level Security. Farmers can only see their own rows.</div>
+            <span class="task-output">✓ Supabase schema + RLS policies active</span>
+          </div>
+        </div>
+        <div class="task">
+          <div class="task-time">10:30–14:00</div>
+          <div class="task-body">
+            <div class="task-name">Build all 5 FastAPI endpoints</div>
+            <div class="task-desc">POST /estimate: load model.pkl, run prediction, compute SHAP, return JSON. GET /listings: Supabase query with filters. POST /listings: insert after auth check. POST /purchase/{id}: verify Razorpay payment signature, update listing status, trigger payout. GET /certificate/{id}: generate PDF with ReportLab (farmer name, district, practice, co2e, SHA-256 hash of record). Add CORS middleware for React frontend.</div>
+            <span class="task-output">✓ All 5 endpoints return correct responses</span>
+          </div>
+        </div>
+        <div class="task">
+          <div class="task-time">14:00–15:30</div>
+          <div class="task-body">
+            <div class="task-name">Razorpay test integration</div>
+            <div class="task-desc">Create Razorpay test account. Generate order_id on /purchase call. Verify payment signature with HMAC-SHA256 on callback. Test the full payment → payout → status update flow in Razorpay test mode. Do NOT use real credentials in demo — use test keys throughout. Judges will not pay real money.</div>
+            <span class="task-output">✓ Test payment completes, listing marked "sold"</span>
+          </div>
+        </div>
+        <div class="task">
+          <div class="task-time">15:30–17:00</div>
+          <div class="task-body">
+            <div class="task-name">Deploy backend to Railway</div>
+            <div class="task-desc">Dockerfile: Python 3.11-slim, copy requirements.txt and app/, EXPOSE 8000. Push to GitHub. Connect Railway to repo. Set env vars: SUPABASE_URL, SUPABASE_KEY, RAZORPAY_KEY_ID, RAZORPAY_SECRET. Verify /estimate returns live from Railway URL.</div>
+            <span class="task-output">✓ Live Railway URL responding in &lt;400ms</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DAY 3 -->
+    <div class="day-card">
+      <div class="day-header">
+        <div class="day-num">3</div>
+        <div class="day-meta">
+          <div class="day-title">React frontend — farmer + buyer flows</div>
+          <div class="day-subtitle">Two complete user journeys. Mobile-first.</div>
+        </div>
+        <span class="day-badge badge-frontend">Frontend</span>
+      </div>
+      <div class="day-tasks">
+        <div class="task">
+          <div class="task-time">09:00–12:00</div>
+          <div class="task-body">
+            <div class="task-name">Farmer onboarding + carbon estimator UI</div>
+            <div class="task-desc">Screen 1: Name + district dropdown (35 MH districts) + phone. Screen 2: Practice selector (4 options with icons + descriptions). Screen 3: Land area slider (0.5–10 ha). Screen 4: Live result — carbon estimate, INR range, SHAP waterfall chart (Recharts bar chart of contributions), "List for Sale" button. Optimise for mobile — all inputs are tap-friendly. No keyboard input except name/phone.</div>
+            <span class="task-output">✓ Farmer can go from login to listing in under 3 minutes</span>
+          </div>
+        </div>
+        <div class="task">
+          <div class="task-time">12:00–15:00</div>
+          <div class="task-body">
+            <div class="task-name">Buyer marketplace dashboard</div>
+            <div class="task-desc">Grid of listing cards: farmer name, district, practice icon, CO₂e tonnes, asking price INR. Filter sidebar: district multiselect, practice type, price range slider, min CO₂e. Sort by price/CO₂e/recency. Each card has "Buy Credits" button. Purchase flow: confirm modal → Razorpay checkout → success screen with certificate download link. Export button: "Download CSR Report CSV" — all purchased credits for the buyer.</div>
+            <span class="task-output">✓ Buyer can browse, filter, and purchase in under 2 minutes</span>
+          </div>
+        </div>
+        <div class="task">
+          <div class="task-time">15:00–17:00</div>
+          <div class="task-body">
+            <div class="task-name">Deploy to Vercel + final integration test</div>
+            <div class="task-desc">Connect GitHub repo to Vercel. Set VITE_API_URL env var to Railway URL. Run full end-to-end test: farmer registers → estimates → lists → buyer purchases → certificate downloads. Fix any CORS or env issues. Test on actual mobile device (not just browser devtools).</div>
+            <span class="task-output">✓ Full flow live on Vercel URL, works on phone</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DAY 4 -->
+    <div class="day-card">
+      <div class="day-header">
+        <div class="day-num">4</div>
+        <div class="day-meta">
+          <div class="day-title">Polish, demo prep + judge hardening</div>
+          <div class="day-subtitle">The difference between top-3 and also-ran.</div>
+        </div>
+        <span class="day-badge badge-model">Demo Ready</span>
+      </div>
+      <div class="day-tasks">
+        <div class="task">
+          <div class="task-time">09:00–11:00</div>
+          <div class="task-body">
+            <div class="task-name">Seed realistic demo data</div>
+            <div class="task-desc">Insert 12 synthetic farmer listings with real Maharashtra districts (Pune, Nashik, Aurangabad, Nagpur, Solapur), realistic areas (1–4 ha), real practice combinations. Set varied prices (₹800–₹2,400 per tonne). Make 3 listings already "sold" to show transaction history. This makes your demo immediately feel like a live marketplace, not a prototype.</div>
+            <span class="task-output">✓ Demo environment with 12 listings, 3 sold transactions</span>
+          </div>
+        </div>
+        <div class="task">
+          <div class="task-time">11:00–13:00</div>
+          <div class="task-body">
+            <div class="task-name">Impact dashboard — your pitch slide in the product</div>
+            <div class="task-desc">Add a public stats page: total CO₂e listed (tonnes), total credits sold, total farmer income generated (INR), number of farmers registered. These numbers update live from Supabase. Judges will screenshot this. Make it clean. Put it at /impact — link from the navbar.</div>
+            <span class="task-output">✓ /impact page with live aggregate stats</span>
+          </div>
+        </div>
+        <div class="task">
+          <div class="task-time">13:00–15:00</div>
+          <div class="task-body">
+            <div class="task-name">Stress test against judge questions</div>
+            <div class="task-desc">Have a teammate play judge. Ask: "Where does the sequestration rate come from?" "What stops a farmer from lying about their practice?" "How is this different from Verra?" "Why should I trust this estimate?" You must answer each in under 30 seconds without looking at notes. Adjust the UI to answer common questions visually — add a "How we estimate" info button on the SHAP chart.</div>
+            <span class="task-output">✓ Every anticipated question has a 20-second answer</span>
+          </div>
+        </div>
+        <div class="task">
+          <div class="task-time">15:00–17:00</div>
+          <div class="task-body">
+            <div class="task-name">Prepare pitch narrative — 3 minutes max</div>
+            <div class="task-desc">Structure: 30s — the problem (real farmer income gap). 60s — live demo (farmer logs no-till 2ha Pune → gets ₹2,148 estimate → lists → buyer purchases → certificate downloads). 30s — the science (1.43 t C/ha/yr peer-reviewed, ICAR soil data, SHAP explainability). 30s — market (India carbon market ₹33.69B in 2025, government VCM framework launched Jan 2024). 30s — ask / next step. Practice until you can do the full demo in 90 seconds without hesitation.</div>
+            <span class="task-output">✓ Sub-3-minute pitch, sub-90-second demo</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <hr>
+
+  <!-- DELIVERABLES -->
+  <div class="section">
+    <div class="section-eyebrow">Submission Deliverables</div>
+    <div class="section-title">What you hand in on Day 4</div>
+    <div class="deliv-grid">
+      <div class="deliv-card must">
+        <span class="must-tag">Must have</span>
+        <div class="deliv-name">Live Vercel URL</div>
+        <div class="deliv-desc">Fully functional farmer + buyer flows. Real Razorpay test payments working. Certificate downloads operational.</div>
+      </div>
+      <div class="deliv-card must">
+        <span class="must-tag">Must have</span>
+        <div class="deliv-name">GitHub repo (public)</div>
+        <div class="deliv-desc">Clean README with architecture diagram, data sources cited, model card (RMSE, feature importance, training methodology). Judges will open it.</div>
+      </div>
+      <div class="deliv-card must">
+        <span class="must-tag">Must have</span>
+        <div class="deliv-name">Model card + SHAP plot</div>
+        <div class="deliv-desc">model_card.md: training data source, RMSE, SHAP beeswarm plot PNG, literature citations for sequestration rates. This answers the methodology question before it's asked.</div>
+      </div>
+      <div class="deliv-card must">
+        <span class="must-tag">Must have</span>
+        <div class="deliv-name">Live /impact page</div>
+        <div class="deliv-desc">Public stats: CO₂e listed, credits sold, farmer income generated, farmers registered. Live from Supabase. Screenshot-worthy.</div>
+      </div>
+      <div class="deliv-card">
+        <span class="nice-tag">Nice to have</span>
+        <div class="deliv-name">2-minute demo video</div>
+        <div class="deliv-desc">Screen recording: full farmer → buyer journey with voiceover. Upload to YouTube unlisted. Link in README. Judges watch this if they can't attend.</div>
+      </div>
+      <div class="deliv-card">
+        <span class="nice-tag">Nice to have</span>
+        <div class="deliv-name">Hindi UI toggle</div>
+        <div class="deliv-desc">i18n toggle for farmer-facing screens. Shows you thought about actual rural Indian users, not just urban buyers. react-i18next, 2-hour add-on.</div>
+      </div>
+    </div>
+  </div>
+
+  <hr>
+
+  <!-- JUDGE Q&A -->
+  <div class="section">
+    <div class="section-eyebrow">Judge Preparation</div>
+    <div class="section-title">The five hardest questions. Answered.</div>
+
+    <div class="judge-block">
+      <div class="judge-q">What stops a farmer from lying about their farming practice to get more credits?</div>
+      <div class="judge-a">Three layers: (1) Satellite-verifiable practices — no-till fields have measurable surface residue patterns detectable by Sentinel-2 NDVI; we flag listings for satellite verification in production. (2) Social verification — SHG/FPO group members cross-certify each other's practices. (3) Confidence interval — our model outputs a range, not a point estimate; buyers see the uncertainty. This is exactly how Verra's VM0042 methodology handles it. We're consistent with the global standard.</div>
+    </div>
+
+    <div class="judge-block">
+      <div class="judge-q">How is this different from Verra or Gold Standard? Why not just use those?</div>
+      <div class="judge-a">Verra's minimum project size is 1,000 ha with a 3-year MRV cycle costing $50,000–$200,000 to certify. A 2-ha Indian farmer is structurally excluded. CarbonKisan aggregates micro-parcels, runs an ML-estimated proxy MRV, and issues micro-credits in the India VCM framework (BEE, Jan 2024) — a sovereign Indian standard, not Verra. The government framework specifically targets this gap. We're the product layer on top of a framework that was launched 18 months ago with no marketplace yet built.</div>
+    </div>
+
+    <div class="judge-block">
+      <div class="judge-q">Your model is trained on synthetic data. How valid is it?</div>
+      <div class="judge-a">The synthetic data is parameterised by peer-reviewed meta-analysis rates (Frontiers, 2023; n=70 studies) and ICAR district-level soil data — not invented numbers. The model learns the relationship between soil type, rainfall zone, and sequestration rate, which is real. RMSE of less than 0.15 t CO₂e on held-out test data. The alternative — waiting for 10 years of field measurements — means farmers earn zero in the meantime. Every carbon market in the world, including Verra, uses modelled estimates. We're transparent that ours is modelled.</div>
+    </div>
+
+    <div class="judge-block">
+      <div class="judge-q">What's the business model? How does the platform sustain itself?</div>
+      <div class="judge-a">15% platform fee on every credit transaction. On a ₹2,000 tonne credit for 2 ha (1.79 tonnes), that's ₹537 per transaction. At 10,000 active farmers in Maharashtra alone, with average 2 ha and 1 listing per year, that's ₹10.7 crore annual GMV and ₹1.6 crore platform revenue. The model scales linearly with farmer count. CSR departments additionally pay a subscription for bulk purchasing tools and ESG reporting exports.</div>
+    </div>
+
+    <div class="judge-block">
+      <div class="judge-q">Why Maharashtra? Why not national scale?</div>
+      <div class="judge-a">Maharashtra has the highest density of ICRISAT soil measurement points for the DECCAN black soil zone — the best soil data available for model training. Pune and Nashik have active FPO networks. Maharashtra also has the highest corporate CSR spend in India, creating immediate buyer demand. Narrow scope, executed well, beats a national solution that works nowhere. We expand state-by-state as soil data quality improves.</div>
+    </div>
+  </div>
+
+</div>
+
+<div class="footer">
+  <div>
+    <div class="footer-logo">CarbonKisan</div>
+    <div class="footer-tagline">AMIEE Hackathon — Environment & Entrepreneurship Track</div>
+  </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Carbon Kisan — Log Practice</title>
+  <meta name="description" content="Log your sustainable farming practice and estimate your carbon credit income.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/styles.css">
+  <style>
+    .log-layout { padding-top: 64px; min-height: 100vh; }
+    .log-inner { max-width: 960px; margin: 0 auto; padding: 32px 24px; }
+    .log-grid { display: grid; grid-template-columns: 1fr 380px; gap: 24px; align-items: start; }
+    .result-panel { background: linear-gradient(135deg, rgba(46,204,113,0.08), rgba(26,107,138,0.05)); border: 0.5px solid var(--leaf); border-radius: var(--radius-xl); padding: 28px; position: sticky; top: 88px; }
+    .result-panel-title { font-size: 14px; font-weight: 600; color: var(--text-secondary); margin-bottom: 20px; display: flex; align-items: center; gap: 8px; }
+    .result-amount { font-size: 52px; font-weight: 700; color: var(--leaf); line-height: 1; margin-bottom: 4px; }
+    .result-co2 { font-size: 15px; color: var(--text-secondary); margin-bottom: 16px; }
+    .result-breakdown { display: flex; flex-direction: column; gap: 8px; border-top: 0.5px solid var(--border); padding-top: 16px; margin-top: 4px; }
+    .result-row { display: flex; justify-content: space-between; font-size: 12px; }
+    .result-row-label { color: var(--text-muted); }
+    .result-row-value { color: var(--text-primary); font-weight: 500; }
+    .result-model-note { font-size: 11px; color: var(--text-muted); margin-top: 14px; padding-top: 12px; border-top: 0.5px solid var(--border); font-style: italic; }
+    .voice-btn { display: inline-flex; align-items: center; gap: 6px; background: var(--surface-3); border: 0.5px solid var(--border-strong); border-radius: var(--radius); padding: 8px 14px; font-size: 13px; color: var(--text-secondary); cursor: pointer; transition: all 0.15s; font-family: inherit; }
+    .voice-btn:hover { border-color: var(--leaf); color: var(--leaf); }
+    .voice-btn.recording { background: rgba(239,68,68,0.1); border-color: var(--red); color: var(--red); }
+    .voice-btn.recording .voice-icon { animation: blink 1s infinite; }
+    @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+    .ai-suggestion { background: rgba(26,107,138,0.12); border: 0.5px solid rgba(26,107,138,0.4); border-radius: var(--radius); padding: 10px 14px; font-size: 13px; color: var(--river); margin-top: 10px; display: none; align-items: center; gap: 8px; }
+    .ai-suggestion.show { display: flex; }
+    .ai-confirm-btn { background: var(--sky); color: white; border: none; border-radius: var(--radius-sm); padding: 4px 12px; font-size: 12px; font-weight: 500; cursor: pointer; margin-left: auto; font-family: inherit; }
+    .form-section-label { font-size: 11px; font-weight: 600; color: var(--leaf); text-transform: uppercase; letter-spacing: 0.8px; margin: 24px 0 12px; }
+    @media (max-width: 768px) {
+      .log-grid { grid-template-columns: 1fr; }
+      .result-panel { position: static; order: -1; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── NAVBAR ── -->
+<nav class="navbar" id="main-nav">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-brand">
+      <div class="nav-brand-icon">🌿</div>
+      <div class="nav-brand-name">Carbon Kisan</div>
+    </a>
+    <div class="nav-links">
+      <a href="farmer-dashboard.html" class="nav-link" data-i18n="nav_dashboard">Dashboard</a>
+      <a href="log-practice.html" class="nav-link active" data-i18n="nav_log">Log practice</a>
+      <a href="farmer-credits.html" class="nav-link" data-i18n="nav_credits">Credits</a>
+    </div>
+    <div class="nav-actions">
+      <div class="lang-switcher">
+        <button class="lang-tag active">EN ▾</button>
+      </div>
+      <span class="badge badge-sold" id="farmer-navbar-badge">🌾 Rajan Patil</span>
+    </div>
+    <button class="hamburger" id="hamburger"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+
+<!-- ── BOTTOM NAV ── -->
+<nav class="bottom-nav">
+  <div class="bottom-nav-items">
+    <a href="farmer-dashboard.html" class="bottom-nav-item">
+      <span class="bottom-nav-icon">🏠</span><span>Home</span>
+    </a>
+    <a href="log-practice.html" class="bottom-nav-item active">
+      <span class="bottom-nav-icon">📝</span><span>Log</span>
+    </a>
+    <a href="farmer-credits.html" class="bottom-nav-item">
+      <span class="bottom-nav-icon">💰</span><span>Credits</span>
+    </a>
+    <a href="farmer-dashboard.html#refer" class="bottom-nav-item">
+      <span class="bottom-nav-icon">🤝</span><span>Refer</span>
+    </a>
+  </div>
+</nav>
+
+<div class="log-layout">
+  <div class="log-inner">
+    <div class="page-header" style="border-radius:var(--radius-lg);margin-bottom:24px">
+      <div class="flex items-center justify-between flex-wrap gap-12">
+        <div>
+          <div class="section-eyebrow" data-i18n="hero_eyebrow">Farmer portal</div>
+          <h1 data-i18n="log_title">Log sustainable practice</h1>
+          <p data-i18n="log_sub">Fill in your farming details — our model will estimate your carbon credit instantly.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="log-grid">
+      <!-- ── FORM ── -->
+      <form id="log-form" onsubmit="submitPractice(event)">
+        <!-- LAND DETAILS -->
+        <div class="form-section-label" data-i18n="log_sec_land">🌾 Land details / भूमि विवरण</div>
+        <div class="card">
+          <div class="grid-2">
+            <div class="form-group">
+              <label class="form-label" for="crop" data-i18n="log_label_crop">Crop type / फसल का प्रकार</label>
+              <select class="input" id="crop" onchange="recalculate()" required style="appearance:none">
+                <option value="">Select crop / फसल चुनें</option>
+                <option value="wheat">Wheat / गेहूँ</option>
+                <option value="rice">Rice / धान</option>
+                <option value="soy">Soybean / सोयाबीन</option>
+                <option value="cotton">Cotton / कपास</option>
+                <option value="maize">Maize / मक्का</option>
+                <option value="sugarcane">Sugarcane / गन्ना</option>
+                <option value="pulses">Pulses / दलहन</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="practice" data-i18n="log_label_practice">Practice type / कृषि पद्धति</label>
+              <select class="input" id="practice" onchange="recalculate()" required style="appearance:none">
+                <option value="">Select practice / पद्धति चुनें</option>
+                <option value="notill">No-till / बिना जुताई</option>
+                <option value="cover">Cover crop / आवरण फसल</option>
+                <option value="reduced">Reduced pesticide / कम कीटनाशक</option>
+                <option value="organic">Organic / जैविक खेती</option>
+                <option value="mulching">Mulching / पलवार</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="land-area">
+              <span data-i18n="log_label_area">Land area (acres) / भूमि (एकड़)</span>
+              <span class="text-leaf font-600" style="float:right" id="land-area-display">5 acres</span>
+            </label>
+            <input type="range" min="1" max="50" value="5" id="land-area" oninput="updateLandDisplay(); recalculate()" style="width:100%;accent-color:var(--leaf);margin-bottom:4px">
+            <div class="flex justify-between text-xs text-muted">
+              <span>1 acre (0.4 ha)</span>
+              <span>50 acres (20 ha)</span>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="season" data-i18n="log_label_season">Season / सीज़न</label>
+            <select class="input" id="season" style="appearance:none" required>
+              <option value="kharif2026">Kharif 2026 (Jun–Oct)</option>
+              <option value="rabi2026">Rabi 2026 (Oct–Mar)</option>
+              <option value="kharif2025">Kharif 2025 (Jun–Oct)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- AI SUGGESTION -->
+        <div class="ai-suggestion" id="ai-suggestion">
+          🤖 We think this looks like <strong id="ai-practice-guess">no-till farming</strong>. Is that right?
+          <button type="button" class="ai-confirm-btn" onclick="confirmAISuggestion()">✓ Yes, confirm</button>
+        </div>
+
+        <!-- PHOTO UPLOAD -->
+        <div class="form-section-label" style="margin-top:20px" data-i18n="log_sec_photo">📸 Field photo / खेत की फोटो (optional)</div>
+        <div class="upload-zone" id="photo-zone">
+          <input type="file" id="photo-input" accept="image/*" capture="environment" style="display:none">
+          <div style="font-size:36px;margin-bottom:10px">📸</div>
+          <div style="font-size:14px;color:var(--text-secondary)" data-i18n="log_photo_hint">Drag land photo or tap to upload</div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:4px" data-i18n="log_photo_sub">Optional — strengthens credit verification</div>
+        </div>
+
+        <!-- ADDITIONAL NOTES -->
+        <div class="form-section-label" style="margin-top:20px" data-i18n="log_sec_notes">📝 Additional notes / अतिरिक्त जानकारी</div>
+        <div class="card">
+          <div class="form-group">
+            <label class="form-label" for="notes" data-i18n="log_label_desc">Practice description / विवरण (optional)</label>
+            <textarea class="input" id="notes" rows="3" placeholder="Describe your farming practice in detail..." style="resize:vertical"></textarea>
+          </div>
+          <div class="grid-2">
+            <div class="form-group">
+              <label class="form-label" for="water-usage" data-i18n="log_label_water">Water usage reduced?</label>
+              <select class="input" id="water-usage" style="appearance:none">
+                <option value="no">No / नहीं</option>
+                <option value="yes">Yes / हाँ</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="fertilizer" data-i18n="log_label_fertilizer">Chemical fertilizer reduced?</label>
+              <select class="input" id="fertilizer" style="appearance:none">
+                <option value="no">No / नहीं</option>
+                <option value="yes">Yes / हाँ</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- SUBMIT -->
+        <div style="margin-top:20px;display:flex;gap:12px;flex-wrap:wrap">
+          <button type="submit" class="btn btn-primary" style="flex:1;padding:14px;font-size:15px" data-i18n="log_btn_issue">
+            🌱 Issue credit to wallet
+          </button>
+          <button type="button" class="btn btn-secondary" onclick="saveDraft()" data-i18n="log_btn_draft">
+            Save as draft
+          </button>
+        </div>
+      </form>
+
+      <!-- ── RESULT PANEL ── -->
+      <div class="result-panel" id="result-panel">
+        <div class="result-panel-title">
+          <span data-i18n="log_est_res">Estimated result</span>
+          <span class="badge badge-pending" id="result-status">Select crop & practice</span>
+        </div>
+        <div class="result-amount" id="result-amount">—</div>
+        <div class="result-co2" id="result-co2">Select crop type and practice</div>
+
+        <div class="result-breakdown" id="result-breakdown" style="display:none">
+          <div class="result-row">
+            <span class="result-row-label">Land area</span>
+            <span class="result-row-value" id="rb-land">—</span>
+          </div>
+          <div class="result-row">
+            <span class="result-row-label">CO₂ sequestered</span>
+            <span class="result-row-value text-leaf" id="rb-co2">—</span>
+          </div>
+          <div class="result-row">
+            <span class="result-row-label">Price per tonne CO₂</span>
+            <span class="result-row-value">₹5,000.00</span>
+          </div>
+          <div class="result-row" style="border-top:0.5px solid var(--border);padding-top:8px;margin-top:4px">
+            <span class="result-row-label font-600" style="color:var(--text-secondary)">Estimated income</span>
+            <span class="result-row-value font-700 text-leaf" id="rb-income">—</span>
+          </div>
+        </div>
+
+        <div class="result-model-note" data-i18n="log_model_note">
+          Model: XGBoost · ICRISAT soil data · R² 0.81. Results are estimates. Final credit is verified.
+        </div>
+        <div class="rule-block info" style="margin-top:16px;font-size:12px">
+          <div class="rule-title">💡 Did you know?</div>
+          No-till farming sequesters 20–30% more carbon than conventional tilling. Cover crops add an additional 15% soil carbon.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="/js/main.js"></script>
+<script>
+  // Load local farmer details
+  document.addEventListener('DOMContentLoaded', () => {
+    const fName = localStorage.getItem('carbn-farmer-name') || 'Rajan Patil';
+    document.getElementById('farmer-navbar-badge').textContent = `🌾 ${fName}`;
+  });
+
+  const cropRates = { wheat: 16, rice: 21, soy: 18, cotton: 14, maize: 12, sugarcane: 10, pulses: 13 };
+  const practiceMultipliers = { notill: 1.0, cover: 1.25, reduced: 0.8, organic: 1.3, mulching: 0.9 };
+  const PRICE_PER_TONNE = 5000.0;
+
+  function updateLandDisplay() {
+    const val = document.getElementById('land-area').value;
+    document.getElementById('land-area-display').textContent = `${val} acres`;
+  }
+
+  async function recalculate() {
+    const crop = document.getElementById('crop').value;
+    const practice = document.getElementById('practice').value;
+    const land = parseInt(document.getElementById('land-area').value);
+
+    const amountEl = document.getElementById('result-amount');
+    const co2El = document.getElementById('result-co2');
+    const statusEl = document.getElementById('result-status');
+    const breakdownEl = document.getElementById('result-breakdown');
+
+    if (!crop || !practice) {
+      amountEl.textContent = '—';
+      co2El.textContent = 'Select crop type and practice';
+      statusEl.className = 'badge badge-pending';
+      statusEl.textContent = 'Estimating...';
+      breakdownEl.style.display = 'none';
+      return;
+    }
+
+    try {
+      const res = await window.fetchWithAuth('/estimate/calculate', {
+        method: 'POST',
+        body: JSON.stringify({
+          crop: crop,
+          practice: practice,
+          area_acres: land,
+          season: document.getElementById('season').value
+        })
+      });
+      const data = await res.json();
+      const co2Tonnes = data.estimated_co2_tonnes.toFixed(3);
+      const income = data.estimated_income;
+
+      animateResultValue(amountEl, income, '₹');
+      co2El.textContent = `${co2Tonnes} t CO₂ sequestered per season`;
+
+      statusEl.className = 'badge badge-success';
+      statusEl.textContent = '✓ Ready to issue';
+
+      document.getElementById('rb-land').textContent = `${land} acres`;
+      document.getElementById('rb-co2').textContent = `${co2Tonnes} t`;
+      document.getElementById('rb-income').textContent = `₹${income.toLocaleString('en-IN')}`;
+      breakdownEl.style.display = 'flex';
+    } catch (err) {
+      console.error(err);
+      showToast('error', 'Error', 'Failed to calculate estimate');
+    }
+  }
+
+  function animateResultValue(el, target, prefix = '') {
+    const duration = 600;
+    const start = performance.now();
+    const from = parseInt(el.textContent.replace(/[^0-9]/g, '')) || 0;
+
+    function update(ts) {
+      const progress = Math.min((ts - start) / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      const val = Math.round(from + (target - from) * eased);
+      el.textContent = prefix + val.toLocaleString('en-IN');
+      if (progress < 1) requestAnimationFrame(update);
+    }
+    requestAnimationFrame(update);
+  }
+
+
+  function confirmAISuggestion() {
+    document.getElementById('ai-suggestion').style.display = 'none';
+    showToast('success', 'Practice confirmed', 'No-till farming confirmed for this field.');
+  }
+
+  async function submitPractice(e) {
+    e.preventDefault();
+    const crop = document.getElementById('crop').value;
+    const practice = document.getElementById('practice').value;
+    const land = parseFloat(document.getElementById('land-area').value);
+    const season = document.getElementById('season').value;
+
+    if (!crop || !practice) {
+      showToast('error', 'Missing fields', 'Please select crop type and practice type.');
+      return;
+    }
+
+    try {
+      const res = await window.fetchWithAuth('/listings/create', {
+        method: 'POST',
+        body: JSON.stringify({
+          crop: crop,
+          practice: practice,
+          area_acres: land,
+          season: season,
+          price_per_tonne: 5000.0,
+          description: document.getElementById('notes').value
+        })
+      });
+      
+      showToast('success', 'Credit issued to wallet! 🌿', 'Your carbon credit will be listed in the marketplace.');
+      setTimeout(() => window.location.href = 'farmer-dashboard.html', 1500);
+    } catch (err) {
+      showToast('error', 'Error', 'Failed to submit practice.');
+    }
+  }
+
+  function saveDraft() {
+    showToast('info', 'Draft saved', 'You can continue later from your dashboard.');
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const zone = document.getElementById('photo-zone');
+    const input = document.getElementById('photo-input');
+    zone.addEventListener('click', () => input.click());
+    zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('dragging'); });
+    zone.addEventListener('dragleave', () => zone.classList.remove('dragging'));
+    zone.addEventListener('drop', e => {
+      e.preventDefault();
+      zone.classList.remove('dragging');
+      if (e.dataTransfer.files[0]) handlePhotoUpload(e.dataTransfer.files[0]);
+    });
+    input.addEventListener('change', e => {
+      if (e.target.files[0]) handlePhotoUpload(e.target.files[0]);
+    });
+  });
+
+  function handlePhotoUpload(file) {
+    const zone = document.getElementById('photo-zone');
+    zone.innerHTML = `
+      <div style="font-size:28px;margin-bottom:8px">✅</div>
+      <div style="font-size:14px;color:var(--leaf);font-weight:500">${file.name}</div>
+      <div style="font-size:11px;color:var(--text-muted);margin-top:4px">${(file.size/1024).toFixed(0)} KB · Uploaded ✓</div>
+    `;
+    setTimeout(() => {
+      document.getElementById('ai-suggestion').classList.add('show');
+      showToast('info', 'AI analyzing photo…', 'We are detecting your farming practice automatically.');
+    }, 1000);
+  }
+</script>
+</body>
+</html>
