@@ -258,21 +258,24 @@
 
   async function fetchListings() {
     try {
-      const res = await window.fetchWithAuth('/listings/live');
+      const res = await window.fetchWithAuth('/listings');
       const data = await res.json();
-      allListings = data.map(l => ({
-        id: `CC-${l.id}`,
-        dbId: l.id,
-        farmer: l.farmer.full_name,
-        location: `${l.farmer.state || 'Unknown'}`,
-        state: l.farmer.state || 'MH',
-        crop: l.crop,
-        practice: l.practice,
-        co2: l.estimated_co2_tonnes,
-        price: l.price_total,
-        date: new Date(l.created_at).toLocaleDateString('en-IN', { month: 'short', day: 'numeric' }),
-        trend: [3, 4, 4, 5, 4, 5, 5]
-      }));
+      allListings = data.map(l => {
+        const stateCode = l.farmers?.district_code ? l.farmers.district_code.split('_')[0] : 'Unknown';
+        return {
+          id: `CC-${l.id.substring(0,6).toUpperCase()}`,
+          dbId: `'${l.id}'`, // wrap uuid in quotes for openBuyModal
+          farmer: l.farmers?.full_name || 'Unknown',
+          location: l.farmers?.district_code || 'Unknown',
+          state: stateCode,
+          crop: 'Wheat', // default crop
+          practice: l.estimates?.practice_type || 'Unknown',
+          co2: l.estimates?.co2e_tonnes || 0,
+          price: l.asking_price_inr,
+          date: new Date(l.published_at || l.created_at || Date.now()).toLocaleDateString('en-IN', { month: 'short', day: 'numeric' }),
+          trend: [3, 4, 4, 5, 4, 5, 5]
+        };
+      });
       filterListings();
     } catch (err) {
       console.error(err);

@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -253,16 +253,18 @@
         <input class="input" type="text" id="profile-name" placeholder="e.g. Rajan Patil">
       </div>
       <div class="form-group">
-        <label class="form-label">Village / à¤—à¤¾à¤‚à¤µ</label>
+        <label class="form-label">Village / गाँव</label>
         <input class="input" type="text" id="profile-village" placeholder="Your village">
       </div>
       <div class="form-group">
-        <label class="form-label">District / à¤œà¤¿à¤²à¤¾</label>
-        <input class="input" type="text" id="profile-district" placeholder="District">
+        <label class="form-label">District / ज़िला *</label>
+        <select class="input" id="profile-district" style="appearance:none" required>
+          <option value="">Select district (35 Maharashtra districts)</option>
+        </select>
       </div>
       <div class="form-group">
-        <label class="form-label">State / à¤°à¤¾à¤œà¥à¤¯ *</label>
-        <select class="input" id="profile-state" style="appearance:none">
+        <label class="form-label">State / राज्य *</label>
+        <select class="input" id="profile-state" style="appearance:none" required>
           <option value="">Select state</option>
           <option>Maharashtra</option><option>Punjab</option>
           <option>Madhya Pradesh</option><option>Uttar Pradesh</option>
@@ -584,6 +586,22 @@
         e.target.value = formatted;
       }
     });
+
+    // Fetch and populate districts
+    fetch(API_BASE + '/auth/districts')
+      .then(res => res.json())
+      .then(data => {
+        const select = document.getElementById('profile-district');
+        if (data.data) {
+          data.data.forEach(d => {
+            const opt = document.createElement('option');
+            opt.value = d.code;
+            opt.textContent = d.name;
+            select.appendChild(opt);
+          });
+        }
+      })
+      .catch(err => console.error("Could not load districts:", err));
   });
 </script>
 </body>

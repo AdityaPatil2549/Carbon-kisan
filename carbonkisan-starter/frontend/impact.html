@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Platform Impact — Carbon Kisan</title>
+  <meta name="description" content="Live statistics of the Carbon Kisan micro-marketplace.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/styles.css">
+  <style>
+    .impact-hero {
+      padding: 100px 24px 60px;
+      text-align: center;
+      background: radial-gradient(ellipse 60% 50% at 50% 0%, rgba(46,204,113,0.12) 0%, transparent 70%);
+    }
+    
+    .stat-card {
+      background: var(--surface-1);
+      border: 0.5px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 32px 24px;
+      text-align: center;
+      transition: transform 0.2s;
+    }
+    .stat-card:hover {
+      transform: translateY(-4px);
+    }
+    .stat-val {
+      font-size: 42px;
+      font-weight: 700;
+      color: var(--leaf);
+      margin-bottom: 8px;
+    }
+    .stat-label {
+      font-size: 14px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .top-district-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 16px;
+      border-bottom: 0.5px solid var(--border);
+      align-items: center;
+    }
+    .top-district-row:last-child {
+      border-bottom: none;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── NAVBAR ── -->
+<nav class="navbar">
+  <div class="navbar-inner">
+    <a href="index.html" class="logo">
+      <span class="logo-icon">🌿</span>
+      Carbon Kisan
+    </a>
+    <div class="nav-links">
+      <a href="index.html" class="nav-link">Home</a>
+      <a href="marketplace.html" class="nav-link">Marketplace</a>
+      <a href="impact.html" class="nav-link" style="color:var(--text-primary)">Impact</a>
+    </div>
+    <div class="nav-actions">
+      <a href="farmer-login.html" class="nav-link">Farmers</a>
+      <a href="buyer-login.html" class="btn btn-secondary btn-sm">Buyer login</a>
+    </div>
+  </div>
+</nav>
+
+<div class="impact-hero">
+  <h1 style="font-size: 48px; color: var(--text-primary); margin-bottom: 16px;">Live Platform Impact</h1>
+  <p style="color: var(--text-secondary); max-width: 600px; margin: 0 auto; line-height: 1.6;">
+    Tracking the real-world climate benefits and rural income generated through sustainable Indian agriculture on Carbon Kisan.
+  </p>
+</div>
+
+<div class="container" style="max-width: 1000px; padding-bottom: 80px;">
+  <div class="grid-2" style="margin-bottom: 40px; gap: 24px;">
+    
+    <div class="stat-card">
+      <div class="stat-val" id="stat-listed" data-count="0" data-suffix=" t">0 t</div>
+      <div class="stat-label">Total CO₂ Sequestered & Listed</div>
+    </div>
+    
+    <div class="stat-card">
+      <div class="stat-val" id="stat-sold" data-count="0" data-suffix=" t">0 t</div>
+      <div class="stat-label">Total CO₂ Offset (Sold)</div>
+    </div>
+    
+    <div class="stat-card">
+      <div class="stat-val" id="stat-income" data-count="0" data-prefix="₹">₹0</div>
+      <div class="stat-label">Total Farmer Income Generated</div>
+    </div>
+    
+    <div class="stat-card">
+      <div class="stat-val" id="stat-districts" data-count="0">0</div>
+      <div class="stat-label">Active Districts</div>
+    </div>
+    
+  </div>
+
+  <div class="card">
+    <h2 style="font-size: 18px; margin-bottom: 16px;">Top Districts by Sequestration</h2>
+    <div id="district-list">
+      <!-- Injected by JS -->
+      <div style="text-align: center; color: var(--text-muted); padding: 40px;">Loading data...</div>
+    </div>
+  </div>
+</div>
+
+<script src="/js/main.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', async () => {
+    try {
+      const res = await fetch(API_BASE + '/impact/stats');
+      const data = await res.json();
+      
+      document.getElementById('stat-listed').setAttribute('data-count', data.total_co2e_listed || 0);
+      document.getElementById('stat-sold').setAttribute('data-count', data.total_co2e_sold || 0);
+      document.getElementById('stat-income').setAttribute('data-count', data.total_farmer_income_inr || 0);
+      document.getElementById('stat-districts').setAttribute('data-count', data.district_count || 0);
+      
+      const districtHtml = data.top_districts.map(d => `
+        <div class="top-district-row">
+          <div>
+            <div style="font-weight:600; color:var(--text-primary)">${d.district_name || d.district_code}</div>
+            <div style="font-size:12px; color:var(--text-muted)">${d.district_code}</div>
+          </div>
+          <div style="font-weight:600; color:var(--leaf); font-size: 18px;">
+            ${d.total_co2e} t CO₂
+          </div>
+        </div>
+      `).join('');
+      
+      document.getElementById('district-list').innerHTML = districtHtml || '<div style="padding:20px;text-align:center;color:var(--text-muted)">No active districts yet.</div>';
+
+      // Start animations
+      document.querySelectorAll('[data-count]').forEach(el => countObs.observe(el));
+      
+    } catch (err) {
+      console.error(err);
+      document.getElementById('district-list').innerHTML = '<div style="padding:20px;text-align:center;color:var(--red)">Failed to load impact stats.</div>';
+    }
+  });
+
+  const countObs = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting && e.target.getAttribute('data-count')) {
+        animateCount(e.target);
+        countObs.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.1 });
+
+  function animateCount(el) {
+    const target = parseFloat(el.getAttribute('data-count'));
+    const prefix = el.getAttribute('data-prefix') || '';
+    const suffix = el.getAttribute('data-suffix') || '';
+    const decimals = 0;
+    const duration = 1500;
+    const start = performance.now();
+
+    function update(ts) {
+      const progress = Math.min((ts - start) / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      const val = eased * target;
+      
+      let formattedVal = val.toLocaleString('en-IN', {
+        minimumFractionDigits: decimals,
+        maximumFractionDigits: decimals
+      });
+      el.textContent = prefix + formattedVal + suffix;
+      if (progress < 1) requestAnimationFrame(update);
+    }
+    requestAnimationFrame(update);
+  }
+</script>
+</body>
+</html>

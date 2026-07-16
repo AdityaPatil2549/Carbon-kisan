@@ -6,7 +6,10 @@ before any listing is marked sold or any transaction is recorded.
 Idempotency check prevents double-processing from webhook + client callback.
 """
 import logging
+import csv
+import io
 from fastapi import APIRouter, HTTPException, Depends
+from fastapi.responses import StreamingResponse
 from app.models.schemas import PurchaseInitiateRequest, PurchaseConfirmRequest
 from app.models.db import supabase
 from app.services.razorpay_client import create_order, verify_payment_signature
@@ -196,3 +199,65 @@ async def confirm_purchase(payload: PurchaseConfirmRequest, buyer_id: str = Depe
         "transaction_id": txn.data[0]["id"],
         "certificate_id": certificate_id,
     }
+
+
+@router.get("/purchase/export-csv")
+async def export_csr_csv(buyer_id: str = Depends(get_current_buyer)):
+    """
+    Export all transactions for the buyer as a CSV report.
+    """
+    transactions = (
+        supabase.table("transactions")
+        .select("*, listings(*, estimates(*, farmers(*)))")
+        .eq("buyer_id", buyer_id)
+        .order("created_at", desc=True)
+        .execute()
+    )
+    
+    output = io.StringIO()
+    writer = csv.writer(output)
+    
+    # Write header
+    writer.writerow([
+        "Transaction Date",
+        "Credit ID",
+        "Farmer Name",
+        "Location",
+        "Practice Type",
+        "CO2e (tonnes)",
+        "Amount Paid (INR)",
+        "Payment ID"
+    ])
+    
+    for txn in transactions.data:
+        listing = txn.get("listings", {})
+        estimate = listing.get("estimates", {})
+        farmer = estimate.get("farmers", {})
+        
+        date_str = txn.get("created_at", "")[:10]
+        credit_id = txn.get("id", "")[:8].upper()
+        farmer_name = farmer.get("full_name", "Unknown")
+        location = f"{farmer.get('district_code', '')}, {farmer.get('state_code', '')}"
+        practice = estimate.get("practice_type", "")
+        co2e = estimate.get("co2e_tonnes", 0)
+        amount = txn.get("amount_paid_inr", 0)
+        payment_id = txn.get("razorpay_payment_id", "")
+        
+        writer.writerow([
+            date_str,
+            credit_id,
+            farmer_name,
+            location,
+            practice,
+            co2e,
+            amount,
+            payment_id
+        ])
+        
+    output.seek(0)
+    
+    return StreamingResponse(
+        iter([output.getvalue()]),
+        media_type="text/csv",
+        headers={"Content-Disposition": "attachment; filename=CSR_Report.csv"}
+    )

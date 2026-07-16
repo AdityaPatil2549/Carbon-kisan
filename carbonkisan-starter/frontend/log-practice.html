@@ -111,27 +111,42 @@
               </select>
             </div>
             <div class="form-group">
-              <label class="form-label" for="practice" data-i18n="log_label_practice">Practice type / कृषि पद्धति</label>
-              <select class="input" id="practice" onchange="recalculate()" required style="appearance:none">
-                <option value="">Select practice / पद्धति चुनें</option>
-                <option value="notill">No-till / बिना जुताई</option>
-                <option value="cover">Cover crop / आवरण फसल</option>
-                <option value="reduced">Reduced pesticide / कम कीटनाशक</option>
-                <option value="organic">Organic / जैविक खेती</option>
-                <option value="mulching">Mulching / पलवार</option>
-              </select>
+              <label class="form-label" data-i18n="log_label_practice">Practice type / कृषि पद्धति</label>
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;" id="practice-grid">
+                <div class="practice-card" onclick="selectPractice('no_till')" style="border:1px solid var(--border); border-radius:8px; padding:12px; cursor:pointer;">
+                  <div style="font-size:24px; margin-bottom:4px;">🚜</div>
+                  <div style="font-weight:600; font-size:13px;">No-till / ज़ीरो टिलेज</div>
+                  <div style="font-size:11px; color:var(--text-muted);">No soil disturbance</div>
+                </div>
+                <div class="practice-card" onclick="selectPractice('cover_crop')" style="border:1px solid var(--border); border-radius:8px; padding:12px; cursor:pointer;">
+                  <div style="font-size:24px; margin-bottom:4px;">🌱</div>
+                  <div style="font-weight:600; font-size:13px;">Cover crop / आवरण फसल</div>
+                  <div style="font-size:11px; color:var(--text-muted);">Off-season ground cover</div>
+                </div>
+                <div class="practice-card" onclick="selectPractice('no_till_cover_crop')" style="border:1px solid var(--border); border-radius:8px; padding:12px; cursor:pointer;">
+                  <div style="font-size:24px; margin-bottom:4px;">🔄</div>
+                  <div style="font-weight:600; font-size:13px;">No-till + Cover Crop</div>
+                  <div style="font-size:11px; color:var(--text-muted);">Combined practice</div>
+                </div>
+                <div class="practice-card" onclick="selectPractice('agroforestry')" style="border:1px solid var(--border); border-radius:8px; padding:12px; cursor:pointer;">
+                  <div style="font-size:24px; margin-bottom:4px;">🌳</div>
+                  <div style="font-weight:600; font-size:13px;">Agroforestry / वानिकी</div>
+                  <div style="font-size:11px; color:var(--text-muted);">Integrating trees</div>
+                </div>
+              </div>
+              <input type="hidden" id="practice" value="" onchange="recalculate()">
             </div>
           </div>
 
           <div class="form-group">
             <label class="form-label" for="land-area">
-              <span data-i18n="log_label_area">Land area (acres) / भूमि (एकड़)</span>
-              <span class="text-leaf font-600" style="float:right" id="land-area-display">5 acres</span>
+              <span data-i18n="log_label_area">Land area (hectares) / भूमि (हेक्टेयर)</span>
+              <span class="text-leaf font-600" style="float:right" id="land-area-display">5.0 ha</span>
             </label>
-            <input type="range" min="1" max="50" value="5" id="land-area" oninput="updateLandDisplay(); recalculate()" style="width:100%;accent-color:var(--leaf);margin-bottom:4px">
+            <input type="range" min="0.5" max="10" step="0.5" value="5" id="land-area" oninput="updateLandDisplay(); recalculate()" style="width:100%;accent-color:var(--leaf);margin-bottom:4px">
             <div class="flex justify-between text-xs text-muted">
-              <span>1 acre (0.4 ha)</span>
-              <span>50 acres (20 ha)</span>
+              <span>0.5 ha</span>
+              <span>10.0 ha</span>
             </div>
           </div>
 
@@ -206,17 +221,9 @@
         <div class="result-co2" id="result-co2">Select crop type and practice</div>
 
         <div class="result-breakdown" id="result-breakdown" style="display:none">
-          <div class="result-row">
-            <span class="result-row-label">Land area</span>
-            <span class="result-row-value" id="rb-land">—</span>
-          </div>
-          <div class="result-row">
-            <span class="result-row-label">CO₂ sequestered</span>
-            <span class="result-row-value text-leaf" id="rb-co2">—</span>
-          </div>
-          <div class="result-row">
-            <span class="result-row-label">Price per tonne CO₂</span>
-            <span class="result-row-value">₹5,000.00</span>
+          <div style="font-size:12px; font-weight:600; margin-bottom:8px; color:var(--text-secondary)">SHAP Value Breakdown (Live)</div>
+          <div id="shap-chart" style="display:flex; flex-direction:column; gap:6px; margin-bottom: 16px;">
+            <!-- Rendered via JS -->
           </div>
           <div class="result-row" style="border-top:0.5px solid var(--border);padding-top:8px;margin-top:4px">
             <span class="result-row-label font-600" style="color:var(--text-secondary)">Estimated income</span>
@@ -248,15 +255,30 @@
   const practiceMultipliers = { notill: 1.0, cover: 1.25, reduced: 0.8, organic: 1.3, mulching: 0.9 };
   const PRICE_PER_TONNE = 5000.0;
 
+  let currentEstimateId = null;
+  let currentEstimateInr = 0;
+
+  function selectPractice(val) {
+    document.querySelectorAll('.practice-card').forEach(c => {
+      c.style.borderColor = 'var(--border)';
+      c.style.background = 'transparent';
+    });
+    const target = event.currentTarget;
+    target.style.borderColor = 'var(--leaf)';
+    target.style.background = 'rgba(46,204,113,0.05)';
+    document.getElementById('practice').value = val;
+    recalculate();
+  }
+
   function updateLandDisplay() {
-    const val = document.getElementById('land-area').value;
-    document.getElementById('land-area-display').textContent = `${val} acres`;
+    const val = parseFloat(document.getElementById('land-area').value).toFixed(1);
+    document.getElementById('land-area-display').textContent = `${val} ha`;
   }
 
   async function recalculate() {
     const crop = document.getElementById('crop').value;
     const practice = document.getElementById('practice').value;
-    const land = parseInt(document.getElementById('land-area').value);
+    const land = parseFloat(document.getElementById('land-area').value);
 
     const amountEl = document.getElementById('result-amount');
     const co2El = document.getElementById('result-co2');
@@ -273,18 +295,23 @@
     }
 
     try {
-      const res = await window.fetchWithAuth('/estimate/calculate', {
+      const districtCode = localStorage.getItem('carbn-farmer-district') || 'MH_NSK';
+      const res = await window.fetchWithAuth('/estimate', {
         method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          crop: crop,
-          practice: practice,
-          area_acres: land,
-          season: document.getElementById('season').value
+          practice_type: practice,
+          area_ha: land,
+          district_code: districtCode,
+          season_months: 6
         })
       });
       const data = await res.json();
-      const co2Tonnes = data.estimated_co2_tonnes.toFixed(3);
-      const income = data.estimated_income;
+      currentEstimateId = data.estimate_id;
+      currentEstimateInr = data.inr_estimate;
+      
+      const co2Tonnes = data.co2e_tonnes.toFixed(3);
+      const income = data.inr_estimate;
 
       animateResultValue(amountEl, income, '₹');
       co2El.textContent = `${co2Tonnes} t CO₂ sequestered per season`;
@@ -292,10 +319,25 @@
       statusEl.className = 'badge badge-success';
       statusEl.textContent = '✓ Ready to issue';
 
-      document.getElementById('rb-land').textContent = `${land} acres`;
-      document.getElementById('rb-co2').textContent = `${co2Tonnes} t`;
+      // Render SHAP waterfall
+      const shap = data.shap_breakdown;
+      let shapHtml = '';
+      for (const [key, val] of Object.entries(shap)) {
+        const pct = Math.min(100, Math.max(2, (val / data.co2e_tonnes) * 100));
+        shapHtml += `
+          <div style="display:flex; align-items:center; font-size:11px;">
+            <div style="width:100px; color:var(--text-muted); text-transform:capitalize;">${key.replace('_', ' ')}</div>
+            <div style="flex:1; background:rgba(46,204,113,0.1); border-radius:4px; height:14px; margin:0 8px;">
+              <div style="background:var(--leaf); width:${pct}%; height:100%; border-radius:4px;"></div>
+            </div>
+            <div style="width:45px; text-align:right; color:var(--text-primary); font-weight:600;">+${val.toFixed(2)} t</div>
+          </div>
+        `;
+      }
+      document.getElementById('shap-chart').innerHTML = shapHtml;
+
       document.getElementById('rb-income').textContent = `₹${income.toLocaleString('en-IN')}`;
-      breakdownEl.style.display = 'flex';
+      breakdownEl.style.display = 'block';
     } catch (err) {
       console.error(err);
       showToast('error', 'Error', 'Failed to calculate estimate');
@@ -316,37 +358,24 @@
     }
     requestAnimationFrame(update);
   }
-
-
-  function confirmAISuggestion() {
-    document.getElementById('ai-suggestion').style.display = 'none';
-    showToast('success', 'Practice confirmed', 'No-till farming confirmed for this field.');
-  }
-
   async function submitPractice(e) {
     e.preventDefault();
-    const crop = document.getElementById('crop').value;
-    const practice = document.getElementById('practice').value;
-    const land = parseFloat(document.getElementById('land-area').value);
-    const season = document.getElementById('season').value;
-
-    if (!crop || !practice) {
-      showToast('error', 'Missing fields', 'Please select crop type and practice type.');
+    if (!currentEstimateId) {
+      showToast('error', 'Estimate required', 'Please wait for the calculation to finish.');
       return;
     }
 
     try {
-      const res = await window.fetchWithAuth('/listings/create', {
+      const res = await window.fetchWithAuth('/listings', {
         method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          crop: crop,
-          practice: practice,
-          area_acres: land,
-          season: season,
-          price_per_tonne: 5000.0,
-          description: document.getElementById('notes').value
+          estimate_id: currentEstimateId,
+          asking_price_inr: currentEstimateInr
         })
       });
+      
+      if (!res.ok) throw new Error("Failed to submit");
       
       showToast('success', 'Credit issued to wallet! 🌿', 'Your carbon credit will be listed in the marketplace.');
       setTimeout(() => window.location.href = 'farmer-dashboard.html', 1500);
@@ -375,17 +404,73 @@
     });
   });
 
-  function handlePhotoUpload(file) {
+
+  async function handlePhotoUpload(file) {
     const zone = document.getElementById('photo-zone');
     zone.innerHTML = `
-      <div style="font-size:28px;margin-bottom:8px">✅</div>
-      <div style="font-size:14px;color:var(--leaf);font-weight:500">${file.name}</div>
-      <div style="font-size:11px;color:var(--text-muted);margin-top:4px">${(file.size/1024).toFixed(0)} KB · Uploaded ✓</div>
+      <div style="font-size:28px;margin-bottom:8px">⏳</div>
+      <div style="font-size:14px;color:var(--text-primary);font-weight:500">Uploading & Analyzing...</div>
+      <div style="font-size:11px;color:var(--text-muted);margin-top:4px">Please wait...</div>
     `;
-    setTimeout(() => {
+    
+    showToast('info', 'AI analyzing photo…', 'We are detecting your farming practice automatically.');
+    
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+      
+      const res = await window.fetchWithAuth('/vision/analyze-photo', {
+        method: 'POST',
+        headers: {}, // Do not set Content-Type, browser sets it automatically with boundary for FormData
+        body: formData
+      });
+      
+      if (!res.ok) throw new Error("Analysis failed");
+      
+      const data = await res.json();
+      
+      zone.innerHTML = `
+        <div style="font-size:28px;margin-bottom:8px">✅</div>
+        <div style="font-size:14px;color:var(--leaf);font-weight:500">${file.name}</div>
+        <div style="font-size:11px;color:var(--text-muted);margin-top:4px">${(file.size/1024).toFixed(0)} KB · Detected: ${data.practice_type} ✓</div>
+      `;
+      
+      // Map API response to dropdown values if needed (API returns 'notill', 'cover', 'reduced', 'organic', 'mulching')
+      let practiceText = data.practice_type;
+      const practiceNames = {
+        'notill': 'No-till farming',
+        'cover': 'Cover crop',
+        'reduced': 'Reduced pesticide',
+        'organic': 'Organic farming',
+        'mulching': 'Mulching'
+      };
+      
+      document.getElementById('ai-practice-guess').textContent = practiceNames[data.practice_type] || data.practice_type;
+      
+      // Store the detected practice globally so confirmAISuggestion can access it
+      window.detectedPractice = data.practice_type;
+      
       document.getElementById('ai-suggestion').classList.add('show');
-      showToast('info', 'AI analyzing photo…', 'We are detecting your farming practice automatically.');
-    }, 1000);
+      
+    } catch (err) {
+      console.error(err);
+      zone.innerHTML = `
+        <div style="font-size:28px;margin-bottom:8px">❌</div>
+        <div style="font-size:14px;color:var(--red);font-weight:500">Analysis Failed</div>
+        <div style="font-size:11px;color:var(--text-muted);margin-top:4px">Please select practice manually.</div>
+      `;
+      showToast('error', 'Error', 'Failed to analyze photo.');
+    }
+  }
+
+  function confirmAISuggestion() {
+    document.getElementById('ai-suggestion').style.display = 'none';
+    const practiceSelect = document.getElementById('practice');
+    if (window.detectedPractice) {
+      practiceSelect.value = window.detectedPractice;
+      recalculate();
+    }
+    showToast('success', 'Practice confirmed', 'Farming practice applied from photo.');
   }
 </script>
 </body>

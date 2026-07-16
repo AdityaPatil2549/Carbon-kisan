@@ -22,7 +22,7 @@ from app.middleware import (
     RateLimitMiddleware,
     SecurityHeadersMiddleware,
 )
-from app.routers import auth, profiles, estimate, listings, purchase, certificate, impact, admin
+from app.routers import auth, profiles, estimate, listings, purchase, certificate, impact, admin, vision
 
 
 # ─── Structured Logging Configuration ───
@@ -154,6 +154,7 @@ app.include_router(purchase.router, tags=["Purchase"])
 app.include_router(certificate.router, tags=["Certificate"])
 app.include_router(impact.router, tags=["Impact"])
 app.include_router(admin.router, prefix="/admin", tags=["Admin"])
+app.include_router(vision.router, tags=["Vision"])
 
 
 # ─── Health Check ───
