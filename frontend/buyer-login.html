@@ -239,6 +239,7 @@
   }
 
   function ssoLogin() {
+    localStorage.removeItem('carbn-token');
     localStorage.setItem('carbn-buyer-logged', 'true');
     localStorage.setItem('carbn-buyer-company', 'WIPRO');
     localStorage.setItem('carbn-buyer-name', 'Wipro CSR');

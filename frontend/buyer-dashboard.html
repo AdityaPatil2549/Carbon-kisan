@@ -305,15 +305,19 @@
     fetchImpactStats();
   });
 
+  function populateDemoStats() {
+    document.getElementById('stat-credits-bought').setAttribute('data-count', '42');
+    document.getElementById('stat-co2-offset').setAttribute('data-count', '148.5');
+    document.getElementById('stat-total-spent').setAttribute('data-count', '267300');
+    document.getElementById('stat-farmers-supported').setAttribute('data-count', '38');
+    document.getElementById('stat-districts').textContent = `Across 5 districts`;
+    document.querySelectorAll('[data-count]').forEach(el => animateCount(el));
+  }
+
   async function fetchImpactStats() {
     // If no token exists, we are in Demo mode (SSO bypass) - skip fetching real stats and use UI defaults
     if (!localStorage.getItem('carbn-token')) {
-        document.getElementById('stat-credits-bought').setAttribute('data-count', '42');
-        document.getElementById('stat-co2-offset').setAttribute('data-count', '148.5');
-        document.getElementById('stat-total-spent').setAttribute('data-count', '267300');
-        document.getElementById('stat-farmers-supported').setAttribute('data-count', '38');
-        document.getElementById('stat-districts').textContent = `Across 5 districts`;
-        document.querySelectorAll('[data-count]').forEach(el => animateCount(el));
+        populateDemoStats();
         return;
     }
 
@@ -326,11 +330,14 @@
           document.getElementById('stat-total-spent').setAttribute('data-count', data.total_farmer_income_inr || 0);
           document.getElementById('stat-farmers-supported').setAttribute('data-count', data.farmer_count || 0);
           document.getElementById('stat-districts').textContent = `Across ${data.district_count || 0} districts`;
+          // Re-trigger intersection observer for new data-count values
+          document.querySelectorAll('[data-count]').forEach(el => countObs.observe(el));
+      } else {
+          populateDemoStats();
       }
-      // Re-trigger intersection observer for new data-count values
-      document.querySelectorAll('[data-count]').forEach(el => countObs.observe(el));
     } catch (err) {
       console.error('Failed to fetch impact stats', err);
+      populateDemoStats();
     }
   }
 
