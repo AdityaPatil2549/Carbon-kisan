@@ -21,7 +21,9 @@ RMSE_THRESHOLD = 0.15
 
 
 def train():
-    df = pd.read_csv("data/train.csv")
+    import os
+    BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    df = pd.read_csv(os.path.join(BASE_DIR, "data", "train.csv"))
     X, y = df[FEATURES], df[TARGET]
 
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1, random_state=42)
@@ -60,9 +62,9 @@ def train():
         print("WARNING: top-2 SHAP features are not {practice_encoded, soil_modifier} — "
               "the model may have learned a spurious relationship. Investigate before shipping.")
 
-    with open("app/ml/model.pkl", "wb") as f:
+    with open(os.path.join(BASE_DIR, "app", "ml", "model.pkl"), "wb") as f:
         pickle.dump(model, f)
-    with open("app/ml/explainer.pkl", "wb") as f:
+    with open(os.path.join(BASE_DIR, "app", "ml", "explainer.pkl"), "wb") as f:
         pickle.dump(explainer, f)
 
     print("\nSaved model.pkl and explainer.pkl to app/ml/")

@@ -29,7 +29,12 @@ RAINFALL_ENCODING = {"low": 0, "medium": 1, "high": 2}
 N_SAMPLES = 10_000
 
 
-def generate(districts_csv: str = "data/maharashtra_districts.csv", out_csv: str = "data/train.csv"):
+import os
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+DEFAULT_DISTRICTS = os.path.join(BASE_DIR, "data", "maharashtra_districts.csv")
+DEFAULT_OUT = os.path.join(BASE_DIR, "data", "train.csv")
+
+def generate(districts_csv: str = DEFAULT_DISTRICTS, out_csv: str = DEFAULT_OUT):
     districts = pd.read_csv(districts_csv)
 
     rows = []
