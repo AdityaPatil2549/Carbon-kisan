@@ -1,9 +1,17 @@
 // ── CARBON KISAN — GLOBAL JAVASCRIPT ──
 
-// Auto-detect API base: use relative path on Vercel, localhost for dev
-window.API_BASE_URL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
-  ? 'http://localhost:8000/api/v1'
-  : '/api/v1';
+// IMPORTANT: Once you deploy your backend to Railway, paste your Railway URL here!
+// Example: 'https://carbon-backend-production.up.railway.app'
+const RAILWAY_BACKEND_URL = '';
+
+// Auto-detect API base: use local, Railway, or Vercel fallback
+if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+  window.API_BASE_URL = 'http://localhost:8000/api/v1';
+} else if (RAILWAY_BACKEND_URL) {
+  window.API_BASE_URL = `${RAILWAY_BACKEND_URL}/api/v1`;
+} else {
+  window.API_BASE_URL = '/api/v1';
+}
 
 
 window.fetchWithAuth = async function(endpoint, options = {}) {
