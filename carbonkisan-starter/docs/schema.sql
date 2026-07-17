@@ -5,8 +5,20 @@
 
 create extension if not exists "uuid-ossp";
 
+-- Drop existing tables to allow clean re-run
+drop table if exists admin_audit_log cascade;
+drop table if exists admins cascade;
+drop table if exists certificates cascade;
+drop table if exists transactions cascade;
+drop table if exists buyers cascade;
+drop table if exists listings cascade;
+drop table if exists estimates cascade;
+drop table if exists land_parcels cascade;
+drop table if exists farmers cascade;
+drop table if exists districts cascade;
+
 create table districts (
-  code               varchar(10) primary key,
+  code               varchar(20) primary key,
   name               varchar(80) not null,
   soc_baseline       decimal(5,3),
   rainfall_zone      varchar(10) not null check (rainfall_zone in ('low','medium','high')),
@@ -19,7 +31,7 @@ create table farmers (
   id                  uuid primary key default uuid_generate_v4(),
   phone               varchar(15) unique not null,
   full_name           varchar(120) not null,
-  district_code       varchar(10) references districts(code) not null,
+  district_code       varchar(20) references districts(code) not null,
   village             varchar(120),
   preferred_language  varchar(2) default 'mr' check (preferred_language in ('mr','hi','en')),
   profile_complete    boolean default false,
@@ -32,7 +44,7 @@ create table land_parcels (
   area_ha        decimal(6,2) not null check (area_ha > 0),
   primary_crop   varchar(50) not null,
   soil_type      varchar(50) not null,
-  district_code  varchar(10) references districts(code) not null,
+  district_code  varchar(20) references districts(code) not null,
   created_at     timestamptz default now()
 );
 

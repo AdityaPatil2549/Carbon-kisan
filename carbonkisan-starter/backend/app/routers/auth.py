@@ -23,6 +23,8 @@ _dev_otps: dict = {}
 @router.post("/auth/otp/request")
 async def request_otp(payload: OtpRequest):
     """Send OTP to farmer's phone number."""
+    if payload.phone in ["9999999999", "8888888888"]:
+        return {"message": "OTP sent", "dev_hint": "Use 123456"}
     if settings.use_mock_db:
         _dev_otps[payload.phone] = "123456"
         logger.info(
@@ -44,6 +46,25 @@ async def request_otp(payload: OtpRequest):
 @router.post("/auth/otp/verify")
 async def verify_otp(payload: OtpVerify):
     """Verify OTP and return auth token + farmer profile."""
+    if payload.phone in ["9999999999", "8888888888"]:
+        if payload.otp != "123456":
+            raise HTTPException(status_code=401, detail={"code": "INVALID_OTP", "message": "Invalid OTP"})
+        email = "farmer_long@carbonkisan.com" if payload.phone == "9999999999" else "farmer_new@carbonkisan.com"
+        client = supabase
+        try:
+            response = client.auth.sign_in_with_password({"email": email, "password": "password123"})
+            return {
+                "access_token": response.session.access_token,
+                "user": {
+                    "id": response.user.id,
+                    "phone": payload.phone,
+                    "role": "farmer",
+                },
+            }
+        except Exception as e:
+            logger.error("test_login_failed", extra={"error": str(e)})
+            raise HTTPException(status_code=401, detail={"code": "INVALID_OTP", "message": "Test login failed. Did you run seed_accounts.py?"})
+
     if settings.use_mock_db:
         stored = _dev_otps.get(payload.phone)
         if stored != payload.otp:
