@@ -146,15 +146,20 @@ app.add_middleware(
 
 # ─── Routes ───
 
-app.include_router(auth.router, tags=["Auth"])
-app.include_router(profiles.router, tags=["Profiles"])
-app.include_router(estimate.router, tags=["Estimate"])
-app.include_router(listings.router, tags=["Listings"])
-app.include_router(purchase.router, tags=["Purchase"])
-app.include_router(certificate.router, tags=["Certificate"])
-app.include_router(impact.router, tags=["Impact"])
-app.include_router(admin.router, prefix="/admin", tags=["Admin"])
-app.include_router(vision.router, tags=["Vision"])
+from fastapi import APIRouter
+api_router = APIRouter(prefix="/api/v1")
+
+api_router.include_router(auth.router, tags=["Auth"])
+api_router.include_router(profiles.router, tags=["Profiles"])
+api_router.include_router(estimate.router, tags=["Estimate"])
+api_router.include_router(listings.router, tags=["Listings"])
+api_router.include_router(purchase.router, tags=["Purchase"])
+api_router.include_router(certificate.router, tags=["Certificate"])
+api_router.include_router(impact.router, tags=["Impact"])
+api_router.include_router(admin.router, prefix="/admin", tags=["Admin"])
+api_router.include_router(vision.router, tags=["Vision"])
+
+app.include_router(api_router)
 
 
 # ─── Health Check ───
