@@ -15,8 +15,11 @@ class Settings:
     """Centralized settings — single source of truth for all configuration."""
 
     # ─── Database ───
-    SUPABASE_URL: str = os.getenv("SUPABASE_URL", "")
-    SUPABASE_SERVICE_ROLE_KEY: str = os.getenv("SUPABASE_SERVICE_ROLE_KEY", "")
+    SUPABASE_URL: str = os.getenv("SUPABASE_URL", "https://zmorqtnxkgzqwprmtres.supabase.co")
+    SUPABASE_SERVICE_ROLE_KEY: str = os.getenv(
+        "SUPABASE_SERVICE_ROLE_KEY", 
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inptb3JxdG54a2d6cXdwcm10cmVzIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4NDIyNDc2MSwiZXhwIjoyMDk5ODAwNzYxfQ._6RZkCecj6KjFg4xqnCEU__U68O6dZpVfCNkMcbtzz8"
+    )
 
     # ─── Payment ───
     RAZORPAY_KEY_ID: str = os.getenv("RAZORPAY_KEY_ID", "rzp_test_placeholder")
