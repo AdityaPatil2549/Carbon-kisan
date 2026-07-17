@@ -308,12 +308,12 @@
   async function fetchImpactStats() {
     // If no token exists, we are in Demo mode (SSO bypass) - skip fetching real stats and use UI defaults
     if (!localStorage.getItem('carbn-token')) {
-        document.getElementById('stat-credits-bought').setAttribute('data-count', 42);
-        document.getElementById('stat-co2-offset').setAttribute('data-count', 148.5);
-        document.getElementById('stat-total-spent').setAttribute('data-count', 267300);
-        document.getElementById('stat-farmers-supported').setAttribute('data-count', 38);
+        document.getElementById('stat-credits-bought').setAttribute('data-count', '42');
+        document.getElementById('stat-co2-offset').setAttribute('data-count', '148.5');
+        document.getElementById('stat-total-spent').setAttribute('data-count', '267300');
+        document.getElementById('stat-farmers-supported').setAttribute('data-count', '38');
         document.getElementById('stat-districts').textContent = `Across 5 districts`;
-        document.querySelectorAll('[data-count]').forEach(el => countObs.observe(el));
+        document.querySelectorAll('[data-count]').forEach(el => animateCount(el));
         return;
     }
 
