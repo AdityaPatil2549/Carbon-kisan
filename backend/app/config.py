@@ -45,8 +45,9 @@ class Settings:
     # ─── CORS ───
     ALLOWED_ORIGINS: List[str] = os.getenv(
         "ALLOWED_ORIGINS",
-        "http://localhost:5173,http://localhost:3000,http://127.0.0.1:5173,http://localhost:5185"
+        "http://localhost:5173,http://localhost:3000,http://127.0.0.1:5173,http://localhost:5185,https://carbon-kisan-six.vercel.app,https://carbon-kisan.vercel.app,https://carbon-kisan-app.vercel.app"
     ).split(",")
+
 
     # ─── Derived ───
     @property

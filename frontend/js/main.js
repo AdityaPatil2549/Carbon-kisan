@@ -1,6 +1,10 @@
 // ── CARBON KISAN — GLOBAL JAVASCRIPT ──
 
-window.API_BASE_URL = 'http://localhost:8000/api/v1';
+// Auto-detect API base: use relative path on Vercel, localhost for dev
+window.API_BASE_URL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+  ? 'http://localhost:8000/api/v1'
+  : '/api/v1';
+
 
 window.fetchWithAuth = async function(endpoint, options = {}) {
   const token = localStorage.getItem('carbn-token');
