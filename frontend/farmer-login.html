@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Carbon Kisan â€” Farmer Login</title>
+  <title>Carbon Kisan – Farmer Login</title>
   <meta name="description" content="Login to Carbon Kisan farmer portal. Enter your mobile number and verify with OTP.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -31,7 +31,7 @@
       pointer-events: none;
     }
     .login-left::after {
-      content: 'ðŸŒ¿';
+      content: '🌿';
       position: absolute;
       bottom: -40px; left: -40px;
       font-size: 260px;
@@ -154,7 +154,7 @@
 
 <div class="login-left">
   <div class="login-brand">
-    <div class="login-brand-icon">ðŸŒ¿</div>
+    <div class="login-brand-icon">🌿</div>
     <div class="login-brand-name">Carbon Kisan</div>
   </div>
   <div class="section-eyebrow" data-i18n="hero_eyebrow">Farmer portal</div>
@@ -162,14 +162,14 @@
     Earn from your<br><span>sustainable farming.</span>
   </div>
   <p class="login-hero-sub" data-i18n="hero_sub">
-    Log your farming practices â€” no-till, cover cropping, reduced pesticide use. Our system calculates your COâ‚‚ credit and connects you directly with CSR buyers across India.
+    Log your farming practices – no-till, cover cropping, reduced pesticide use. Our system calculates your CO₂ credit and connects you directly with CSR buyers across India.
   </p>
   <div class="login-testimonial">
     <p class="login-testimonial-quote">
-      "à¤®à¥ˆà¤‚à¤¨à¥‡ à¤ªà¤¹à¤²à¥‡ à¤¸à¥€à¤œà¤¼à¤¨ à¤®à¥‡à¤‚ â‚¹4,820 à¤•à¤®à¤¾à¤à¥¤ à¤®à¥à¤à¥‡ WhatsApp à¤ªà¤° à¤¨à¥‹à¤Ÿà¤¿à¤«à¤¿à¤•à¥‡à¤¶à¤¨ à¤†à¤¯à¤¾ à¤œà¤¬ Tata Motors à¤¨à¥‡ à¤®à¥‡à¤°à¤¾ à¤•à¥à¤°à¥‡à¤¡à¤¿à¤Ÿ à¤–à¤°à¥€à¤¦à¤¾à¥¤"
+      "मैंने पहले सीज़न में ₹4,820 कमाए। मुझे WhatsApp पर नोटिफिकेशन आया जब Tata Motors ने मेरा क्रेडिट खरीदा।"
     </p>
     <div class="login-testimonial-author">
-      <div class="login-testimonial-avatar">ðŸ‘¨â€ðŸŒ¾</div>
+      <div class="login-testimonial-avatar">👨‍🌾</div>
       <div>
         <div class="login-testimonial-name">Rajan Patil</div>
         <div class="login-testimonial-loc">Nashik, Maharashtra</div>
@@ -197,14 +197,14 @@
     </div>
 
     <h1 class="login-step-title" id="step1-title">Welcome back</h1>
-    <p class="login-step-sub" id="step1-sub">Enter your number to continue / à¤…à¤ªà¤¨à¤¾ à¤¨à¤‚à¤¬à¤° à¤¦à¤°à¥à¤œ à¤•à¤°à¥‡à¤‚</p>
+    <p class="login-step-sub" id="step1-sub">Enter your number to continue / अपना नंबर दर्ज करें</p>
     <div class="lang-section" id="login-lang">
-      <button class="lang-tag active" data-lang="en">ðŸ‡¬ðŸ‡§ English</button>
-      <button class="lang-tag" data-lang="hi">à¤¹à¤¿à¤‚à¤¦à¥€</button>
-      <button class="lang-tag" data-lang="mr">à¤®à¤°à¤¾à¤ à¥€</button>
+      <button class="lang-tag active" data-lang="en">🇬🇧 English</button>
+      <button class="lang-tag" data-lang="hi">हिंदी</button>
+      <button class="lang-tag" data-lang="mr">मराठी</button>
     </div>
     <div class="form-group" style="margin-top:24px">
-      <label class="form-label" for="phone-input" data-i18n="f_label_phone">Mobile number / à¤®à¥‹à¤¬à¤¾à¤‡à¤² à¤¨à¤‚à¤¬à¤°</label>
+      <label class="form-label" for="phone-input" data-i18n="f_label_phone">Mobile number / मोबाइल नंबर</label>
       <div class="phone-input-row">
         <div class="phone-prefix">+91</div>
         <input class="input" type="tel" id="phone-input" placeholder="98765 43210" maxlength="10" inputmode="numeric" pattern="[0-9]*" style="flex:1" oninput="document.getElementById('phone-error').style.display='none'; this.classList.remove('error'); this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10)">
@@ -213,11 +213,11 @@
       <div class="form-error" id="phone-error" style="display:none"></div>
     </div>
     <button class="btn btn-primary btn-full" style="margin-top:8px;padding:14px" onclick="goToStep2()" id="send-otp-btn">
-      Continue â†’
+      Continue →
     </button>
     <div class="sep"></div>
     <p style="font-size:13px;color:var(--text-muted);text-align:center">
-      I'm a CSR buyer â†’ <a href="buyer-login.html" style="color:var(--river);text-decoration:none">Login here</a>
+      I'm a CSR buyer → <a href="buyer-login.html" style="color:var(--river);text-decoration:none">Login here</a>
     </p>
   </div>
 
@@ -239,17 +239,17 @@
       Verify OTP
     </button>
     <button class="btn btn-ghost btn-full" style="margin-top:10px" onclick="goToStep(1)" data-i18n="f_back_btn">
-      â† Change number
+      ← Change number
     </button>
   </div>
 
   <!-- Step 2B: New User Profile Setup (signup flow only) -->
   <div class="login-step" id="step-2b">
-    <h1 class="login-step-title">Set up your profile ðŸ‘¨â€ðŸŒ¾</h1>
-    <p class="login-step-sub">Tell us about your farm â€” this personalises your dashboard</p>
+    <h1 class="login-step-title">Set up your profile 👨‍🌾</h1>
+    <p class="login-step-sub">Tell us about your farm – this personalises your dashboard</p>
     <div class="profile-grid">
       <div class="form-group">
-        <label class="form-label">Full name / à¤ªà¥‚à¤°à¤¾ à¤¨à¤¾à¤® *</label>
+        <label class="form-label">Full name / पूरा नाम *</label>
         <input class="input" type="text" id="profile-name" placeholder="e.g. Rajan Patil">
       </div>
       <div class="form-group">
@@ -275,11 +275,11 @@
         </select>
       </div>
       <div class="form-group">
-        <label class="form-label">Farm size (acres) / à¤–à¥‡à¤¤ à¤•à¤¾ à¤†à¤•à¤¾à¤°</label>
+        <label class="form-label">Farm size (acres) / खेत का आकार</label>
         <input class="input" type="number" id="profile-farm-size" placeholder="e.g. 3.5" min="0" step="0.1">
       </div>
       <div class="form-group">
-        <label class="form-label">Primary crop / à¤®à¥à¤–à¥à¤¯ à¤«à¤¸à¤²</label>
+        <label class="form-label">Primary crop / मुख्य फसल</label>
         <select class="input" id="profile-crop" style="appearance:none">
           <option value="">Select crop</option>
           <option>Wheat</option><option>Rice</option><option>Cotton</option>
@@ -288,7 +288,7 @@
       </div>
     </div>
     <button class="btn btn-primary btn-full" style="margin-top:20px;padding:14px" onclick="saveProfile()">
-      Save &amp; continue â†’
+      Save &amp; continue →
     </button>
   </div>
 
@@ -299,8 +299,8 @@
 
     <!-- Verification Option Tabs -->
     <div class="verify-tabs">
-      <button class="verify-tab active" id="tab-land-record" onclick="switchVerifyTab('land')">ðŸŒ¾ Land Record / à¤­à¥‚à¤®à¤¿ à¤¦à¤¸à¥à¤¤à¤¾à¤µà¥‡à¤œ</button>
-      <button class="verify-tab" id="tab-gov-id" onclick="switchVerifyTab('gov')">ðŸ†” Government ID / à¤¸à¤°à¤•à¤¾à¤°à¥€ à¤ªà¤¹à¤šà¤¾à¤¨ à¤ªà¤¤à¥à¤°</button>
+      <button class="verify-tab active" id="tab-land-record" onclick="switchVerifyTab('land')">🌾 Land Record / भूमि दस्तावेज</button>
+      <button class="verify-tab" id="tab-gov-id" onclick="switchVerifyTab('gov')">🆔 Government ID / सरकारी पहचान पत्र</button>
     </div>
 
     <!-- Tab 1: Land Record Pane -->
@@ -313,36 +313,36 @@
       </div>
       <div class="upload-zone" id="doc-upload-zone" style="margin-bottom:16px">
         <input type="file" accept=".pdf,.jpg,.jpeg,.png" style="display:none" id="doc-file-input">
-        <div style="font-size:32px;margin-bottom:10px">ðŸ“¸</div>
+        <div style="font-size:32px;margin-bottom:10px">📸</div>
         <div style="font-size:14px;color:var(--text-secondary)">Drag document or tap to upload</div>
-        <div style="font-size:11px;color:var(--text-muted);margin-top:4px">PDF, JPG, PNG Â· Max 5MB</div>
+        <div style="font-size:11px;color:var(--text-muted);margin-top:4px">PDF, JPG, PNG · Max 5MB</div>
       </div>
     </div>
 
     <!-- Tab 2: Government ID Pane -->
     <div class="verify-content-pane" id="pane-gov">
       <div class="form-group">
-        <label class="form-label" for="gov-id-type">Select ID Type / à¤ªà¤¹à¤šà¤¾à¤¨ à¤ªà¤¤à¥à¤° à¤•à¤¾ à¤ªà¥à¤°à¤•à¤¾à¤°</label>
+        <label class="form-label" for="gov-id-type">Select ID Type / पहचान पत्र का प्रकार</label>
         <select class="input" id="gov-id-type" style="appearance:none; margin-bottom: 12px;">
-          <option value="Aadhaar">Aadhaar Card / à¤†à¤§à¤¾à¤° à¤•à¤¾à¤°à¥à¤¡</option>
-          <option value="PAN">PAN Card / à¤ªà¥ˆà¤¨ à¤•à¤¾à¤°à¥à¤¡</option>
-          <option value="Voter">Voter ID / à¤®à¤¤à¤¦à¤¾à¤¤à¤¾ à¤ªà¤¹à¤šà¤¾à¤¨ à¤ªà¤¤à¥à¤°</option>
+          <option value="Aadhaar">Aadhaar Card / आधार कार्ड</option>
+          <option value="PAN">PAN Card / पैन कार्ड</option>
+          <option value="Voter">Voter ID / मतदाता पहचान पत्र</option>
         </select>
       </div>
       <div class="form-group">
-        <label class="form-label" for="gov-id-number" id="gov-id-label">12-Digit Aadhaar Number / 12-à¤…à¤‚à¤•à¥€à¤¯ à¤†à¤§à¤¾à¤° à¤¨à¤‚à¤¬à¤°</label>
+        <label class="form-label" for="gov-id-number" id="gov-id-label">12-Digit Aadhaar Number / 12-अंकीय आधार नंबर</label>
         <input class="input" type="text" id="gov-id-number" placeholder="xxxx-xxxx-xxxx" maxlength="14" style="margin-bottom: 12px;">
       </div>
       <div class="upload-zone" id="gov-upload-zone" style="margin-bottom:16px">
         <input type="file" accept=".pdf,.jpg,.jpeg,.png" style="display:none" id="gov-file-input">
-        <div style="font-size:32px;margin-bottom:10px">ðŸªª</div>
-        <div style="font-size:14px;color:var(--text-secondary)">Upload ID Front & Back photo</div>
-        <div style="font-size:11px;color:var(--text-muted);margin-top:4px">PDF, JPG, PNG Â· Max 5MB</div>
+        <div style="font-size:32px;margin-bottom:10px">🪪</div>
+        <div style="font-size:14px;color:var(--text-secondary)">Upload ID Front &amp; Back photo</div>
+        <div style="font-size:11px;color:var(--text-muted);margin-top:4px">PDF, JPG, PNG · Max 5MB</div>
       </div>
     </div>
 
     <button class="btn btn-primary btn-full" style="padding:14px" onclick="completeLogin()" data-i18n="f_btn_complete">
-      Complete setup â†’
+      Complete setup →
     </button>
     <button class="btn btn-ghost btn-full" style="margin-top:10px" onclick="skipDocUpload()" data-i18n="f_btn_skip">
       Skip for now (add later)
@@ -362,7 +362,7 @@
   let currentVerifyMode = 'land';
   let userMode = 'login'; // 'login' or 'signup'
 
-  // â”€â”€ MODE DETECTION â”€â”€
+  // ── MODE DETECTION ──
   function initMode() {
     const params = new URLSearchParams(window.location.search);
     const mode = params.get('mode') || 'login';
@@ -375,11 +375,11 @@
     document.getElementById('btn-mode-signup').classList.toggle('active', mode === 'signup');
     document.getElementById('step1-title').textContent = mode === 'signup' ? 'Create your account' : 'Welcome back';
     document.getElementById('step1-sub').textContent = mode === 'signup'
-      ? 'Enter your mobile number to get started / à¤¶à¥à¤°à¥‚ à¤•à¤°à¤¨à¥‡ à¤•à¥‡ à¤²à¤¿à¤ à¤¨à¤‚à¤¬à¤° à¤¦à¤°à¥à¤œ à¤•à¤°à¥‡à¤‚'
-      : 'Enter your number to continue / à¤…à¤ªà¤¨à¤¾ à¤¨à¤‚à¤¬à¤° à¤¦à¤°à¥à¤œ à¤•à¤°à¥‡à¤‚';
+      ? 'Enter your mobile number to get started / शुरू करने के लिए नंबर दर्ज करें'
+      : 'Enter your number to continue / अपना नंबर दर्ज करें';
   }
 
-  // â”€â”€ STEP 1 â†’ Continue â”€â”€
+  // ── STEP 1 → Continue ──
   async function goToStep2() {
     const phone = document.getElementById('phone-input').value.replace(/\s/g, '');
     const errorEl = document.getElementById('phone-error');
@@ -396,12 +396,12 @@
     localStorage.setItem('carbn-farmer-phone', phone);
 
     if (userMode === 'signup') {
-      // New user â†’ profile setup step
+      // New user → profile setup step
       localStorage.setItem('carbn-token', 'dummy-token-123');
       localStorage.setItem('carbn-is-new-user', 'true');
       goToStep('2b');
     } else {
-      // Returning user â†’ skip to verification (OTP bypassed)
+      // Returning user → skip to verification (OTP bypassed)
       localStorage.setItem('carbn-token', 'dummy-token-123');
       localStorage.setItem('carbn-farmer-name', localStorage.getItem('carbn-farmer-name') || 'Farmer');
       localStorage.setItem('carbn-is-new-user', 'false');
@@ -410,7 +410,7 @@
     }
   }
 
-  // â”€â”€ STEP 2B â†’ Save Profile â”€â”€
+  // ── STEP 2B → Save Profile ──
   function saveProfile() {
     const name = document.getElementById('profile-name').value.trim();
     const state = document.getElementById('profile-state').value;
@@ -436,11 +436,11 @@
     localStorage.setItem('carbn-farmer-farm-size', farmSize);
     localStorage.setItem('carbn-farmer-crop', crop);
 
-    showToast('success', 'Profile saved! ðŸŒ¿', 'Setting up your account...');
+    showToast('success', 'Profile saved! 🌿', 'Setting up your account...');
     goToStep(3);
   }
 
-  // â”€â”€ STEP 3 â†’ Complete â”€â”€
+  // ── STEP 3 → Complete ──
   function completeLogin() {
     if (currentVerifyMode === 'gov') {
       const idNum = document.getElementById('gov-id-number').value.trim();
@@ -452,7 +452,7 @@
     }
 
     localStorage.setItem('carbn-farmer-logged', 'true');
-    showToast('success', 'Welcome to Carbon Kisan! ðŸŒ¿', 'Your account is set up.');
+    showToast('success', 'Welcome to Carbon Kisan! 🌿', 'Your account is set up.');
     setTimeout(() => window.location.href = 'farmer-dashboard.html', 1200);
   }
 
@@ -462,7 +462,7 @@
     setTimeout(() => window.location.href = 'farmer-dashboard.html', 1000);
   }
 
-  // â”€â”€ STEP NAVIGATION â”€â”€
+  // ── STEP NAVIGATION ──
   function goToStep(n) {
     document.querySelectorAll('.login-step').forEach(s => s.classList.remove('active'));
     document.getElementById(`step-${n}`).classList.add('active');
@@ -477,14 +477,14 @@
       el.classList.remove('active', 'done');
       if (line) line.classList.remove('done');
 
-      if (i < stepNum) { el.classList.add('done'); el.innerHTML = 'âœ“'; }
+      if (i < stepNum) { el.classList.add('done'); el.innerHTML = '✓'; }
       else if (i === stepNum) { el.classList.add('active'); el.innerHTML = String(i); }
       else { el.innerHTML = String(i); }
       if (line && i < stepNum) line.classList.add('done');
     });
   }
 
-  // â”€â”€ VERIFY TABS â”€â”€
+  // ── VERIFY TABS ──
   function switchVerifyTab(mode) {
     currentVerifyMode = mode;
     document.querySelectorAll('.verify-tab').forEach(t => t.classList.remove('active'));
@@ -498,7 +498,7 @@
     }
   }
 
-  // â”€â”€ OTP (kept for when API is ready) â”€â”€
+  // ── OTP (kept for when API is ready) ──
   async function verifyOTP() {
     showToast('info', 'OTP bypassed', 'Continuing without OTP for now.');
     goToStep(3);
@@ -516,7 +516,7 @@
       const s = remaining % 60;
       timerEl.textContent = `Expires in ${m}:${String(s).padStart(2, '0')}`;
       timerEl.style.color = remaining <= 60 ? 'var(--red)' : 'var(--amber)';
-      if (remaining <= 0) { clearInterval(otpTimerInterval); timerEl.textContent = 'OTP expired â€” request a new one'; timerEl.style.color = 'var(--red)'; }
+      if (remaining <= 0) { clearInterval(otpTimerInterval); timerEl.textContent = 'OTP expired – request a new one'; timerEl.style.color = 'var(--red)'; }
       remaining--;
     }
     updateTimer();
@@ -562,15 +562,15 @@
 
     idSelector.addEventListener('change', () => {
       if (idSelector.value === 'Aadhaar') {
-        label.textContent = '12-Digit Aadhaar Number / 12-à¤…à¤‚à¤•à¥€à¤¯ à¤†à¤§à¤¾à¤° à¤¨à¤‚à¤¬à¤°';
+        label.textContent = '12-Digit Aadhaar Number / 12-अंकीय आधार नंबर';
         input.placeholder = 'xxxx-xxxx-xxxx';
         input.setAttribute('maxlength', '14');
       } else if (idSelector.value === 'PAN') {
-        label.textContent = 'PAN Card Number / à¤ªà¥ˆà¤¨ à¤•à¤¾à¤°à¥à¤¡ à¤¨à¤‚à¤¬à¤°';
+        label.textContent = 'PAN Card Number / पैन कार्ड नंबर';
         input.placeholder = 'ABCDE1234F';
         input.setAttribute('maxlength', '10');
       } else {
-        label.textContent = 'Voter ID Card Number / à¤®à¤¤à¤¦à¤¾à¤¤à¤¾ à¤ªà¤¹à¤šà¤¾à¤¨ à¤ªà¤¤à¥à¤° à¤¨à¤‚à¤¬à¤°';
+        label.textContent = 'Voter ID Card Number / मतदाता पहचान पत्र नंबर';
         input.placeholder = 'XYZ1234567';
         input.setAttribute('maxlength', '12');
       }
@@ -606,4 +606,3 @@
 </script>
 </body>
 </html>
-
