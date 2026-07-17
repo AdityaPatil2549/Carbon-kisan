@@ -1,14 +1,14 @@
 // ── CARBON KISAN — GLOBAL JAVASCRIPT ──
 
-// IMPORTANT: Once you deploy your backend to Render, paste your Render URL here!
-// Example: 'https://carbon-backend.onrender.com'
-const RENDER_BACKEND_URL = '';
+// IMPORTANT: Paste your production backend URL here (e.g. Railway, Render, etc.)
+// Example: 'https://carbon-backend.up.railway.app'
+const PRODUCTION_BACKEND_URL = '';
 
-// Auto-detect API base: use local, Render, or Vercel fallback
+// Auto-detect API base: use local, remote, or Vercel fallback
 if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
   window.API_BASE_URL = 'http://localhost:8000/api/v1';
-} else if (RENDER_BACKEND_URL) {
-  window.API_BASE_URL = `${RENDER_BACKEND_URL}/api/v1`;
+} else if (PRODUCTION_BACKEND_URL) {
+  window.API_BASE_URL = `${PRODUCTION_BACKEND_URL}/api/v1`;
 } else {
   window.API_BASE_URL = '/api/v1';
 }
