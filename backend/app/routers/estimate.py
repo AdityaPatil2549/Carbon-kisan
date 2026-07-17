@@ -35,3 +35,31 @@ async def create_estimate(payload: EstimateRequest, farmer_id: str = Depends(get
 
     estimate_id = insert_result.data[0]["id"]
     return EstimateResponse(estimate_id=estimate_id, **result)
+
+from pydantic import BaseModel, Field
+class LocalEstimateRequest(BaseModel):
+    practice_type: str
+    area_ha: float
+    season_months: int
+    co2e_tonnes: float
+    inr_estimate: int
+    shap_breakdown: dict
+
+@router.post("/estimate/local")
+async def save_local_estimate(payload: LocalEstimateRequest, farmer_id: str = Depends(get_current_farmer)):
+    """Saves a client-side calculated estimate to the DB and returns the ID."""
+    insert_result = supabase.table("estimates").insert({
+        "farmer_id": farmer_id,
+        "practice_type": payload.practice_type,
+        "area_ha": payload.area_ha,
+        "season_months": payload.season_months,
+        "co2e_tonnes": payload.co2e_tonnes,
+        "confidence_low": payload.co2e_tonnes * 0.9,
+        "confidence_high": payload.co2e_tonnes * 1.1,
+        "inr_estimate": payload.inr_estimate,
+        "shap_breakdown": payload.shap_breakdown,
+        "model_version": "client_xgb_v1",
+    }).execute()
+
+    return {"estimate_id": insert_result.data[0]["id"]}
+

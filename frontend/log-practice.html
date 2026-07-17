@@ -353,6 +353,15 @@
 
     currentEstimateId  = 'local-' + Date.now();
     currentEstimateInr = inr_estimate;
+    window.currentEstimateData = {
+      practice_type: practice,
+      area_ha: land,
+      season_months: season.includes('2026') || season.includes('2025') ? 6 : 12, // fallback
+      co2e_tonnes: co2e_tonnes,
+      inr_estimate: inr_estimate,
+      shap_breakdown: shap
+    };
+
 
     animateResultValue(amountEl, inr_estimate, '₹');
     co2El.textContent = `${co2e_tonnes} t CO₂ sequestered per season`;
@@ -392,26 +401,38 @@
   }
   async function submitPractice(e) {
     e.preventDefault();
-    if (!currentEstimateId) {
+    if (!currentEstimateId || !window.currentEstimateData) {
       showToast('error', 'Estimate required', 'Please wait for the calculation to finish.');
       return;
     }
 
     try {
+      // 1. Save the local estimate to the DB to get a real ID
+      const estRes = await window.fetchWithAuth('/estimate/local', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(window.currentEstimateData)
+      });
+      if (!estRes.ok) throw new Error("Failed to save estimate to database");
+      const estData = await estRes.json();
+      const realEstimateId = estData.estimate_id;
+
+      // 2. Submit the listing with the real DB estimate ID
       const res = await window.fetchWithAuth('/listings', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          estimate_id: currentEstimateId,
-          asking_price_inr: currentEstimateInr
+          estimate_id: realEstimateId,
+          asking_price_inr: window.currentEstimateData.inr_estimate
         })
       });
       
-      if (!res.ok) throw new Error("Failed to submit");
+      if (!res.ok) throw new Error("Failed to submit listing");
       
       showToast('success', 'Credit issued to wallet! 🌿', 'Your carbon credit will be listed in the marketplace.');
       setTimeout(() => window.location.href = 'farmer-dashboard.html', 1500);
     } catch (err) {
+      console.error(err);
       showToast('error', 'Error', 'Failed to submit practice.');
     }
   }
