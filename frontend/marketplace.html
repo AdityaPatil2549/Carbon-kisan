@@ -268,7 +268,8 @@
   }
 
   async function fetchListings() {
-    if (!localStorage.getItem('carbn-token')) {
+    const isDemo = !localStorage.getItem('carbn-token') || localStorage.getItem('carbn-buyer-email') === 'csr@wipro.com';
+    if (isDemo) {
       populateDemoListings();
       return;
     }
