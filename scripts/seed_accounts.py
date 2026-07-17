@@ -5,10 +5,10 @@ import time
 from datetime import datetime, timezone, timedelta
 from dotenv import load_dotenv
 
-load_dotenv(os.path.join(os.path.dirname(__file__), "carbonkisan-starter", "backend", ".env"))
+load_dotenv(os.path.join(os.path.dirname(__file__), "..", "backend", ".env"))
 
 # Add backend directory to sys.path so we can import app modules
-sys.path.append(os.path.join(os.path.dirname(__file__), "carbonkisan-starter", "backend"))
+sys.path.append(os.path.join(os.path.dirname(__file__), "..", "backend"))
 
 from app.models.db import supabase
 from supabase import create_client

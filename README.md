@@ -65,13 +65,13 @@ To run the local development environment for demonstration purposes:
 ### 1. Database Setup
 The project requires a Supabase instance.
 1. Create a project on Supabase.
-2. Run the SQL initialization script found in `carbonkisan-starter/docs/schema.sql` in your Supabase SQL Editor.
+2. Run the SQL initialization script found in `docs/schema.sql` in your Supabase SQL Editor.
 3. Import the required district reference data (`maharashtra_districts.csv`) into the `districts` table.
 
 ### 2. Backend (FastAPI)
 Navigate to the backend directory and set up the environment:
 ```bash
-cd carbonkisan-starter/backend
+cd backend
 python -m venv venv
 source venv/Scripts/activate # (Or venv/bin/activate on Mac/Linux)
 pip install -r requirements.txt
@@ -94,7 +94,7 @@ $env:PYTHONUTF8=1; fastapi dev app/main.py --port 8000
 ### 3. Frontend (React/Vite App)
 In a separate terminal, start the frontend server:
 ```bash
-cd carbonkisan-starter/frontend
+cd frontend
 npm install
 npm run dev
 ```
