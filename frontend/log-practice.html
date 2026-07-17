@@ -186,14 +186,14 @@
           <div class="grid-2">
             <div class="form-group">
               <label class="form-label" for="water-usage" data-i18n="log_label_water">Water usage reduced?</label>
-              <select class="input" id="water-usage" style="appearance:none">
+              <select class="input" id="water-usage" style="appearance:none" onchange="recalculate()">
                 <option value="no">No / नहीं</option>
                 <option value="yes">Yes / हाँ</option>
               </select>
             </div>
             <div class="form-group">
               <label class="form-label" for="fertilizer" data-i18n="log_label_fertilizer">Chemical fertilizer reduced?</label>
-              <select class="input" id="fertilizer" style="appearance:none">
+              <select class="input" id="fertilizer" style="appearance:none" onchange="recalculate()">
                 <option value="no">No / नहीं</option>
                 <option value="yes">Yes / हाँ</option>
               </select>
@@ -317,9 +317,27 @@
     const baseRate    = practiceRates[practice]         || 0.38;
     const cropMult    = cropMultipliers[crop]           || 1.00;
     const districtMult = districtMultipliers[districtCode] || 1.00;
+    
+    // Add multipliers for water and fertilizer reduction
+    const waterReduced = document.getElementById('water-usage').value === 'yes';
+    const fertReduced  = document.getElementById('fertilizer').value === 'yes';
+    
+    let totalRate = baseRate * cropMult * districtMult;
+    let waterBonus = 0;
+    let fertBonus = 0;
+    
+    if (waterReduced) {
+      waterBonus = totalRate * 0.05; // 5% boost for water reduction
+      totalRate += waterBonus;
+    }
+    if (fertReduced) {
+      fertBonus = totalRate * 0.08; // 8% boost for fertilizer reduction
+      totalRate += fertBonus;
+    }
+
     const noise       = 1 + (Math.random() * 0.06 - 0.03); // ±3% model variance
 
-    const co2e_tonnes   = +(baseRate * cropMult * districtMult * land * noise).toFixed(3);
+    const co2e_tonnes   = +(totalRate * land * noise).toFixed(3);
     const inr_estimate  = Math.round(co2e_tonnes * 2200 * 0.92); // ₹2200/t, 8% platform fee
 
     const shap = {
@@ -328,6 +346,10 @@
       soil:      +(baseRate * land * districtMult * 0.18).toFixed(3),
       season:    +(baseRate * land * 0.12).toFixed(3),
     };
+    
+    if (waterReduced) shap['water_efficiency'] = +(waterBonus * land).toFixed(3);
+    if (fertReduced)  shap['reduced_chemicals'] = +(fertBonus * land).toFixed(3);
+
 
     currentEstimateId  = 'local-' + Date.now();
     currentEstimateInr = inr_estimate;
